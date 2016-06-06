@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+    <include layout="@layout/layout_title"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/ll_title">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:minHeight="400dp"
+            android:gravity="center">
+
+            <EditText
+                android:id="@+id/et_my_name"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:hint="@string/your_name"
+                android:textSize="16sp"
+                android:padding="10dp"
+                android:gravity="center_vertical"
+                android:background="@drawable/edit_text_background_gradient"/>
+
+            <Button
+                android:id="@+id/btn_channel_a"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:padding="5dp"
+                android:textAllCaps="false"
+                android:background="@drawable/btn_bg"
+                android:drawableLeft="@drawable/ic_public_channel"
+                android:drawablePadding="30dp"
+                android:textSize="24sp"
+                android:gravity="left|center_vertical"
+                android:text="@string/public_channel_a"/>
+
+            <Button
+                android:id="@+id/btn_channel_b"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:padding="5dp"
+                android:textAllCaps="false"
+                android:background="@drawable/btn_bg"
+                android:drawableLeft="@drawable/ic_public_channel"
+                android:drawablePadding="30dp"
+                android:textSize="24sp"
+                android:gravity="left|center_vertical"
+                android:text="@string/public_channel_b"/>
+
+            <EditText
+                android:id="@+id/et_channel_no"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:hint="@string/enter_channel_no"
+                android:textSize="16sp"
+                android:padding="10dp"
+                android:gravity="center_vertical"
+                android:inputType="number"
+                android:background="@drawable/edit_text_background_gradient"/>
+
+            <Button
+                android:id="@+id/btn_submit"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:textAllCaps="false"
+                android:background="@drawable/btn_bg"
+                android:textSize="24sp"
+                android:text="@string/submit"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/rl_loading_panel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/loading_panel_bg"
+        android:visibility="gone">
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/progress_bar"
+            android:layout_centerHorizontal="true"
+            android:textSize="20sp"
+            android:textColor="@color/WhiteSmoke"
+            android:text="@string/joining_channel_please_wait"/>
+    </RelativeLayout>
+
+</RelativeLayout>

@@ -1,0 +1,140 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_title"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_recipient_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="100dp"
+                    android:background="@drawable/drawer_bg"
+                    android:textSize="10dip"
+                    android:typeface="monospace"
+                    android:textColor="@color/White"
+                    android:textStyle="bold"
+                    android:padding="5dp"/>
+            </ScrollView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/tv_chat_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:text="Chat History"
+                android:paddingBottom="10dp"/>
+
+            <TextView
+                android:id="@+id/tv_chat_history"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/SkyBlue"
+                android:maxLines = "20"
+                android:scrollbars = "vertical"
+                android:gravity="bottom"
+                android:padding="5dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/SkyBlue"
+            android:visibility="gone">
+            <TextView
+                android:id="@+id/tv_percent"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:text="0%"/>
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:indeterminate="false"
+                android:progressDrawable="@drawable/custom_progress_drawable" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_play"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@color/SkyBlue"
+            android:visibility="gone">
+            <Button
+                android:id="@+id/btn_play"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textAllCaps="false"
+                android:text="Play"
+                android:background="@drawable/btn_bg"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/et_chat"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"/>
+
+            <Button
+                android:id="@+id/btn_voice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_bg"
+                android:layout_margin="4dp"
+                android:textAllCaps="false"
+                android:text="Voice"/>
+
+            <Button
+                android:id="@+id/btn_send"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_bg"
+                android:layout_margin="4dp"
+                android:textAllCaps="false"
+                android:text="@string/send"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

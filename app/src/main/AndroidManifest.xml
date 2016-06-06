@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.siliconorchard.walkitalkiechat" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.BROADCAST_STICKY"/>
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:name=".AppController"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme" >
+        <activity android:name=".activities.MainActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".activities.ChatActivity" />
+        <activity android:name=".activities.ActivityChatPrivateChannel" />
+        <activity android:name=".activities.ActivityChatPublicChannel" />
+        <activity android:name=".activities.SettingsActivity" />
+        <activity android:name=".activities.ActivityChatWithIphone" />
+        <activity android:name=".activities.DiscoveryActivity" />
+        <activity android:name=".activities.DiscoveryActivityForResult" />
+
+        <activity android:name=".activities.RecordVoiceActivityForResult" android:theme="@style/Theme.Transparent"/>
+
+        <activity android:name=".activities.ActivityCreateChannel"
+            android:noHistory="true"/>
+        <activity android:name=".activities.ActivityJoinChannel"
+            android:noHistory="true"/>
+
+        <receiver android:name=".broadcastreceiver.WifiReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".broadcastreceiver.ChatMessageReceiver">
+            <intent-filter>
+                <action android:name="com.siliconorchard.walkitalkiechat.service.receiver.background"/>
+            </intent-filter>
+        </receiver>
+        <service android:name=".service.ServiceServer" />
+    </application>
+
+</manifest>
