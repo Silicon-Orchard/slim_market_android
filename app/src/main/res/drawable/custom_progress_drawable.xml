@@ -6,6 +6,6 @@
 
     <!-- Define the progress properties like start color, end color etc -->
     <item android:id="@android:id/progress">
-        <scale android:scaleWidth="100%" android:drawable="@drawable/shape_progress_bar_fg"/>
+        <scale android:scaleWidth="100%" android:drawable="@drawable/image_loading_bar"/>
     </item>
 </layer-list> 
