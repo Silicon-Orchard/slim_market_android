@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:orientation="horizontal"
-    android:padding="5dp"
-    android:background="@color/SkyBlue">
+    android:padding="5dp">
 
     <LinearLayout
         android:id="@+id/layout_back"
@@ -28,7 +27,8 @@
         android:gravity="center"
         android:text="Title"
         android:textSize="22sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textColor="@color/White"/>
 
     <LinearLayout
         android:id="@+id/layout_map_icon"

@@ -1,45 +1,74 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/container"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/WhiteSmoke">
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/image_bg_p1"/>
 
     <include layout="@layout/layout_title"/>
 
+    <ImageView
+        android:id="@+id/iv_logo"
+        android:layout_width="150dp"
+        android:layout_height="280dp"
+        android:layout_marginTop="50dp"
+        android:src="@drawable/image_logo"
+        android:layout_centerHorizontal="true"/>
 
     <LinearLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center">
-        <Button
-            android:id="@+id/btn_join_channel"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:padding="5dp"
-            android:textAllCaps="false"
-            android:background="@drawable/btn_bg"
-            android:drawableLeft="@drawable/ic_channel_join"
-            android:drawablePadding="40dp"
-            android:textSize="24sp"
-            android:gravity="left|center_vertical"
-            android:text="@string/join_channel"/>
+        android:layout_below="@id/iv_logo"
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/btn_create_channel"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:padding="5dp"
-            android:textAllCaps="false"
-            android:background="@drawable/btn_bg"
-            android:drawableLeft="@drawable/ic_channel_create"
-            android:drawablePadding="40dp"
-            android:textSize="24sp"
-            android:gravity="left|center_vertical"
-            android:text="@string/create_channel"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="35dp"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
+
+            <Button
+                android:id="@+id/btn_create_channel"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:textAllCaps="false"
+                android:background="@android:color/transparent"
+                android:drawableLeft="@drawable/ic_channel_create"
+                android:drawablePadding="20dp"
+                android:textSize="24sp"
+                android:textColor="#e84d37"
+                android:gravity="left|center_vertical"
+                android:text="@string/create_channel"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginBottom="10dp"
+                android:background="@color/White"/>
+
+            <Button
+                android:id="@+id/btn_join_channel"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:padding="10dp"
+                android:textAllCaps="false"
+                android:background="@drawable/btn_bg_border"
+                android:drawableLeft="@drawable/ic_channel_join"
+                android:drawablePadding="20dp"
+                android:textSize="24sp"
+                android:textColor="@color/WhiteSmoke"
+                android:gravity="left|center_vertical"
+                android:text="@string/join_channel"/>
+
+
+        </LinearLayout>
+
     </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>
