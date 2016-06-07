@@ -1,14 +1,22 @@
 package com.siliconorchard.walkitalkiechat.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.siliconorchard.walkitalkiechat.R;
+import com.siliconorchard.walkitalkiechat.model.ChatMessage;
+import com.siliconorchard.walkitalkiechat.utilities.Constant;
+import com.siliconorchard.walkitalkiechat.utilities.Utils;
+
+import org.json.JSONException;
 
 /**
  * Created by adminsiriconorchard on 6/7/16.
@@ -21,6 +29,12 @@ public class LoadingActivity extends ActivityBase {
 
     private static int MAX_PROGRESS_BAR;
 
+
+    private AlertDialog mAlertDialog;
+
+    private String ipAddress;
+    private SharedPreferences mSharedPref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -28,13 +42,26 @@ public class LoadingActivity extends ActivityBase {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_screen);
-        mProgress = (ProgressBar) findViewById(R.id.loading_bar);
 
-        showFakeProgress();
+        mSharedPref = getSharedPreferences(Constant.SHARED_PREF_NAME, MODE_PRIVATE);
+        ipAddress = Utils.getDeviceIpAddress();
+        mProgress = (ProgressBar) findViewById(R.id.loading_bar);
 
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        boolean isPermissionRequested = Utils.findDeviceID(this, mSharedPref);
+        if(ipAddress == null || ipAddress.length()<5) {
+            showWifiNotEnabledDialog();
+        } else {
+            if(!isPermissionRequested) {
+                sendBroadcastRequestInfo();
+                showFakeProgress();
+            }
+        }
+    }
 
     private void showFakeProgress() {
         MAX_PROGRESS_BAR = PROGRESS * PROGRESS;
@@ -65,5 +92,69 @@ public class LoadingActivity extends ActivityBase {
                 startActivity(main_intent);
             }
         }.execute();
+    }
+
+
+
+    private void sendBroadcastRequestInfo() {
+        if(Utils.isInfoRequestSent()) {
+            return;
+        }
+        try {
+            ChatMessage chatMessage = generateChatMessageBasics();
+            chatMessage.setType(ChatMessage.TYPE_REQUEST_INFO);
+            Utils.sendBroadCastMessage(chatMessage);
+            Utils.setIsInfoRequestSent(true);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case Constant.READ_PHONE_STATE_PERMISSION: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Utils.getDeviceIdFromTelephonyManager(this, mSharedPref);
+
+                } else {
+                    Utils.setDeviceId(Constant.DEVICE_ID_UNKNOWN);
+                    mSharedPref.edit().putString(Constant.KEY_DEVICE_ID, Constant.DEVICE_ID_UNKNOWN).commit();
+                }
+                sendBroadcastRequestInfo();
+                showFakeProgress();
+                break;
+            }
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    private void showWifiNotEnabledDialog() {
+        AlertDialog.Builder  builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.wifi_not_enabled);
+        builder.setMessage(R.string.error_wifi_not_enabled_please_enable);
+        builder.setCancelable(false);
+        builder.setIcon(R.drawable.ic_info);
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (mAlertDialog != null) {
+                    mAlertDialog.dismiss();
+                    LoadingActivity.this.finish();
+                }
+            }
+        });
+        mAlertDialog = builder.create();
+        mAlertDialog.show();
+    }
+
+    private ChatMessage generateChatMessageBasics() {
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setDeviceId(Utils.getDeviceId(this, mSharedPref));
+        chatMessage.setIpAddress(ipAddress);
+        chatMessage.setDeviceName(Utils.getDeviceName(mSharedPref));
+        return chatMessage;
     }
 }

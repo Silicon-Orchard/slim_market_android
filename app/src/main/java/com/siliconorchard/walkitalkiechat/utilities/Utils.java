@@ -42,7 +42,8 @@ public class Utils {
     private static String DEVICE_ID;
     private static boolean isInfoRequestSent;
 
-    public static void findDeviceID(Activity activity, SharedPreferences sharedPreferences) {
+    public static boolean findDeviceID(Activity activity, SharedPreferences sharedPreferences) {
+        boolean isPermissionRequested = false;
         DEVICE_ID = sharedPreferences.getString(Constant.KEY_DEVICE_ID, null);
         if(DEVICE_ID == null) {
             try {
@@ -60,7 +61,6 @@ public class Utils {
                         // Show an expanation to the user *asynchronously* -- don't block
                         // this thread waiting for the user's response! After the user
                         // sees the explanation, try again to request the permission.
-
                     } else {
 
                         // No explanation needed, we can request the permission.
@@ -69,6 +69,7 @@ public class Utils {
                                 new String[]{Manifest.permission.READ_PHONE_STATE},
                                 Constant.READ_PHONE_STATE_PERMISSION);
 
+                        isPermissionRequested = true;
                         // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                         // app-defined int constant. The callback method gets the
                         // result of the request.
@@ -77,7 +78,7 @@ public class Utils {
             }
         }
 
-
+        return isPermissionRequested;
     }
 
     public static void findDeviceName(SharedPreferences sharedPreferences) {
