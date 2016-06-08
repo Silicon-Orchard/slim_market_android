@@ -130,7 +130,11 @@
                         android:layout_width="0dp"
                         android:layout_height="40dp"
                         android:layout_weight="1"
-                        android:background="@drawable/drawer_bg"/>
+                        android:background="@drawable/drawer_bg"
+                        android:textColor="@color/White"
+                        android:textColorHint="@color/SlateBlue"
+                        android:textCursorDrawable="@null"
+                        android:hint="Type your message"/>
                 </LinearLayout>
 
                 <LinearLayout
