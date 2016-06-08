@@ -12,138 +12,146 @@
 
     <include layout="@layout/layout_title"/>
 
-    <LinearLayout
-        android:id="@+id/ll_recipient"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_margin="10dp"
-        android:layout_below="@+id/ll_title"
-        android:orientation="vertical"
-        android:background="@drawable/drawer_bg">
-
-        <ListView
-            android:id="@+id/lv_recipient_list"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:dividerHeight="0dp"
-            android:divider="@null"/>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="3dp"
-            android:background="@color/orange4_new_theme"/>
-
-    </LinearLayout>
-
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/ll_recipient"
-        android:padding="10dp"
-        android:orientation="vertical" >
+        android:layout_below="@+id/ll_title">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/tv_chat_title"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/ll_recipient"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:text="Chat History"
-                android:paddingBottom="10dp"/>
+                android:layout_height="150dp"
+                android:layout_margin="10dp"
+                android:layout_below="@+id/ll_title"
+                android:orientation="vertical"
+                android:background="@drawable/drawer_bg">
 
-            <TextView
-                android:id="@+id/tv_chat_history"
+                <ListView
+                    android:id="@+id/lv_recipient_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:dividerHeight="0dp"
+                    android:divider="@null"/>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="3dp"
+                    android:background="@color/orange4_new_theme"/>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/SkyBlue"
-                android:maxLines = "20"
-                android:scrollbars = "vertical"
-                android:gravity="bottom"
-                android:padding="5dp"/>
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:minHeight="350dp"
+                android:padding="10dp"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/tv_chat_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="8sp"/>
+
+                    <ListView
+                        android:id="@+id/lv_chat_history"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="5dp"
+                        android:dividerHeight="0dp"
+                        android:divider="@null"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_progress_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@color/SkyBlue"
+                    android:visibility="gone">
+                    <TextView
+                        android:id="@+id/tv_percent"
+                        android:layout_width="250dp"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:text="0%"/>
+
+                    <ProgressBar
+                        android:id="@+id/progress_bar"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"
+                        android:indeterminate="false"
+                        android:progressDrawable="@drawable/custom_progress_drawable" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_play"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@color/SkyBlue"
+                    android:visibility="gone">
+                    <Button
+                        android:id="@+id/btn_play"
+                        android:layout_width="250dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:textAllCaps="false"
+                        android:text="Play"
+                        android:background="@drawable/btn_bg"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/et_chat"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+
+                    <Button
+                        android:id="@+id/btn_voice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/btn_bg"
+                        android:layout_margin="4dp"
+                        android:textAllCaps="false"
+                        android:text="Voice"/>
+
+                    <Button
+                        android:id="@+id/btn_send"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/btn_bg"
+                        android:layout_margin="4dp"
+                        android:textAllCaps="false"
+                        android:text="@string/send"/>
+                </LinearLayout>
+
+            </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/ll_progress_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@color/SkyBlue"
-            android:visibility="gone">
-            <TextView
-                android:id="@+id/tv_percent"
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:text="0%"/>
-
-            <ProgressBar
-                android:id="@+id/progress_bar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="20dp"
-                android:indeterminate="false"
-                android:progressDrawable="@drawable/custom_progress_drawable" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ll_play"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:background="@color/SkyBlue"
-            android:visibility="gone">
-            <Button
-                android:id="@+id/btn_play"
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:textAllCaps="false"
-                android:text="Play"
-                android:background="@drawable/btn_bg"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/et_chat"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"/>
-
-            <Button
-                android:id="@+id/btn_voice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/btn_bg"
-                android:layout_margin="4dp"
-                android:textAllCaps="false"
-                android:text="Voice"/>
-
-            <Button
-                android:id="@+id/btn_send"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/btn_bg"
-                android:layout_margin="4dp"
-                android:textAllCaps="false"
-                android:text="@string/send"/>
-        </LinearLayout>
-
-    </LinearLayout>
+    </ScrollView>
 
 </RelativeLayout>

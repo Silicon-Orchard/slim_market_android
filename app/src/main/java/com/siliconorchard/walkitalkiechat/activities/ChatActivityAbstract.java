@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.siliconorchard.walkitalkiechat.R;
+import com.siliconorchard.walkitalkiechat.adapter.AdapterChatHistory;
 import com.siliconorchard.walkitalkiechat.adapter.AdapterRecipientList;
 import com.siliconorchard.walkitalkiechat.asynctasks.SendMessageAsync;
 import com.siliconorchard.walkitalkiechat.asynctasks.SendVoiceDataAsync;
@@ -43,7 +44,7 @@ import java.util.List;
  */
 public abstract class ChatActivityAbstract extends ActivityBase {
 
-    protected TextView mTvClientMsg;
+    //protected TextView mTvClientMsg;
 
     protected TextView mTvTitle;
     protected LinearLayout mLayoutBack;
@@ -77,6 +78,9 @@ public abstract class ChatActivityAbstract extends ActivityBase {
 
     protected AdapterRecipientList adapterRecipientList;
 
+    protected ListView mLvChatHistory;
+    protected AdapterChatHistory adapterChatHistory;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,14 +95,15 @@ public abstract class ChatActivityAbstract extends ActivityBase {
         myIpAddress = bundle.getString(Constant.KEY_MY_IP_ADDRESS, null);
         channelNumber = bundle.getInt(Constant.KEY_CHANNEL_NUMBER, 0);
 
-        mTvClientMsg = (TextView) findViewById(R.id.tv_chat_history);
+        //mTvClientMsg = (TextView) findViewById(R.id.tv_chat_history);
+        mLvChatHistory = (ListView) findViewById(R.id.lv_chat_history);
         mTvTitle = (TextView) findViewById(R.id.tv_title_name);
         mLayoutBack = (LinearLayout) findViewById(R.id.layout_back);
         mTvTitle.setText("Channel: "+channelNumber);
 
         mEtChat = (EditText) findViewById(R.id.et_chat);
         mBtnSend = (Button) findViewById(R.id.btn_send);
-        mTvClientMsg.setText(" ");
+        //mTvClientMsg.setText(" ");
 
         /*mTvRecipientList = (TextView) findViewById(R.id.tv_recipient_list);
         mTvRecipientList.setText("");*/
@@ -115,7 +120,14 @@ public abstract class ChatActivityAbstract extends ActivityBase {
 
         mLvRecipientList = (ListView) findViewById(R.id.lv_recipient_list);
 
+        initChatHistoryList();
+
         initSubView(bundle);
+    }
+
+    private void initChatHistoryList() {
+        adapterChatHistory = new AdapterChatHistory(this, null);
+        mLvChatHistory.setAdapter(adapterChatHistory);
     }
 
     private void initListeners() {
@@ -131,8 +143,8 @@ public abstract class ChatActivityAbstract extends ActivityBase {
                     if (msg == null || msg.length() <= 0) {
                         return;
                     }
-
-                    mTvClientMsg.append("\nMe: " + msg);
+                    //mTvClientMsg.append("\nMe: " + msg);
+                    addMyChatMessage("$",msg);
                     mEtChat.setText("");
                     try {
                         sendBroadCastMessage(generateChatMessage(msg).getJsonString());
@@ -147,7 +159,7 @@ public abstract class ChatActivityAbstract extends ActivityBase {
             }
         });
 
-        mTvClientMsg.setMovementMethod(new ScrollingMovementMethod());
+        //mTvClientMsg.setMovementMethod(new ScrollingMovementMethod());
 
         mLayoutBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,6 +186,13 @@ public abstract class ChatActivityAbstract extends ActivityBase {
                 startActivityForResult(intent, Constant.ACTIVITY_RESULT_RECORD_VOICE);
             }
         });
+    }
+
+    private void addMyChatMessage(String name, String msg) {
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setDeviceName(name);
+        chatMessage.setMessage(msg);
+        adapterChatHistory.addMessage(chatMessage);
     }
 
     protected ChatMessage generateChatMessage(String message) {
@@ -239,7 +258,8 @@ public abstract class ChatActivityAbstract extends ActivityBase {
                     }
                     switch (chatMessage.getType()) {
                         case ChatMessage.TYPE_MESSAGE:
-                            mTvClientMsg.append("\n" + chatMessage.getDeviceName() + ": " + chatMessage.getMessage());
+                            //mTvClientMsg.append("\n" + chatMessage.getDeviceName() + ": " + chatMessage.getMessage());
+                            adapterChatHistory.addMessage(chatMessage);
                             addToReceiverList(getHostInfoFromChatMessage(chatMessage), ClientType.TYPE_JOINER);
                             break;
                         case ChatMessage.TYPE_JOIN_CHANNEL:
@@ -402,7 +422,8 @@ public abstract class ChatActivityAbstract extends ActivityBase {
             sendVoiceDataAsync.setOnPreExecute(new SendVoiceDataAsync.OnPreExecute() {
                 @Override
                 public void onPreExecute() {
-                    mTvClientMsg.append("\nSending voice mail...");
+                    //mTvClientMsg.append("\nSending voice mail...");
+                    addMyChatMessage("$","Sending voice mail...");
                 }
             });
             sendVoiceDataAsync.setOnProgressUpdate(new SendVoiceDataAsync.OnProgressUpdate() {
@@ -422,9 +443,11 @@ public abstract class ChatActivityAbstract extends ActivityBase {
                 @Override
                 public void onPostExecute(boolean isExecuted) {
                     if(isExecuted) {
-                        mTvClientMsg.append("\nVoice mail sent");
+                        //mTvClientMsg.append("\nVoice mail sent");
+                        addMyChatMessage("$","Voice mail sent");
                     } else {
-                        mTvClientMsg.append("\nVoice mail sending failed");
+                        //mTvClientMsg.append("\nVoice mail sending failed");
+                        addMyChatMessage("$","Voice mail sending failed");
                     }
                     mLayoutProgress.setVisibility(View.GONE);
                     mLayoutPlay.setVisibility(View.GONE);
@@ -497,17 +520,18 @@ public abstract class ChatActivityAbstract extends ActivityBase {
         mRunnableReceiveFile.setOnReceiveCallBacks(new RunnableReceiveFile.OnReceiveCallBacks() {
             @Override
             public void onPreReceive(final VoiceMessage voiceMessage) {
-                mTvClientMsg.post(new Runnable() {
+                mTvPercent.post(new Runnable() {
                     @Override
                     public void run() {
-                        mTvClientMsg.append("\n" + voiceMessage.getDeviceName() + ": Sending voice mail...");
+                        //mTvClientMsg.append("\n" + voiceMessage.getDeviceName() + ": Sending voice mail...");
+                        addMyChatMessage(voiceMessage.getDeviceName(), "Sending voice mail..");
                     }
                 });
             }
 
             @Override
             public void onProgressUpdate(final VoiceMessage voiceMessage) {
-                mTvClientMsg.post(new Runnable() {
+                mTvPercent.post(new Runnable() {
                     @Override
                     public void run() {
                         mProgress.setVisibility(View.VISIBLE);
@@ -526,10 +550,11 @@ public abstract class ChatActivityAbstract extends ActivityBase {
             public void onPostReceive(final VoiceMessage voiceMessage, File file) {
                 if (voiceMessage.getCurrentChunkNo() >= voiceMessage.getTotalChunkCount()) {
                     mFile = new File(file.getAbsolutePath());
-                    mTvClientMsg.post(new Runnable() {
+                    mTvPercent.post(new Runnable() {
                         @Override
                         public void run() {
-                            mTvClientMsg.append("\nYou received a voice mail from " + voiceMessage.getDeviceName());
+                            //mTvClientMsg.append("\nYou received a voice mail from " + voiceMessage.getDeviceName());
+                            addMyChatMessage(voiceMessage.getDeviceName(), "Voice mail received.");
                             mLayoutPlay.setVisibility(View.VISIBLE);
                             mLayoutProgress.setVisibility(View.GONE);
                         }
@@ -539,11 +564,11 @@ public abstract class ChatActivityAbstract extends ActivityBase {
 
             @Override
             public void onErrorOccur(final String errorText) {
-                mTvClientMsg.post(new Runnable() {
+                mTvPercent.post(new Runnable() {
                     @Override
                     public void run() {
                         Toast.makeText(getApplicationContext(), errorText, Toast.LENGTH_LONG).show();
-                        mTvClientMsg.append("\n" + errorText);
+                        //mTvClientMsg.append("\n" + errorText);
                     }
                 });
             }

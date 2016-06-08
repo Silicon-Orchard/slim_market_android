@@ -60,7 +60,7 @@ public class ActivityChatPublicChannel extends ChatActivityAbstract{
         mTvTitle.setText(channelName);
         mEtChat = (EditText) findViewById(R.id.et_chat);
         mBtnSend = (Button) findViewById(R.id.btn_send);
-        mTvClientMsg.setText(" ");
+        //mTvClientMsg.setText(" ");
         //mTvRecipientList.setText("You joined\n");
         HostInfo channelHost = new HostInfo();
         channelHost.setDeviceName(Utils.getDeviceName(mSharedPref));
