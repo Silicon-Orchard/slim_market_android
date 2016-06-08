@@ -1,77 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center">
+    android:gravity="center"
+    android:orientation="vertical">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY"
-        android:src="@drawable/image_bg_p1"/>
+        android:src="@drawable/image_bg_p1" />
 
-    <include layout="@layout/layout_title"/>
+    <include layout="@layout/layout_title" />
 
     <ImageView
         android:id="@+id/iv_logo"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_margin="10dp"
         android:layout_below="@+id/ll_title"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/ic_create_channel"/>
-
-    <TextView
-        android:id="@+id/tv_title_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/iv_logo"
-        android:gravity="center"
-        android:textSize="24sp"
-        android:textColor="@color/WhiteSmoke"
-        android:textStyle="bold"
-        android:text="@string/create_new_channel"/>
+        android:layout_margin="15dp"
+        android:src="@drawable/ic_create_channel" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/tv_title_text">
+        android:layout_below="@+id/iv_logo">
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:gravity="center_horizontal"
             android:minHeight="250dp"
-            android:paddingTop="20dp"
-            android:gravity="center_horizontal">
+            android:orientation="vertical"
+            android:paddingTop="20dp">
 
             <EditText
                 android:id="@+id/et_my_name"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                android:hint="@string/your_name"
-                android:textSize="16sp"
-                android:padding="10dp"
+                android:background="@drawable/edit_text_border"
                 android:gravity="center_vertical"
-                android:textColorHint="@color/Gray"
+                android:hint="@string/your_name"
+                android:padding="10dp"
                 android:textColor="@color/LightGrey"
-                android:background="@drawable/edit_text_border"/>
+                android:textColorHint="@color/Gray"
+                android:textSize="16sp" />
 
             <EditText
                 android:id="@+id/et_channel_no"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                android:hint="@string/enter_channel_no"
-                android:textSize="16sp"
-                android:padding="10dp"
+                android:background="@drawable/edit_text_border"
                 android:gravity="center_vertical"
+                android:hint="@string/enter_channel_no"
                 android:inputType="number"
-                android:textColorHint="@color/Gray"
+                android:padding="10dp"
                 android:textColor="@color/LightGrey"
-                android:background="@drawable/edit_text_border"/>
+                android:textColorHint="@color/Gray"
+                android:textSize="16sp" />
 
 
             <Button
@@ -79,11 +68,11 @@
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:textAllCaps="false"
                 android:background="@drawable/btn_orrange_bg"
-                android:textSize="24sp"
+                android:text="@string/create"
+                android:textAllCaps="false"
                 android:textColor="@color/White"
-                android:text="@string/create"/>
+                android:textSize="24sp" />
 
         </LinearLayout>
     </ScrollView>
@@ -94,6 +83,7 @@
         android:layout_height="match_parent"
         android:background="@color/loading_panel_bg"
         android:visibility="gone">
+
         <ProgressBar
             android:id="@+id/progress_bar"
             style="?android:attr/progressBarStyleLarge"
@@ -101,15 +91,16 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:background="@android:color/transparent"/>
+            android:background="@android:color/transparent" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/progress_bar"
             android:layout_centerHorizontal="true"
-            android:textSize="20sp"
+            android:text="@string/creating_channel_please_wait"
             android:textColor="@color/WhiteSmoke"
-            android:text="@string/creating_channel_please_wait"/>
+            android:textSize="20sp" />
     </RelativeLayout>
 
 </RelativeLayout>
