@@ -15,6 +15,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fillViewport="true"
         android:layout_below="@+id/ll_title">
 
         <LinearLayout
@@ -52,7 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:minHeight="350dp"
+                android:minHeight="250dp"
                 android:padding="10dp"
                 android:orientation="vertical" >
 
@@ -127,26 +128,32 @@
                     <EditText
                         android:id="@+id/et_chat"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"/>
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/drawer_bg"/>
+                </LinearLayout>
 
-                    <Button
-                        android:id="@+id/btn_voice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/btn_bg"
-                        android:layout_margin="4dp"
-                        android:textAllCaps="false"
-                        android:text="Voice"/>
-
-                    <Button
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:background="@color/orange4_new_theme">
+                    <ImageView
                         android:id="@+id/btn_send"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/btn_bg"
+                        android:layout_height="40dp"
                         android:layout_margin="4dp"
                         android:textAllCaps="false"
-                        android:text="@string/send"/>
+                        android:src="@drawable/ic_send"/>
+
+                    <ImageView
+                        android:id="@+id/btn_voice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_margin="4dp"
+                        android:textAllCaps="false"
+                        android:src="@drawable/ic_record"/>
                 </LinearLayout>
 
             </LinearLayout>

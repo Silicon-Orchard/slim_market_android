@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -50,7 +51,7 @@ public abstract class ChatActivityAbstract extends ActivityBase {
     protected LinearLayout mLayoutBack;
 
     protected EditText mEtChat;
-    protected Button mBtnSend;
+    protected ImageView mBtnSend;
 
     protected List<HostInfo> mListHostInfo;
 
@@ -66,7 +67,7 @@ public abstract class ChatActivityAbstract extends ActivityBase {
     protected ProgressBar mProgress;
     protected Button mBtnPlay;
     protected LinearLayout mLayoutPlay;
-    protected Button mBtnVoice;
+    protected ImageView mBtnVoice;
 
     protected static final int MAX_PROGRESS_BAR = 100;
     protected boolean isPlaying;
@@ -102,7 +103,7 @@ public abstract class ChatActivityAbstract extends ActivityBase {
         mTvTitle.setText("Channel: "+channelNumber);
 
         mEtChat = (EditText) findViewById(R.id.et_chat);
-        mBtnSend = (Button) findViewById(R.id.btn_send);
+        mBtnSend = (ImageView) findViewById(R.id.btn_send);
         //mTvClientMsg.setText(" ");
 
         /*mTvRecipientList = (TextView) findViewById(R.id.tv_recipient_list);
@@ -116,7 +117,7 @@ public abstract class ChatActivityAbstract extends ActivityBase {
         mBtnPlay = (Button) findViewById(R.id.btn_play);
         mLayoutPlay = (LinearLayout) findViewById(R.id.ll_play);
         mLayoutPlay.setVisibility(View.GONE);
-        mBtnVoice = (Button) findViewById(R.id.btn_voice);
+        mBtnVoice = (ImageView) findViewById(R.id.btn_voice);
 
         mLvRecipientList = (ListView) findViewById(R.id.lv_recipient_list);
 
@@ -144,7 +145,7 @@ public abstract class ChatActivityAbstract extends ActivityBase {
                         return;
                     }
                     //mTvClientMsg.append("\nMe: " + msg);
-                    addMyChatMessage("$",msg);
+                    addChatMessage("$", msg);
                     mEtChat.setText("");
                     try {
                         sendBroadCastMessage(generateChatMessage(msg).getJsonString());
@@ -188,11 +189,15 @@ public abstract class ChatActivityAbstract extends ActivityBase {
         });
     }
 
-    private void addMyChatMessage(String name, String msg) {
+    private void addChatMessage(String name, String msg) {
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setDeviceName(name);
         chatMessage.setMessage(msg);
         adapterChatHistory.addMessage(chatMessage);
+        mLvChatHistory.post(new Runnable() {
+            public void run() {
+                mLvChatHistory.setSelection(mLvChatHistory.getCount() - 1);
+            }});
     }
 
     protected ChatMessage generateChatMessage(String message) {
@@ -259,7 +264,7 @@ public abstract class ChatActivityAbstract extends ActivityBase {
                     switch (chatMessage.getType()) {
                         case ChatMessage.TYPE_MESSAGE:
                             //mTvClientMsg.append("\n" + chatMessage.getDeviceName() + ": " + chatMessage.getMessage());
-                            adapterChatHistory.addMessage(chatMessage);
+                            addChatMessage(chatMessage.getDeviceName(), chatMessage.getMessage());
                             addToReceiverList(getHostInfoFromChatMessage(chatMessage), ClientType.TYPE_JOINER);
                             break;
                         case ChatMessage.TYPE_JOIN_CHANNEL:
@@ -423,7 +428,7 @@ public abstract class ChatActivityAbstract extends ActivityBase {
                 @Override
                 public void onPreExecute() {
                     //mTvClientMsg.append("\nSending voice mail...");
-                    addMyChatMessage("$","Sending voice mail...");
+                    addChatMessage("$", "Sending voice mail...");
                 }
             });
             sendVoiceDataAsync.setOnProgressUpdate(new SendVoiceDataAsync.OnProgressUpdate() {
@@ -444,10 +449,10 @@ public abstract class ChatActivityAbstract extends ActivityBase {
                 public void onPostExecute(boolean isExecuted) {
                     if(isExecuted) {
                         //mTvClientMsg.append("\nVoice mail sent");
-                        addMyChatMessage("$","Voice mail sent");
+                        addChatMessage("$", "Voice mail sent");
                     } else {
                         //mTvClientMsg.append("\nVoice mail sending failed");
-                        addMyChatMessage("$","Voice mail sending failed");
+                        addChatMessage("$", "Voice mail sending failed");
                     }
                     mLayoutProgress.setVisibility(View.GONE);
                     mLayoutPlay.setVisibility(View.GONE);
@@ -524,7 +529,7 @@ public abstract class ChatActivityAbstract extends ActivityBase {
                     @Override
                     public void run() {
                         //mTvClientMsg.append("\n" + voiceMessage.getDeviceName() + ": Sending voice mail...");
-                        addMyChatMessage(voiceMessage.getDeviceName(), "Sending voice mail..");
+                        addChatMessage(voiceMessage.getDeviceName(), "Sending voice mail..");
                     }
                 });
             }
@@ -554,7 +559,7 @@ public abstract class ChatActivityAbstract extends ActivityBase {
                         @Override
                         public void run() {
                             //mTvClientMsg.append("\nYou received a voice mail from " + voiceMessage.getDeviceName());
-                            addMyChatMessage(voiceMessage.getDeviceName(), "Voice mail received.");
+                            addChatMessage(voiceMessage.getDeviceName(), "Voice mail received.");
                             mLayoutPlay.setVisibility(View.VISIBLE);
                             mLayoutProgress.setVisibility(View.GONE);
                         }

@@ -59,7 +59,7 @@ public class ActivityChatPublicChannel extends ChatActivityAbstract{
         }
         mTvTitle.setText(channelName);
         mEtChat = (EditText) findViewById(R.id.et_chat);
-        mBtnSend = (Button) findViewById(R.id.btn_send);
+        //mBtnSend = (Button) findViewById(R.id.btn_send);
         //mTvClientMsg.setText(" ");
         //mTvRecipientList.setText("You joined\n");
         HostInfo channelHost = new HostInfo();
@@ -117,13 +117,13 @@ public class ActivityChatPublicChannel extends ChatActivityAbstract{
     protected void onResume() {
         super.onResume();
         startVoiceChatThread();
-        mBtnVoice.setText("Stream");
+        mBtnVoice.setImageResource(R.drawable.ic_record);
         mBtnVoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(recording) {
                     stopStreaming();
-                    mBtnVoice.setText("Stream");
+                    mBtnVoice.setImageResource(R.drawable.ic_record);
                 } else {
                     Thread recordThread = new Thread(new Runnable(){
                         @Override
@@ -133,7 +133,7 @@ public class ActivityChatPublicChannel extends ChatActivityAbstract{
                         }
                     });
                     recordThread.start();
-                    mBtnVoice.setText("Stop");
+                    mBtnVoice.setImageResource(R.drawable.ic_stop);
                 }
             }
         });
