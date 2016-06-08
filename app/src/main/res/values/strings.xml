@@ -189,4 +189,6 @@
     <string name="wifi_not_enabled">Wifi Not Enabled</string>
     <string name="error_wifi_not_enabled_please_enable">Your wifi connection is not enabled. Please enable your wifi connection first, then start the application again.</string>
     <string name="walkie_talkie">Walkie Talkie</string>
+    <string name="create">Create</string>
+    <string name="create_new_channel">Create New Channel</string>
 </resources>

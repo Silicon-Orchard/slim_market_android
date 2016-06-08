@@ -5,19 +5,46 @@
     android:layout_height="match_parent"
     android:gravity="center">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/image_bg_p1"/>
+
     <include layout="@layout/layout_title"/>
+
+    <ImageView
+        android:id="@+id/iv_logo"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_margin="10dp"
+        android:layout_below="@+id/ll_title"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_create_channel"/>
+
+    <TextView
+        android:id="@+id/tv_title_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/iv_logo"
+        android:gravity="center"
+        android:textSize="24sp"
+        android:textColor="@color/WhiteSmoke"
+        android:textStyle="bold"
+        android:text="@string/create_new_channel"/>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/ll_title">
+        android:layout_below="@+id/tv_title_text">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:minHeight="400dp"
-            android:gravity="center">
+            android:minHeight="250dp"
+            android:paddingTop="20dp"
+            android:gravity="center_horizontal">
 
             <EditText
                 android:id="@+id/et_my_name"
@@ -28,7 +55,9 @@
                 android:textSize="16sp"
                 android:padding="10dp"
                 android:gravity="center_vertical"
-                android:background="@drawable/edit_text_background_gradient"/>
+                android:textColorHint="@color/Gray"
+                android:textColor="@color/LightGrey"
+                android:background="@drawable/edit_text_border"/>
 
             <EditText
                 android:id="@+id/et_channel_no"
@@ -40,7 +69,9 @@
                 android:padding="10dp"
                 android:gravity="center_vertical"
                 android:inputType="number"
-                android:background="@drawable/edit_text_background_gradient"/>
+                android:textColorHint="@color/Gray"
+                android:textColor="@color/LightGrey"
+                android:background="@drawable/edit_text_border"/>
 
 
             <Button
@@ -49,9 +80,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:textAllCaps="false"
-                android:background="@drawable/btn_bg"
+                android:background="@drawable/btn_orrange_bg"
                 android:textSize="24sp"
-                android:text="@string/submit"/>
+                android:textColor="@color/White"
+                android:text="@string/create"/>
 
         </LinearLayout>
     </ScrollView>

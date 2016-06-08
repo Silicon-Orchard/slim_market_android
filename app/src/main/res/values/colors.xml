@@ -155,5 +155,6 @@
     <color name="orange1">#ff9900</color>
     <color name="orange2">#ff6600</color>
     <color name="orange3">#ff3300</color>
+    <color name="orange4_new_theme">#e84d37</color>
     <color name="loading_panel_bg">#aa100d08</color>
 </resources>
