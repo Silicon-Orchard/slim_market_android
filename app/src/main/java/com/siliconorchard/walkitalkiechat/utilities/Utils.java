@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
@@ -323,4 +324,23 @@ public class Utils {
         return null;
     }
 
+    /*
+    * Converts density-independent pixels to actual pixel
+    * @param: {int} density-independent pixel
+    * @return: {int} pixel
+    * */
+    public static int dpToPx(int dp)
+    {
+        return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    }
+
+    /*
+    * Converts actual pixel to density-independent pixels
+    * @param: {int} pixel
+    * @return: {int} density-independent pixel
+    * */
+    public static int pxToDp(int px)
+    {
+        return (int) (px / Resources.getSystem().getDisplayMetrics().density);
+    }
 }

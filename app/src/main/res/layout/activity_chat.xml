@@ -1,41 +1,50 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/image_bg_p1" />
+
     <include layout="@layout/layout_title"/>
+
+    <LinearLayout
+        android:id="@+id/ll_recipient"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_margin="10dp"
+        android:layout_below="@+id/ll_title"
+        android:orientation="vertical"
+        android:background="@drawable/drawer_bg">
+
+        <ListView
+            android:id="@+id/lv_recipient_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:dividerHeight="0dp"
+            android:divider="@null"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:background="@color/orange4_new_theme"/>
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/ll_recipient"
         android:padding="10dp"
         android:orientation="vertical" >
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp">
-
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/tv_recipient_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minHeight="100dp"
-                    android:background="@drawable/drawer_bg"
-                    android:textSize="10dip"
-                    android:typeface="monospace"
-                    android:textColor="@color/White"
-                    android:textStyle="bold"
-                    android:padding="5dp"/>
-            </ScrollView>
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -137,4 +146,4 @@
 
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

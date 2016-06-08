@@ -13,11 +13,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.siliconorchard.walkitalkiechat.R;
+import com.siliconorchard.walkitalkiechat.adapter.AdapterRecipientList;
 import com.siliconorchard.walkitalkiechat.asynctasks.SendMessageAsync;
 import com.siliconorchard.walkitalkiechat.asynctasks.SendVoiceDataAsync;
 import com.siliconorchard.walkitalkiechat.asynctasks.SendVoiceDataAsyncTCP;
@@ -54,7 +56,8 @@ public abstract class ChatActivityAbstract extends ActivityBase {
     protected SharedPreferences mSharedPref;
     protected String myIpAddress;
 
-    protected TextView mTvRecipientList;
+    //protected TextView mTvRecipientList;
+    protected ListView mLvRecipientList;
     protected int channelNumber;
 
     protected LinearLayout mLayoutProgress;
@@ -71,6 +74,8 @@ public abstract class ChatActivityAbstract extends ActivityBase {
 
     private RunnableReceiveFile mRunnableReceiveFile;
     private Thread mThread;
+
+    protected AdapterRecipientList adapterRecipientList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,8 +100,8 @@ public abstract class ChatActivityAbstract extends ActivityBase {
         mBtnSend = (Button) findViewById(R.id.btn_send);
         mTvClientMsg.setText(" ");
 
-        mTvRecipientList = (TextView) findViewById(R.id.tv_recipient_list);
-        mTvRecipientList.setText("");
+        /*mTvRecipientList = (TextView) findViewById(R.id.tv_recipient_list);
+        mTvRecipientList.setText("");*/
 
         mLayoutProgress = (LinearLayout) findViewById(R.id.ll_progress_bar);
         mTvPercent = (TextView) findViewById(R.id.tv_percent);
@@ -107,6 +112,8 @@ public abstract class ChatActivityAbstract extends ActivityBase {
         mLayoutPlay = (LinearLayout) findViewById(R.id.ll_play);
         mLayoutPlay.setVisibility(View.GONE);
         mBtnVoice = (Button) findViewById(R.id.btn_voice);
+
+        mLvRecipientList = (ListView) findViewById(R.id.lv_recipient_list);
 
         initSubView(bundle);
     }
@@ -270,10 +277,13 @@ public abstract class ChatActivityAbstract extends ActivityBase {
         for(int i = 0; i< mListHostInfo.size(); i++) {
             HostInfo hostInfoInList = mListHostInfo.get(i);
             if(hostInfoInList.getIpAddress().equals(hostInfo.getIpAddress())) {
+                hostInfoInList.setIsChecked(true);
+                updateRecipientInfo(hostInfo, type);
                 return false;
             }
         }
         if(hostInfo.getIpAddress() != null && hostInfo.getIpAddress().length()>1) {
+            hostInfo.setIsChecked(true);
             mListHostInfo.add(hostInfo);
             updateRecipientInfo(hostInfo, type);
             return true;
@@ -290,7 +300,7 @@ public abstract class ChatActivityAbstract extends ActivityBase {
         for(int i = 0; i< mListHostInfo.size(); i++) {
             HostInfo hostInfoInList = mListHostInfo.get(i);
             if(hostInfoInList.getIpAddress().equals(hostInfo.getIpAddress())) {
-                mListHostInfo.remove(i);
+                mListHostInfo.get(i).setIsChecked(false);
                 updateRecipientInfo(hostInfo, ClientType.TYPE_QUIT);
                 return true;
             }
@@ -299,7 +309,9 @@ public abstract class ChatActivityAbstract extends ActivityBase {
     }
 
     protected void updateRecipientInfo(HostInfo hostInfo, ClientType type) {
-        String name = hostInfo.getDeviceName();
+        adapterRecipientList = new AdapterRecipientList(this, mListHostInfo);
+        mLvRecipientList.setAdapter(adapterRecipientList);
+        /*String name = hostInfo.getDeviceName();
         switch (type) {
             case TYPE_CREATOR:
                 mTvRecipientList.append(name+"\tCreated Channel\n");
@@ -310,7 +322,7 @@ public abstract class ChatActivityAbstract extends ActivityBase {
             case TYPE_QUIT:
                 mTvRecipientList.append(name+"\tQuit\n");
                 break;
-        }
+        }*/
     }
 
 

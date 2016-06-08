@@ -76,7 +76,7 @@ public class ChatActivity extends ActivityBase {
         mBtnSend = (Button) findViewById(R.id.btn_send);
         mTvClientMsg.setText(" ");
 
-        mTvRecipientList = (TextView) findViewById(R.id.tv_recipient_list);
+        //mTvRecipientList = (TextView) findViewById(R.id.tv_recipient_list);
         HostInfo hostInfo = (HostInfo)bundle.getParcelable(Constant.KEY_HOST_INFO);
         if(hostInfo != null) {
             addToReceiverList(hostInfo);
