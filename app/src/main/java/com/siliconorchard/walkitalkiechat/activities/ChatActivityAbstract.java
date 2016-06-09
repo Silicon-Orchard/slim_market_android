@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
@@ -39,6 +40,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Created by adminsiriconorchard on 5/3/16.
@@ -184,6 +186,15 @@ public abstract class ChatActivityAbstract extends ActivityBase {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ChatActivityAbstract.this, RecordVoiceActivityForResult.class);
+                Bundle bundle = new Bundle();
+                ArrayList<Parcelable> hostList = new ArrayList<>();
+                for(ListIterator<HostInfo> listIterator = mListHostInfo.listIterator(); listIterator.hasNext();) {
+                    hostList.add(listIterator.next());
+                }
+                bundle.putParcelableArrayList(Constant.KEY_HOST_INFO_LIST, hostList);
+                bundle.putInt(Constant.KEY_CHANNEL_NUMBER, channelNumber);
+                bundle.putString(Constant.KEY_MY_IP_ADDRESS, myIpAddress);
+                intent.putExtras(bundle);
                 startActivityForResult(intent, Constant.ACTIVITY_RESULT_RECORD_VOICE);
             }
         });

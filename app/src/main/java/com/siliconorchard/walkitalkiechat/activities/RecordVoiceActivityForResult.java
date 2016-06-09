@@ -5,24 +5,34 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.siliconorchard.walkitalkiechat.R;
+import com.siliconorchard.walkitalkiechat.asynctasks.SendVoiceDataAsync;
+import com.siliconorchard.walkitalkiechat.model.HostInfo;
+import com.siliconorchard.walkitalkiechat.model.VoiceMessage;
 import com.siliconorchard.walkitalkiechat.runnable.RunnableVoiceRecordProgress;
 import com.siliconorchard.walkitalkiechat.utilities.Constant;
+import com.siliconorchard.walkitalkiechat.utilities.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by adminsiriconorchard on 4/26/16.
@@ -51,6 +61,21 @@ public class RecordVoiceActivityForResult extends ActivityBase{
     private RunnableVoiceRecordProgress mRecordProgress;
     private TextView mTvRecordProgress;
 
+    private ImageView mIvSend;
+
+    private List<HostInfo> mListHostInfo;
+
+    private SharedPreferences mSharedPref;
+    private String myIpAddress;
+    private int channelNumber;
+
+    private LinearLayout mLayoutProgress;
+    private TextView mTvPercent;
+    private ProgressBar mProgress;
+
+    private static final int MAX_PROGRESS_BAR = 100;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,14 +86,37 @@ public class RecordVoiceActivityForResult extends ActivityBase{
     }
 
     private void initView() {
+        initInfos();
         mIvRecord = (ImageView) findViewById(R.id.iv_record);
         mIvPlay = (ImageView) findViewById(R.id.iv_play);
         mBtnOk = (Button) findViewById(R.id.btn_ok);
         mIvCancel = (ImageView) findViewById(R.id.iv_close);
         mTvRecordProgress = (TextView) findViewById(R.id.tv_record_progress);
         mTvRecordProgress.setText("");
+        mIvSend = (ImageView) findViewById(R.id.iv_send);
+
+        mLayoutProgress = (LinearLayout) findViewById(R.id.ll_progress_bar);
+        mTvPercent = (TextView) findViewById(R.id.tv_percent);
+        mProgress = (ProgressBar) findViewById(R.id.progress_bar);
+        mProgress.setMax(MAX_PROGRESS_BAR);
     }
 
+
+    private void initInfos() {
+        mSharedPref = getSharedPreferences(Constant.SHARED_PREF_NAME, MODE_PRIVATE);
+        Bundle bundle = getIntent().getExtras();
+        myIpAddress = bundle.getString(Constant.KEY_MY_IP_ADDRESS, null);
+        channelNumber = bundle.getInt(Constant.KEY_CHANNEL_NUMBER, 0);
+        ArrayList<Parcelable> parcelableList = bundle.getParcelableArrayList(Constant.KEY_HOST_INFO_LIST);
+        if(parcelableList != null && parcelableList.size()>0) {
+            int size = parcelableList.size();
+            mListHostInfo = new ArrayList<>();
+            for(int i = 0; i<size; i++) {
+                HostInfo client = (HostInfo) parcelableList.get(i);
+                mListHostInfo.add(client);
+            }
+        }
+    }
     private void initListeners() {
         mIvRecord.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,6 +159,13 @@ public class RecordVoiceActivityForResult extends ActivityBase{
             public void onClick(View v) {
                 setResult(RESULT_CANCELED, null);
                 RecordVoiceActivityForResult.this.finish();
+            }
+        });
+
+        mIvSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendData();
             }
         });
     }
@@ -282,6 +337,62 @@ public class RecordVoiceActivityForResult extends ActivityBase{
             startRecording();
         } else {
             stopRecording();
+        }
+    }
+
+
+    protected void sendData() {
+        if(mFile == null) {
+            Toast.makeText(this,"No file to send",Toast.LENGTH_LONG).show();
+        }
+        VoiceMessage voiceMessage = new VoiceMessage();
+        voiceMessage.setDeviceName(Utils.getDeviceName(mSharedPref));
+        voiceMessage.setChannelNumber(channelNumber);
+        try {
+            SendVoiceDataAsync sendVoiceDataAsync = new SendVoiceDataAsync();
+            sendVoiceDataAsync.setFile(mFile);
+            sendVoiceDataAsync.setClientIPAddressList(mListHostInfo);
+            sendVoiceDataAsync.setMyIpAddress(myIpAddress);
+            sendVoiceDataAsync.setOnPreExecute(new SendVoiceDataAsync.OnPreExecute() {
+                @Override
+                public void onPreExecute() {
+                    //addChatMessage("$", "Sending voice mail...");
+                    mLayoutProgress.setVisibility(View.VISIBLE);
+                }
+            });
+            sendVoiceDataAsync.setOnProgressUpdate(new SendVoiceDataAsync.OnProgressUpdate() {
+                @Override
+                public void onProgressUpdate(int progress) {
+                    if (progress > 100) {
+                        progress = 100;
+                    }
+                    Log.e("TAG_LOG", "Progress Value: " + progress);
+                    mTvPercent.setText("" + progress + "%");
+                    mProgress.setProgress(progress);
+                    mProgress.setProgress(progress);
+                }
+            });
+
+            sendVoiceDataAsync.setOnPostExecute(new SendVoiceDataAsync.OnPostExecute() {
+                @Override
+                public void onPostExecute(boolean isExecuted) {
+                    if(isExecuted) {
+                        //addChatMessage("$", "Voice mail sent");
+                        Toast.makeText(getApplicationContext(), "Voice mail sent",Toast.LENGTH_LONG).show();
+                    } else {
+                        //addChatMessage("$", "Voice mail sending failed");
+                        Toast.makeText(getApplicationContext(), "Voice mail sending failed",Toast.LENGTH_LONG).show();
+                    }
+                    mLayoutProgress.setVisibility(View.GONE);
+                    //mLayoutPlay.setVisibility(View.GONE);
+                    //mBtnVoice.setEnabled(true);
+                    //mEtChat.setText("");
+                    //mEtChat.setEnabled(true);
+                }
+            });
+            sendVoiceDataAsync.execute(voiceMessage);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
