@@ -118,10 +118,14 @@
             android:id="@+id/btn_ok"
             android:layout_width="250dp"
             android:layout_height="45dp"
+            android:padding="10dp"
             android:textAllCaps="false"
             android:layout_gravity="center_horizontal"
-            android:text="OK"
-            android:background="@drawable/btn_bg"/>
+            android:drawableLeft="@drawable/ic_stream"
+            android:text="@string/start_streaming"
+            android:textSize="20sp"
+            android:textColor="@color/orange4_new_theme"
+            android:background="@drawable/btn_white_bg"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"

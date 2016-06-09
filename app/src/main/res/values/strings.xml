@@ -192,4 +192,11 @@
     <string name="create">Create</string>
     <string name="create_new_channel">Create New Channel</string>
     <string name="join">Join</string>
+
+
+    <string name="stream">Stream</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="start_streaming">Start Streaming</string>
+    <string name="stop_streaming">Stop Streaming</string>
 </resources>

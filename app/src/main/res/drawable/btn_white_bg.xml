@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+ Copyright (C) 2009-2010 Aubort Jean-Baptiste (Rorist)
+ Licensed under GNU's GPL 2, see README
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="false">
+        <shape>
+            <gradient android:angle="270" android:endColor="@color/White" android:startColor="@color/White" />
+            <corners android:radius="10dp" />
+        </shape>
+    </item>
+    <item android:state_pressed="true">
+        <shape>
+            <gradient android:angle="270" android:endColor="@color/orange4_new_theme" android:startColor="@color/orange4_new_theme" />
+            <corners android:radius="10dp" />
+        </shape>
+    </item>
+    <item android:state_focused="true">
+        <shape>
+            <gradient android:angle="270" android:endColor="@color/orange4_new_theme" android:startColor="@color/orange4_new_theme" />
+            <corners android:radius="10dp" />
+        </shape>
+    </item>
+</selector>

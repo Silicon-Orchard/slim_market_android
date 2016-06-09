@@ -8,8 +8,6 @@ import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,13 +22,11 @@ import com.siliconorchard.walkitalkiechat.R;
 import com.siliconorchard.walkitalkiechat.adapter.AdapterChatHistory;
 import com.siliconorchard.walkitalkiechat.adapter.AdapterRecipientList;
 import com.siliconorchard.walkitalkiechat.asynctasks.SendMessageAsync;
-import com.siliconorchard.walkitalkiechat.asynctasks.SendVoiceDataAsync;
-import com.siliconorchard.walkitalkiechat.asynctasks.SendVoiceDataAsyncTCP;
 import com.siliconorchard.walkitalkiechat.model.ChatMessage;
 import com.siliconorchard.walkitalkiechat.model.HostInfo;
 import com.siliconorchard.walkitalkiechat.model.VoiceMessage;
 import com.siliconorchard.walkitalkiechat.runnable.RunnableReceiveFile;
-import com.siliconorchard.walkitalkiechat.runnable.RunnableReceiveFileTCP;
+import com.siliconorchard.walkitalkiechat.runnable.RunnableReceiveVoiceChat;
 import com.siliconorchard.walkitalkiechat.utilities.Constant;
 import com.siliconorchard.walkitalkiechat.utilities.Utils;
 
@@ -83,6 +79,10 @@ public abstract class ChatActivityAbstract extends ActivityBase {
 
     protected ListView mLvChatHistory;
     protected AdapterChatHistory adapterChatHistory;
+
+
+    private RunnableReceiveVoiceChat mRunnableReceiveVoiceChat;
+    private Thread mThreadVoiceChat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,7 +141,7 @@ public abstract class ChatActivityAbstract extends ActivityBase {
                     Toast.makeText(ChatActivityAbstract.this, "There are no recipient to this chat room", Toast.LENGTH_LONG).show();
                     return;
                 }
-                if(mBtnVoice.isEnabled()) {
+                if (mBtnVoice.isEnabled()) {
                     String msg = mEtChat.getText().toString().trim();
                     if (msg == null || msg.length() <= 0) {
                         return;
@@ -156,7 +156,6 @@ public abstract class ChatActivityAbstract extends ActivityBase {
                     }
                 } else {
                     mBtnVoice.setEnabled(true);
-                    sendData();
                 }
 
             }
@@ -188,14 +187,14 @@ public abstract class ChatActivityAbstract extends ActivityBase {
                 Intent intent = new Intent(ChatActivityAbstract.this, RecordVoiceActivityForResult.class);
                 Bundle bundle = new Bundle();
                 ArrayList<Parcelable> hostList = new ArrayList<>();
-                for(ListIterator<HostInfo> listIterator = mListHostInfo.listIterator(); listIterator.hasNext();) {
+                for (ListIterator<HostInfo> listIterator = mListHostInfo.listIterator(); listIterator.hasNext(); ) {
                     hostList.add(listIterator.next());
                 }
                 bundle.putParcelableArrayList(Constant.KEY_HOST_INFO_LIST, hostList);
                 bundle.putInt(Constant.KEY_CHANNEL_NUMBER, channelNumber);
                 bundle.putString(Constant.KEY_MY_IP_ADDRESS, myIpAddress);
                 intent.putExtras(bundle);
-                startActivityForResult(intent, Constant.ACTIVITY_RESULT_RECORD_VOICE);
+                startActivity(intent);
             }
         });
     }
@@ -208,7 +207,8 @@ public abstract class ChatActivityAbstract extends ActivityBase {
         mLvChatHistory.post(new Runnable() {
             public void run() {
                 mLvChatHistory.setSelection(mLvChatHistory.getCount() - 1);
-            }});
+            }
+        });
     }
 
     protected ChatMessage generateChatMessage(String message) {
@@ -239,6 +239,7 @@ public abstract class ChatActivityAbstract extends ActivityBase {
         super.onResume();
         registerReceiver(receiver, new IntentFilter(Constant.SERVICE_NOTIFICATION_STRING_CHAT_FOREGROUND));
         runThread();
+        startVoiceChatThread();
     }
 
 
@@ -251,6 +252,7 @@ public abstract class ChatActivityAbstract extends ActivityBase {
             stopPlaying();
         }
         stopThread();
+        stopVoiceChatThread();
     }
 
     @Override
@@ -258,6 +260,7 @@ public abstract class ChatActivityAbstract extends ActivityBase {
         super.onDestroy();
         sendChannelLeftMessage();
         stopThread();
+        stopVoiceChatThread();
     }
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -406,78 +409,6 @@ public abstract class ChatActivityAbstract extends ActivityBase {
         TYPE_QUIT
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == Constant.ACTIVITY_RESULT_RECORD_VOICE && resultCode == RESULT_OK) {
-            Bundle bundle =  data.getExtras();
-            String filePath = bundle.getString(Constant.KEY_ABSOLUTE_FILE_PATH, null);
-            if(filePath != null) {
-                mFile = new File(filePath);
-                mEtChat.setText(mFile.getName());
-                mEtChat.setEnabled(false);
-                mBtnVoice.setEnabled(false);
-                mLayoutPlay.setVisibility(View.VISIBLE);
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    protected void sendData() {
-        if(mFile == null) {
-            Toast.makeText(this,"No file to send",Toast.LENGTH_LONG).show();
-        }
-        VoiceMessage voiceMessage = new VoiceMessage();
-        voiceMessage.setDeviceName(Utils.getDeviceName(mSharedPref));
-        voiceMessage.setChannelNumber(channelNumber);
-        try {
-            SendVoiceDataAsync sendVoiceDataAsync = new SendVoiceDataAsync();
-            sendVoiceDataAsync.setFile(mFile);
-            sendVoiceDataAsync.setClientIPAddressList(mListHostInfo);
-            sendVoiceDataAsync.setMyIpAddress(myIpAddress);
-            sendVoiceDataAsync.setOnPreExecute(new SendVoiceDataAsync.OnPreExecute() {
-                @Override
-                public void onPreExecute() {
-                    //mTvClientMsg.append("\nSending voice mail...");
-                    addChatMessage("$", "Sending voice mail...");
-                }
-            });
-            sendVoiceDataAsync.setOnProgressUpdate(new SendVoiceDataAsync.OnProgressUpdate() {
-                @Override
-                public void onProgressUpdate(int progress) {
-                    if (progress > 100) {
-                        progress = 100;
-                    }
-                    Log.e("TAG_LOG", "Progress Value: " + progress);
-                    mTvPercent.setText("" + progress + "%");
-                    mProgress.setProgress(progress);
-                    mProgress.setProgress(progress);
-                }
-            });
-
-            sendVoiceDataAsync.setOnPostExecute(new SendVoiceDataAsync.OnPostExecute() {
-                @Override
-                public void onPostExecute(boolean isExecuted) {
-                    if(isExecuted) {
-                        //mTvClientMsg.append("\nVoice mail sent");
-                        addChatMessage("$", "Voice mail sent");
-                    } else {
-                        //mTvClientMsg.append("\nVoice mail sending failed");
-                        addChatMessage("$", "Voice mail sending failed");
-                    }
-                    mLayoutProgress.setVisibility(View.GONE);
-                    mLayoutPlay.setVisibility(View.GONE);
-                    mBtnVoice.setEnabled(true);
-                    mEtChat.setText("");
-                    mEtChat.setEnabled(true);
-                }
-            });
-            sendVoiceDataAsync.execute(voiceMessage);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     protected void playAudio() {
         if(mFile == null) {
             Toast.makeText(this, "No file recorded or received",Toast.LENGTH_LONG).show();
@@ -485,8 +416,6 @@ public abstract class ChatActivityAbstract extends ActivityBase {
         }
         isPlaying = true;
         mBtnPlay.setText("Stop");
-        //PlayAudio playAudio = new PlayAudio();
-        //playAudio.execute();
         onPlay(true);
     }
 
@@ -600,6 +529,22 @@ public abstract class ChatActivityAbstract extends ActivityBase {
             mRunnableReceiveFile.terminate();
             mThread = null;
             mRunnableReceiveFile = null;
+        }
+    }
+
+    private void startVoiceChatThread() {
+        mRunnableReceiveVoiceChat = new RunnableReceiveVoiceChat();
+        mThreadVoiceChat = new Thread(mRunnableReceiveVoiceChat);
+        mRunnableReceiveVoiceChat.setChannelNumber(channelNumber);
+        mThreadVoiceChat.start();
+    }
+
+    private void stopVoiceChatThread() {
+        if(mRunnableReceiveVoiceChat != null) {
+            mRunnableReceiveVoiceChat.terminate();
+            mRunnableReceiveVoiceChat.closeSocket();
+            mThreadVoiceChat = null;
+            mRunnableReceiveVoiceChat = null;
         }
     }
 
