@@ -26,7 +26,7 @@
             android:layout_weight="1"/>
 
         <TextView
-            android:id="@+id/tv_second_count"
+            android:id="@+id/tv_record_progress"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginLeft="20dp"

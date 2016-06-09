@@ -14,9 +14,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.siliconorchard.walkitalkiechat.R;
+import com.siliconorchard.walkitalkiechat.runnable.RunnableVoiceRecordProgress;
 import com.siliconorchard.walkitalkiechat.utilities.Constant;
 
 import java.io.File;
@@ -46,6 +48,9 @@ public class RecordVoiceActivityForResult extends ActivityBase{
 
     private MediaPlayer mPlayer = null;
 
+    private RunnableVoiceRecordProgress mRecordProgress;
+    private TextView mTvRecordProgress;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +65,8 @@ public class RecordVoiceActivityForResult extends ActivityBase{
         mIvPlay = (ImageView) findViewById(R.id.iv_play);
         mBtnOk = (Button) findViewById(R.id.btn_ok);
         mIvCancel = (ImageView) findViewById(R.id.iv_close);
+        mTvRecordProgress = (TextView) findViewById(R.id.tv_record_progress);
+        mTvRecordProgress.setText("");
     }
 
     private void initListeners() {
@@ -249,6 +256,9 @@ public class RecordVoiceActivityForResult extends ActivityBase{
         }
 
         mRecorder.start();
+        mRecordProgress = new RunnableVoiceRecordProgress(true);
+        mRecordProgress.setTvProgress(mTvRecordProgress);
+        new Thread(mRecordProgress).start();
     }
 
     private void stopRecording() {
@@ -258,6 +268,8 @@ public class RecordVoiceActivityForResult extends ActivityBase{
         mRecorder.stop();
         mRecorder.release();
         mRecorder = null;
+        mRecordProgress.terminate();
+        mRecordProgress = null;
     }
 
     @Override
