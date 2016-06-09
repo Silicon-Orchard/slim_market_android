@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+ Copyright (C) 2009-2010 Aubort Jean-Baptiste (Rorist)
+ Licensed under GNU's GPL 2, see README
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="false">
+        <shape>
+            <gradient android:angle="270" android:endColor="@color/orange4_new_theme" android:startColor="@color/orange4_new_theme" />
+            <corners android:radius="10dp" />
+            <stroke android:width="2dp" android:color="@color/WhiteSmoke"/>
+        </shape>
+    </item>
+</layer-list>

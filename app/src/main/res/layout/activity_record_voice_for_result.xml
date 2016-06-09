@@ -8,67 +8,98 @@
 
     <LinearLayout
         android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:layout_height="350dp"
         android:orientation="vertical"
-        android:gravity="center"
-        android:background="@color/WhiteSmoke">
-        <Button
-            android:id="@+id/btn_record_voice"
-            android:layout_width="250dp"
-            android:layout_height="45dp"
-            android:layout_marginTop="30dp"
-            android:textAllCaps="false"
-            android:text="Record"
-            android:background="@drawable/btn_bg"/>
+        android:background="@drawable/shape_voice_activity_bg">
 
-        <Button
-            android:id="@+id/btn_play"
-            android:layout_width="250dp"
-            android:layout_height="45dp"
-            android:layout_marginTop="30dp"
-            android:textAllCaps="false"
-            android:text="Play"
-            android:background="@drawable/btn_bg"/>
+        <ImageView
+            android:id="@+id/iv_close"
+            android:layout_width="70dp"
+            android:layout_height="50dp"
+            android:paddingTop="10dp"
+            android:layout_gravity="right"
+            android:src="@drawable/ic_close"/>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:id="@+id/tv_second_count"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:paddingRight="10dp"
+            android:gravity="center_vertical|right"
+            android:textColor="@color/orange4_new_theme"
+            android:text="0:06"
+            android:textStyle="bold"
+            android:background="@drawable/image_record_time_line_1"/>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
             android:orientation="horizontal">
 
-            <android.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"/>
-            <Button
-                android:id="@+id/btn_ok"
-                android:layout_width="0dp"
-                android:layout_height="45dp"
-                android:layout_weight="3"
-                android:layout_marginTop="30dp"
-                android:textAllCaps="false"
-                android:text="OK"
-                android:background="@drawable/btn_bg" />
-
-            <android.widget.Space
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"/>
 
-            <Button
-                android:id="@+id/btn_cancel"
+            <ImageView
+                android:id="@+id/iv_play"
                 android:layout_width="0dp"
-                android:layout_height="45dp"
-                android:layout_weight="3"
-                android:layout_marginTop="30dp"
-                android:textAllCaps="false"
-                android:text="Cancel"
-                android:background="@drawable/btn_bg" />
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:src="@drawable/ic_play"/>
 
-            <android.widget.Space
+            <ImageView
+                android:id="@+id/iv_record"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:src="@drawable/ic_record_start"/>
+
+            <ImageView
+                android:id="@+id/iv_send"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:src="@drawable/ic_send"/>
+
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"/>
         </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+        <Button
+            android:id="@+id/btn_ok"
+            android:layout_width="250dp"
+            android:layout_height="45dp"
+            android:textAllCaps="false"
+            android:layout_gravity="center_horizontal"
+            android:text="OK"
+            android:background="@drawable/btn_bg"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
     </LinearLayout>
 
 </LinearLayout>

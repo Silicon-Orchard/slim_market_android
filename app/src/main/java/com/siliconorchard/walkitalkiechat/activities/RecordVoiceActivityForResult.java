@@ -13,7 +13,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.siliconorchard.walkitalkiechat.R;
@@ -27,10 +27,10 @@ import java.io.IOException;
  */
 public class RecordVoiceActivityForResult extends ActivityBase{
 
-    private Button mBtnRecord;
-    private Button mBtnPlay;
+    private ImageView mIvRecord;
+    private ImageView mIvPlay;
     private Button mBtnOk;
-    private Button mBtnCancel;
+    private ImageView mIvCancel;
 
 
     private boolean isRecording;
@@ -56,14 +56,14 @@ public class RecordVoiceActivityForResult extends ActivityBase{
     }
 
     private void initView() {
-        mBtnRecord = (Button) findViewById(R.id.btn_record_voice);
-        mBtnPlay = (Button) findViewById(R.id.btn_play);
+        mIvRecord = (ImageView) findViewById(R.id.iv_record);
+        mIvPlay = (ImageView) findViewById(R.id.iv_play);
         mBtnOk = (Button) findViewById(R.id.btn_ok);
-        mBtnCancel = (Button) findViewById(R.id.btn_cancel);
+        mIvCancel = (ImageView) findViewById(R.id.iv_close);
     }
 
     private void initListeners() {
-        mBtnRecord.setOnClickListener(new View.OnClickListener() {
+        mIvRecord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isRecording) {
@@ -75,7 +75,7 @@ public class RecordVoiceActivityForResult extends ActivityBase{
             }
         });
 
-        mBtnPlay.setOnClickListener(new View.OnClickListener() {
+        mIvPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isPlaying) {
@@ -99,7 +99,7 @@ public class RecordVoiceActivityForResult extends ActivityBase{
             }
         });
 
-        mBtnCancel.setOnClickListener(new View.OnClickListener() {
+        mIvCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setResult(RESULT_CANCELED, null);
@@ -114,7 +114,8 @@ public class RecordVoiceActivityForResult extends ActivityBase{
             return;
         }
         isPlaying = true;
-        mBtnPlay.setText("Stop");
+        mIvPlay.setImageResource(R.drawable.ic_stop);
+        //mIvPlay.setText("Stop");
         //PlayAudio playAudio = new PlayAudio();
         //playAudio.execute();
         onPlay(true);
@@ -122,7 +123,8 @@ public class RecordVoiceActivityForResult extends ActivityBase{
 
     private void stopAudio() {
         isPlaying = false;
-        mBtnPlay.setText("Play");
+        mIvPlay.setImageResource(R.drawable.ic_play);
+        //mIvPlay.setText("Play");
         onPlay(false);
     }
 
@@ -153,7 +155,8 @@ public class RecordVoiceActivityForResult extends ActivityBase{
     }
 
     private void startAudioRecord() {
-        mBtnRecord.setText("Stop");
+        mIvRecord.setImageResource(R.drawable.ic_stop);
+        //mIvRecord.setText("Stop");
         isRecording = true;
         AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mReceiverBluetoothSco = new BroadcastReceiver() {
@@ -172,7 +175,8 @@ public class RecordVoiceActivityForResult extends ActivityBase{
     }
 
     private void stopAudioRecord() {
-        mBtnRecord.setText("Record");
+        mIvRecord.setImageResource(R.drawable.ic_record_start);
+        //mIvRecord.setText("Record");
         onRecord(false);
     }
 
