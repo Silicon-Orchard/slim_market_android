@@ -81,14 +81,21 @@ public abstract class ActivityChannelBase extends ActivityBase {
         initSubListeners();
     }
 
-    private void submit() {
+    protected boolean isValidNameSaved() {
         String name = mEtMyName.getText().toString().trim();
-        String channelText = mEtChannelNo.getText().toString().trim();
         if(name == null || name.length()<1) {
             Toast.makeText(this, getString(R.string.error_name_must_not_empty),Toast.LENGTH_LONG).show();
-            return;
+            return false;
         }
         Utils.setDeviceName(mSharedPref, name);
+        return true;
+    }
+
+    private void submit() {
+        if(!isValidNameSaved()) {
+            return;
+        }
+        String channelText = mEtChannelNo.getText().toString().trim();
         if(channelText == null || channelText.length() != 4 ) {
             Toast.makeText(this, getString(R.string.error_enter_four_digit_channel_no), Toast.LENGTH_LONG).show();
             return;

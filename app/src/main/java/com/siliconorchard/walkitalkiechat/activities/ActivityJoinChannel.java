@@ -53,12 +53,18 @@ public class ActivityJoinChannel extends ActivityChannelBase {
         mBtnPublicChannelA.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!isValidNameSaved()) {
+                    return;
+                }
                 joinPublicChannel(Constant.PUBLIC_CHANNEL_NUMBER_A);
             }
         });
         mBtnPublicChannelB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!isValidNameSaved()) {
+                    return;
+                }
                 joinPublicChannel(Constant.PUBLIC_CHANNEL_NUMBER_B);
             }
         });
