@@ -5,11 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,6 +21,7 @@ import com.siliconorchard.walkitalkiechat.adapter.AdapterChatHistory;
 import com.siliconorchard.walkitalkiechat.adapter.AdapterRecipientList;
 import com.siliconorchard.walkitalkiechat.asynctasks.SendMessageAsync;
 import com.siliconorchard.walkitalkiechat.model.ChatMessage;
+import com.siliconorchard.walkitalkiechat.model.ChatMessageHistory;
 import com.siliconorchard.walkitalkiechat.model.HostInfo;
 import com.siliconorchard.walkitalkiechat.model.VoiceMessage;
 import com.siliconorchard.walkitalkiechat.runnable.RunnableReceiveFile;
@@ -33,7 +32,6 @@ import com.siliconorchard.walkitalkiechat.utilities.Utils;
 import org.json.JSONException;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -63,14 +61,9 @@ public abstract class ChatActivityAbstract extends ActivityBase {
     protected LinearLayout mLayoutProgress;
     protected TextView mTvPercent;
     protected ProgressBar mProgress;
-    protected Button mBtnPlay;
-    protected LinearLayout mLayoutPlay;
     protected ImageView mBtnVoice;
 
     protected static final int MAX_PROGRESS_BAR = 100;
-    protected boolean isPlaying;
-    protected MediaPlayer mPlayer = null;
-    protected File mFile;
 
     private RunnableReceiveFile mRunnableReceiveFile;
     private Thread mThread;
@@ -116,9 +109,6 @@ public abstract class ChatActivityAbstract extends ActivityBase {
         mProgress = (ProgressBar) findViewById(R.id.progress_bar);
         mProgress.setMax(MAX_PROGRESS_BAR);
         mLayoutProgress.setVisibility(View.GONE);
-        mBtnPlay = (Button) findViewById(R.id.btn_play);
-        mLayoutPlay = (LinearLayout) findViewById(R.id.ll_play);
-        mLayoutPlay.setVisibility(View.GONE);
         mBtnVoice = (ImageView) findViewById(R.id.btn_voice);
 
         mLvRecipientList = (ListView) findViewById(R.id.lv_recipient_list);
@@ -147,7 +137,7 @@ public abstract class ChatActivityAbstract extends ActivityBase {
                         return;
                     }
                     //mTvClientMsg.append("\nMe: " + msg);
-                    addChatMessage("$", msg);
+                    addChatMessage("Me", msg, true, null);
                     mEtChat.setText("");
                     try {
                         sendBroadCastMessage(generateChatMessage(msg).getJsonString());
@@ -170,17 +160,6 @@ public abstract class ChatActivityAbstract extends ActivityBase {
             }
         });
 
-        mBtnPlay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isPlaying) {
-                    stopAudio();
-                } else {
-                    playAudio();
-                }
-            }
-        });
-
         mBtnVoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -199,10 +178,14 @@ public abstract class ChatActivityAbstract extends ActivityBase {
         });
     }
 
-    private void addChatMessage(String name, String msg) {
-        ChatMessage chatMessage = new ChatMessage();
+    private void addChatMessage(String name, String msg, boolean isSent, String filePath) {
+        ChatMessageHistory chatMessage = new ChatMessageHistory();
         chatMessage.setDeviceName(name);
         chatMessage.setMessage(msg);
+        chatMessage.setIsSent(isSent);
+        if(filePath != null) {
+            chatMessage.setFilePath(filePath);
+        }
         adapterChatHistory.addMessage(chatMessage);
         mLvChatHistory.post(new Runnable() {
             public void run() {
@@ -247,10 +230,6 @@ public abstract class ChatActivityAbstract extends ActivityBase {
     protected void onPause() {
         super.onPause();
         unregisterReceiver(receiver);
-        if(isPlaying) {
-            onPlay(false);
-            stopPlaying();
-        }
         stopThread();
         stopVoiceChatThread();
     }
@@ -278,7 +257,7 @@ public abstract class ChatActivityAbstract extends ActivityBase {
                     switch (chatMessage.getType()) {
                         case ChatMessage.TYPE_MESSAGE:
                             //mTvClientMsg.append("\n" + chatMessage.getDeviceName() + ": " + chatMessage.getMessage());
-                            addChatMessage(chatMessage.getDeviceName(), chatMessage.getMessage());
+                            addChatMessage(chatMessage.getDeviceName(), chatMessage.getMessage(), false, null);
                             addToReceiverList(getHostInfoFromChatMessage(chatMessage), ClientType.TYPE_JOINER);
                             break;
                         case ChatMessage.TYPE_JOIN_CHANNEL:
@@ -409,57 +388,6 @@ public abstract class ChatActivityAbstract extends ActivityBase {
         TYPE_QUIT
     }
 
-    protected void playAudio() {
-        if(mFile == null) {
-            Toast.makeText(this, "No file recorded or received",Toast.LENGTH_LONG).show();
-            return;
-        }
-        isPlaying = true;
-        mBtnPlay.setText("Stop");
-        onPlay(true);
-    }
-
-    protected void stopAudio() {
-        isPlaying = false;
-        mBtnPlay.setText("Play");
-        onPlay(false);
-    }
-
-
-    private void onPlay(boolean start) {
-        if (start) {
-            startPlaying();
-        } else {
-            stopPlaying();
-        }
-    }
-
-    private void startPlaying() {
-        mPlayer = new MediaPlayer();
-        try {
-            mPlayer.setDataSource(mFile.getAbsolutePath());
-            mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    stopAudio();
-                }
-            });
-            mPlayer.prepare();
-            mPlayer.start();
-        } catch (IOException e) {
-            Toast.makeText(this,"File is corrupted. Can't play!!!",Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private void stopPlaying() {
-        if(mPlayer == null) {
-            return;
-        }
-        mPlayer.release();
-        mPlayer = null;
-    }
-
-
     protected void runThread() {
         mRunnableReceiveFile = new RunnableReceiveFile();
         mRunnableReceiveFile.setOnReceiveCallBacks(new RunnableReceiveFile.OnReceiveCallBacks() {
@@ -469,7 +397,7 @@ public abstract class ChatActivityAbstract extends ActivityBase {
                     @Override
                     public void run() {
                         //mTvClientMsg.append("\n" + voiceMessage.getDeviceName() + ": Sending voice mail...");
-                        addChatMessage(voiceMessage.getDeviceName(), "Sending voice mail..");
+                        //addChatMessage(voiceMessage.getDeviceName(), "Sending voice mail..");
                     }
                 });
             }
@@ -492,16 +420,15 @@ public abstract class ChatActivityAbstract extends ActivityBase {
             }
 
             @Override
-            public void onPostReceive(final VoiceMessage voiceMessage, File file) {
+            public void onPostReceive(final VoiceMessage voiceMessage, final File file) {
                 if (voiceMessage.getCurrentChunkNo() >= voiceMessage.getTotalChunkCount()) {
-                    mFile = new File(file.getAbsolutePath());
                     mTvPercent.post(new Runnable() {
                         @Override
                         public void run() {
                             //mTvClientMsg.append("\nYou received a voice mail from " + voiceMessage.getDeviceName());
-                            addChatMessage(voiceMessage.getDeviceName(), "Voice mail received.");
-                            mLayoutPlay.setVisibility(View.VISIBLE);
-                            mLayoutProgress.setVisibility(View.GONE);
+                            addChatMessage(voiceMessage.getDeviceName(), "Voice mail received.", false, file.getAbsolutePath());
+                            //mLayoutPlay.setVisibility(View.VISIBLE);
+                            //mLayoutProgress.setVisibility(View.GONE);
                         }
                     });
                 }

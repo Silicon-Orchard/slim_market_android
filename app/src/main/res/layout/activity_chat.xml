@@ -103,24 +103,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/ll_play"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:background="@color/SkyBlue"
-                    android:visibility="gone">
-                    <Button
-                        android:id="@+id/btn_play"
-                        android:layout_width="250dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:textAllCaps="false"
-                        android:text="Play"
-                        android:background="@drawable/btn_bg"/>
-                </LinearLayout>
-
-                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
