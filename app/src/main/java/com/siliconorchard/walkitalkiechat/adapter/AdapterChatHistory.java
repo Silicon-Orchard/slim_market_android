@@ -67,7 +67,6 @@ public class AdapterChatHistory extends BaseAdapter{
             viewHolder.tvMsg = (TextView)convertView.findViewById(R.id.tv_msg);
             viewHolder.llPlay = (LinearLayout) convertView.findViewById(R.id.ll_play);
             viewHolder.ivPlay = (ImageView) convertView.findViewById(R.id.iv_play);
-            viewHolder.position = position;
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -88,6 +87,7 @@ public class AdapterChatHistory extends BaseAdapter{
             viewHolder.llPlay.setVisibility(View.VISIBLE);
             viewHolder.player = null;
             viewHolder.llPlay.setTag(viewHolder);
+            viewHolder.ivPlay.setTag(position);
             viewHolder.llPlay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -164,7 +164,7 @@ public class AdapterChatHistory extends BaseAdapter{
 
 
     protected void playAudio(ViewHolder viewHolder) {
-        String filePath = mListChat.get(viewHolder.position).getFilePath();
+        String filePath = mListChat.get((int)viewHolder.ivPlay.getTag()).getFilePath();
         if(filePath == null) {
             Toast.makeText(mActivity, "No file recorded or received",Toast.LENGTH_LONG).show();
             viewHolder.ivPlay.setImageResource(R.drawable.ic_play);
@@ -185,7 +185,6 @@ public class AdapterChatHistory extends BaseAdapter{
         TextView tvMsg;
         LinearLayout llPlay;
         ImageView ivPlay;
-        int position;
         MediaPlayer player;
     }
 }

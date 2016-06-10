@@ -53,7 +53,7 @@ public class RecordVoiceActivityForResult extends ActivityBase{
 
     private static final String BASE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
     private static final String FOLDER_NAME = "WalkieTalkie";
-    private static final String FILE_NAME = "test.mp3";
+    private String FILE_NAME;
     private File mFile;
     private BroadcastReceiver mReceiverBluetoothSco;
 
@@ -106,6 +106,7 @@ public class RecordVoiceActivityForResult extends ActivityBase{
         mTvPercent = (TextView) findViewById(R.id.tv_percent);
         mProgress = (ProgressBar) findViewById(R.id.progress_bar);
         mProgress.setMax(MAX_PROGRESS_BAR);
+        FILE_NAME = Utils.getDeviceName(mSharedPref)+"_"+System.currentTimeMillis()+".mp3";
     }
 
 
@@ -239,6 +240,7 @@ public class RecordVoiceActivityForResult extends ActivityBase{
                 mFile = new File(folderPath, FILE_NAME);
             } else {
                 mFile = new File(folderPath, fileName);
+                FILE_NAME = fileName;
             }
             if(!mFile.exists()) {
                 mFile.createNewFile();
@@ -388,6 +390,8 @@ public class RecordVoiceActivityForResult extends ActivityBase{
         VoiceMessage voiceMessage = new VoiceMessage();
         voiceMessage.setDeviceName(Utils.getDeviceName(mSharedPref));
         voiceMessage.setChannelNumber(channelNumber);
+        voiceMessage.setFileName(FILE_NAME);
+
         try {
             SendVoiceDataAsync sendVoiceDataAsync = new SendVoiceDataAsync();
             sendVoiceDataAsync.setFile(mFile);

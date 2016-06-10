@@ -25,7 +25,7 @@ public class RunnableReceiveFile extends RunnableBase {
     private OnReceiveCallBacks mOnReceiveCallBacks;
     private int channelNumber;
 
-    private File mFile;
+    private static final String FOLDER_NAME = Constant.BASE_PATH+File.separator+Constant.FOLDER_NAME;
 
     public int getChannelNumber() {
         return channelNumber;
@@ -111,24 +111,21 @@ public class RunnableReceiveFile extends RunnableBase {
                     onError(errorMessage);
                     return;
                 }
-                if(mFile == null) {
-                    mFile = Utils.createFile(Constant.BASE_PATH+File.separator+Constant.FOLDER_NAME, voiceMessage.getDeviceName()+".mp3");
-                }
-                if(mFile == null) {
+                File file = Utils.createFile(FOLDER_NAME, voiceMessage.getFileName());
+                if(file == null) {
                     onError("File cannot be created");
                     return;
                 }
                 //Log.e("TAG_LOG","Received/Sent: "+numOfReceivedMsg+"/"+voiceMessage.getTotalChunkCount());
                 //Log.e("TAG_LOG","ReceivedData: \n"+receivedDataString);
                 byte[] filePart = Base64.decode(receivedDataString, Base64.NO_WRAP);
-                FileOutputStream out = new FileOutputStream(mFile.getAbsolutePath());
+                FileOutputStream out = new FileOutputStream(file.getAbsolutePath());
                 out.write(filePart);
                 out.close();
                 if(mOnReceiveCallBacks != null) {
-                    mOnReceiveCallBacks.onPostReceive(voiceMessage, mFile);
+                    mOnReceiveCallBacks.onPostReceive(voiceMessage, file);
                 }
                 receivedDataString = null;
-                mFile = null;
                 numOfReceivedMsg = 0;
             }
         } catch (Exception e) {
