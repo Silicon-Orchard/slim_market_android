@@ -77,7 +77,9 @@ public class ChatMessageReceiver extends BroadcastReceiver {
                 //Toast.makeText(context, "New message arrived", Toast.LENGTH_LONG).show();
                 try {
                     HostInfo hInfo = Utils.getHostInfoFromChatMessage(receivedMessage);
-                    GlobalDataHolder.getInstance().addToHostList(hInfo);
+                    if(GlobalDataHolder.getInstance().addToHostList(hInfo)) {
+                        publishContactModifyNotification(context);
+                    }
                     ChatMessage sendingMessage = generateChatMessage(sharedPreferences, ipAddress, ChatMessage.TYPE_RECEIVE_INFO, 0);
                     Log.e("TAG_LOG", sendingMessage.getJsonString());
                     sendMessageAsync.execute(hostInfo, sendingMessage.getJsonString());
@@ -88,7 +90,9 @@ public class ChatMessageReceiver extends BroadcastReceiver {
             case ChatMessage.TYPE_RECEIVE_INFO:
                 try {
                     HostInfo hInfo = Utils.getHostInfoFromChatMessage(receivedMessage);
-                    GlobalDataHolder.getInstance().addToHostList(hInfo);
+                    if(GlobalDataHolder.getInstance().addToHostList(hInfo)) {
+                        publishContactModifyNotification(context);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -120,7 +124,9 @@ public class ChatMessageReceiver extends BroadcastReceiver {
             case ChatMessage.TYPE_LEFT_APPLICATION:
                 try {
                     HostInfo hInfo = Utils.getHostInfoFromChatMessage(receivedMessage);
-                    GlobalDataHolder.getInstance().removeFromHostList(hInfo);
+                    if(GlobalDataHolder.getInstance().removeFromHostList(hInfo)) {
+                        publishContactModifyNotification(context);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -140,5 +146,11 @@ public class ChatMessageReceiver extends BroadcastReceiver {
                 break;
         }
         return chatMessage;
+    }
+
+    private void publishContactModifyNotification(Context context) {
+        Intent intentContactModified = new Intent(Constant.RECEIVER_NOTIFICATION_CONTACT_LIST_MODIFIED);
+        intentContactModified.putExtra(Constant.KEY_IS_CONTACT_MODIFIED, true);
+        context.sendBroadcast(intentContactModified);
     }
 }

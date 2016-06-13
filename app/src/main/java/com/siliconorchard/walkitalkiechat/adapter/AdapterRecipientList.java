@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.siliconorchard.walkitalkiechat.R;
+import com.siliconorchard.walkitalkiechat.activities.ActivityContactList;
 import com.siliconorchard.walkitalkiechat.model.HostInfo;
 import com.siliconorchard.walkitalkiechat.utilities.Utils;
 
@@ -22,10 +23,16 @@ public class AdapterRecipientList extends BaseAdapter {
     private List<HostInfo> mListHostInfo;
     private Drawable drawableActive;
     private Drawable drawableInactive;
+    private boolean isContactList;
 
     public AdapterRecipientList(Activity activity, List<HostInfo> hostInfoList) {
         mInflater = LayoutInflater.from(activity);
         mListHostInfo = hostInfoList;
+        if(activity instanceof ActivityContactList) {
+            isContactList = true;
+        } else {
+            isContactList = false;
+        }
         drawableActive = activity.getResources().getDrawable( R.drawable.ic_member_active );
         drawableInactive = activity.getResources().getDrawable( R.drawable.ic_member_inactive );
     }
@@ -65,7 +72,7 @@ public class AdapterRecipientList extends BaseAdapter {
         HostInfo hostInfo = mListHostInfo.get(position);
         viewHolder.textView.setText(hostInfo.getDeviceName());
         viewHolder.textView.setCompoundDrawablePadding(Utils.dpToPx(5));
-        if(hostInfo.isChecked()) {
+        if(hostInfo.isChecked() || isContactList) {
             viewHolder.textView.setCompoundDrawablesWithIntrinsicBounds( drawableActive, null, null, null);
         } else {
             viewHolder.textView.setCompoundDrawablesWithIntrinsicBounds( drawableInactive, null, null, null);

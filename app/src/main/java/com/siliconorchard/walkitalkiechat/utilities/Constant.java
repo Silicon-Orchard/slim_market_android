@@ -19,12 +19,15 @@ public class Constant {
     public static final String KEY_HOST_INFO_LIST = "key_host_info_list";
     public static final String KEY_CHANNEL_NUMBER = "key_channel_number";
 
+    public static final String KEY_IS_CONTACT_MODIFIED = "key_is_contact_added";
+
     public static final String KEY_ABSOLUTE_FILE_PATH = "key_absolute_file_path";
 
     public static final String SERVER_SERVICE_NAME = "com.siliconorchard.walkitalkiechat.service";
 
     public static final String SERVICE_NOTIFICATION_STRING_CHAT_FOREGROUND = "com.siliconorchard.walkitalkiechat.service.receiver.foreground";
     public static final String SERVICE_NOTIFICATION_STRING_CHAT_BACKGROUND = "com.siliconorchard.walkitalkiechat.service.receiver.background";
+    public static final String RECEIVER_NOTIFICATION_CONTACT_LIST_MODIFIED = "com.siliconorchard.walkitalkiechat.receiver.contact_modified";
 
     public static final int FIRST_SERVER_PORT = 43321;
 

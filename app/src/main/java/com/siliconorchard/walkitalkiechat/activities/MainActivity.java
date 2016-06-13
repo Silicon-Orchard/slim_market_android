@@ -22,6 +22,7 @@ public class MainActivity extends ActivityBase {
 
     private Button mBtnJoinChannel;
     private Button mBtnCreateChannel;
+    private Button mBtnContactList;
 
     private String ipAddress;
     private SharedPreferences mSharedPref;
@@ -43,6 +44,7 @@ public class MainActivity extends ActivityBase {
     private void initView() {
         mSharedPref = getSharedPreferences(Constant.SHARED_PREF_NAME, MODE_PRIVATE);
         mBtnJoinChannel = (Button) findViewById(R.id.btn_join_channel);
+        mBtnContactList = (Button) findViewById(R.id.btn_contact_list);
         mBtnCreateChannel = (Button) findViewById(R.id.btn_create_channel);
         mTvTitle = (TextView) findViewById(R.id.tv_title_name);
         mLayoutBack = (LinearLayout) findViewById(R.id.layout_back);
@@ -66,6 +68,12 @@ public class MainActivity extends ActivityBase {
                 startCreateChannelActivity();
             }
         });
+        mBtnContactList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startContactListActivity();
+            }
+        });
     }
 
     private void startChatting() {
@@ -82,6 +90,12 @@ public class MainActivity extends ActivityBase {
 
     private void startJoinChannelActivity() {
         Intent chatActivity = new Intent(this, ActivityJoinChannel.class);
+        chatActivity.putExtra(Constant.KEY_MY_IP_ADDRESS, ipAddress);
+        startActivity(chatActivity);
+    }
+
+    private void startContactListActivity() {
+        Intent chatActivity = new Intent(this, ActivityContactList.class);
         chatActivity.putExtra(Constant.KEY_MY_IP_ADDRESS, ipAddress);
         startActivity(chatActivity);
     }

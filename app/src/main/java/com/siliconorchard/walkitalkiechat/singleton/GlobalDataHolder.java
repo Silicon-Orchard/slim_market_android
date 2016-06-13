@@ -6,6 +6,7 @@ import com.siliconorchard.walkitalkiechat.model.HostInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Created by adminsiriconorchard on 4/20/16.
@@ -44,28 +45,30 @@ public class GlobalDataHolder {
         GlobalDataHolder.mListHostInfo = listHostInfo;
     }
 
-    public void addToHostList(HostInfo hostInfo) {
+    public boolean addToHostList(HostInfo hostInfo) {
         if(mListHostInfo == null) {
             mListHostInfo = new ArrayList<>();
         }
-        for(int i = 0; i<mListHostInfo.size(); i++) {
-            if(mListHostInfo.get(i).getIpAddress().equals(hostInfo.getIpAddress())) {
-                return;
+        for(ListIterator<HostInfo> listIterator = mListHostInfo.listIterator(); listIterator.hasNext();) {
+            if(listIterator.next().getIpAddress().equals(hostInfo.getIpAddress())) {
+                return false;
             }
         }
         mListHostInfo.add(hostInfo);
+        return true;
     }
 
-    public void removeFromHostList(HostInfo hostInfo) {
+    public boolean removeFromHostList(HostInfo hostInfo) {
         if(mListHostInfo == null) {
-            return;
+            return false;
         }
-        for(int i = 0; i<mListHostInfo.size(); i++) {
-            if(mListHostInfo.get(i).getIpAddress().equals(hostInfo.getIpAddress())) {
-                mListHostInfo.remove(i);
-                return;
+        for(ListIterator<HostInfo> listIterator = mListHostInfo.listIterator(); listIterator.hasNext();) {
+            if(listIterator.next().getIpAddress().equals(hostInfo.getIpAddress())) {
+                listIterator.remove();
+                return true;
             }
         }
+        return false;
     }
 
     public List<ChannelInfo> getMyChannels() {

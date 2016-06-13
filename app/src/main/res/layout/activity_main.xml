@@ -13,7 +13,7 @@
     <ImageView
         android:id="@+id/iv_logo"
         android:layout_width="150dp"
-        android:layout_height="280dp"
+        android:layout_height="250dp"
         android:layout_marginTop="50dp"
         android:src="@drawable/image_logo"
         android:layout_centerHorizontal="true"/>
@@ -66,6 +66,23 @@
                 android:textColor="@color/WhiteSmoke"
                 android:gravity="left|center_vertical"
                 android:text="@string/join_channel"/>
+
+
+
+            <Button
+                android:id="@+id/btn_contact_list"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:padding="10dp"
+                android:textAllCaps="false"
+                android:background="@drawable/btn_bg_border"
+                android:drawableLeft="@drawable/ic_contact_list"
+                android:drawablePadding="25dp"
+                android:textSize="24sp"
+                android:textColor="@color/WhiteSmoke"
+                android:gravity="left|center_vertical"
+                android:text="@string/contact_list"/>
 
 
         </LinearLayout>
