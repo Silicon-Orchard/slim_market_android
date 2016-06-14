@@ -46,6 +46,7 @@
         <activity android:name=".activities.ActivityJoinChannel"
             android:noHistory="true"/>
         <activity android:name=".activities.ActivityContactList" />
+        <activity android:name=".activities.ActivityChatOne2One" />
 
         <receiver android:name=".broadcastreceiver.WifiReceiver">
             <intent-filter>

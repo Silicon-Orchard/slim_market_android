@@ -18,44 +18,15 @@ import java.util.List;
 /**
  * Created by adminsiriconorchard on 6/8/16.
  */
-public class AdapterRecipientList extends BaseAdapter {
-    private LayoutInflater mInflater;
-    private List<HostInfo> mListHostInfo;
-    private Drawable drawableActive;
-    private Drawable drawableInactive;
-    private boolean isContactList;
+public class AdapterRecipientList extends AdapterHostListBase {
+
+    protected Drawable drawableActive;
+    protected Drawable drawableInactive;
 
     public AdapterRecipientList(Activity activity, List<HostInfo> hostInfoList) {
-        mInflater = LayoutInflater.from(activity);
-        mListHostInfo = hostInfoList;
-        if(activity instanceof ActivityContactList) {
-            isContactList = true;
-        } else {
-            isContactList = false;
-        }
+        super(activity, hostInfoList);
         drawableActive = activity.getResources().getDrawable( R.drawable.ic_member_active );
         drawableInactive = activity.getResources().getDrawable( R.drawable.ic_member_inactive );
-    }
-
-    @Override
-    public int getCount() {
-        if(mListHostInfo != null) {
-            return mListHostInfo.size();
-        }
-        return 0;
-    }
-
-    @Override
-    public Object getItem(int position) {
-        if(mListHostInfo != null) {
-            return mListHostInfo.get(position);
-        }
-        return null;
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return 0;
     }
 
     @Override
@@ -72,15 +43,11 @@ public class AdapterRecipientList extends BaseAdapter {
         HostInfo hostInfo = mListHostInfo.get(position);
         viewHolder.textView.setText(hostInfo.getDeviceName());
         viewHolder.textView.setCompoundDrawablePadding(Utils.dpToPx(5));
-        if(hostInfo.isChecked() || isContactList) {
+        if(hostInfo.isChecked()) {
             viewHolder.textView.setCompoundDrawablesWithIntrinsicBounds( drawableActive, null, null, null);
         } else {
             viewHolder.textView.setCompoundDrawablesWithIntrinsicBounds( drawableInactive, null, null, null);
         }
         return convertView;
-    }
-
-    class ViewHolder {
-        TextView textView;
     }
 }

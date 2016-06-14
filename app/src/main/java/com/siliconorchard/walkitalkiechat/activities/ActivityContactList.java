@@ -7,19 +7,18 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.siliconorchard.walkitalkiechat.R;
-import com.siliconorchard.walkitalkiechat.adapter.AdapterRecipientList;
+import com.siliconorchard.walkitalkiechat.adapter.AdapterContactList;
 import com.siliconorchard.walkitalkiechat.model.HostInfo;
 import com.siliconorchard.walkitalkiechat.singleton.GlobalDataHolder;
 import com.siliconorchard.walkitalkiechat.utilities.Constant;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 /**
  * Created by adminsiriconorchard on 6/13/16.
@@ -35,7 +34,7 @@ public class ActivityContactList extends ActivityBase {
     private String myIpAddress;
     private ListView mLvRecipientList;
 
-    private AdapterRecipientList adapterRecipientList;
+    private AdapterContactList adapterContactList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,17 +66,27 @@ public class ActivityContactList extends ActivityBase {
                 ActivityContactList.this.finish();
             }
         });
+        mLvRecipientList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(ActivityContactList.this, ActivityChatOne2One.class);
+                intent.putExtra(Constant.KEY_HOST_INFO, mListHostInfo.get(position));
+                intent.putExtra(Constant.KEY_CHANNEL_NUMBER, 0);
+                intent.putExtra(Constant.KEY_MY_IP_ADDRESS, myIpAddress);
+                startActivity(intent);
+            }
+        });
     }
 
     private void initContactList() {
         mListHostInfo = GlobalDataHolder.getInstance().getListHostInfo();
-        adapterRecipientList = new AdapterRecipientList(this, mListHostInfo);
-        mLvRecipientList.setAdapter(adapterRecipientList);
+        adapterContactList = new AdapterContactList(this, mListHostInfo);
+        mLvRecipientList.setAdapter(adapterContactList);
     }
 
     private void updateContactList() {
         mListHostInfo = GlobalDataHolder.getInstance().getListHostInfo();
-        adapterRecipientList.notifyDataSetChanged();
+        adapterContactList.notifyDataSetChanged();
     }
 
     @Override
