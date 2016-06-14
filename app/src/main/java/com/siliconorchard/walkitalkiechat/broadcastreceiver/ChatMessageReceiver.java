@@ -8,8 +8,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.siliconorchard.walkitalkiechat.AppController;
-import com.siliconorchard.walkitalkiechat.activities.ChatActivity;
 import com.siliconorchard.walkitalkiechat.asynctasks.SendMessageAsync;
 import com.siliconorchard.walkitalkiechat.model.ChannelInfo;
 import com.siliconorchard.walkitalkiechat.model.ChatMessage;
@@ -131,6 +129,16 @@ public class ChatMessageReceiver extends BroadcastReceiver {
                     e.printStackTrace();
                 }
                 break;
+
+            case ChatMessage.TYPE_ONE_TO_ONE_CHAT_REQUEST: {
+                try {
+                    HostInfo hInfo = Utils.getHostInfoFromChatMessage(receivedMessage);
+                    publishChatRequestNotification(context, hInfo);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
         }
     }
 
@@ -151,6 +159,12 @@ public class ChatMessageReceiver extends BroadcastReceiver {
     private void publishContactModifyNotification(Context context) {
         Intent intentContactModified = new Intent(Constant.RECEIVER_NOTIFICATION_CONTACT_LIST_MODIFIED);
         intentContactModified.putExtra(Constant.KEY_IS_CONTACT_MODIFIED, true);
+        context.sendBroadcast(intentContactModified);
+    }
+
+    private void publishChatRequestNotification(Context context, HostInfo hostInfo) {
+        Intent intentContactModified = new Intent(Constant.RECEIVER_NOTIFICATION_CHAT_REQUEST);
+        intentContactModified.putExtra(Constant.KEY_HOST_INFO, hostInfo);
         context.sendBroadcast(intentContactModified);
     }
 }

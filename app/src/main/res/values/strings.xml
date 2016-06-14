@@ -200,4 +200,8 @@
     <string name="start_streaming">Start Streaming</string>
     <string name="stop_streaming">Stop Streaming</string>
     <string name="contact_list">Contact List</string>
+    <string name="chat_request">Chat Request</string>
+    <string name="_wants_to_chat_with_you">%s wants to chat with you</string>
+    <string name="accept">Accept</string>
+    <string name="decline">Decline</string>
 </resources>

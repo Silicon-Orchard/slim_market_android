@@ -28,6 +28,7 @@ public class Constant {
     public static final String SERVICE_NOTIFICATION_STRING_CHAT_FOREGROUND = "com.siliconorchard.walkitalkiechat.service.receiver.foreground";
     public static final String SERVICE_NOTIFICATION_STRING_CHAT_BACKGROUND = "com.siliconorchard.walkitalkiechat.service.receiver.background";
     public static final String RECEIVER_NOTIFICATION_CONTACT_LIST_MODIFIED = "com.siliconorchard.walkitalkiechat.receiver.contact_modified";
+    public static final String RECEIVER_NOTIFICATION_CHAT_REQUEST = "com.siliconorchard.walkitalkiechat.receiver.chat_request";
 
     public static final int FIRST_SERVER_PORT = 43321;
 

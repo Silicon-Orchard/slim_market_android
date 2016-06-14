@@ -14,9 +14,14 @@ import android.widget.TextView;
 
 import com.siliconorchard.walkitalkiechat.R;
 import com.siliconorchard.walkitalkiechat.adapter.AdapterContactList;
+import com.siliconorchard.walkitalkiechat.asynctasks.SendMessageAsync;
+import com.siliconorchard.walkitalkiechat.model.ChatMessage;
 import com.siliconorchard.walkitalkiechat.model.HostInfo;
 import com.siliconorchard.walkitalkiechat.singleton.GlobalDataHolder;
 import com.siliconorchard.walkitalkiechat.utilities.Constant;
+import com.siliconorchard.walkitalkiechat.utilities.Utils;
+
+import org.json.JSONException;
 
 import java.util.List;
 
@@ -69,8 +74,10 @@ public class ActivityContactList extends ActivityBase {
         mLvRecipientList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                HostInfo hostInfo = mListHostInfo.get(position);
+                sendChatRequestMessage(hostInfo);
                 Intent intent = new Intent(ActivityContactList.this, ActivityChatOne2One.class);
-                intent.putExtra(Constant.KEY_HOST_INFO, mListHostInfo.get(position));
+                intent.putExtra(Constant.KEY_HOST_INFO, hostInfo);
                 intent.putExtra(Constant.KEY_CHANNEL_NUMBER, 0);
                 intent.putExtra(Constant.KEY_MY_IP_ADDRESS, myIpAddress);
                 startActivity(intent);
@@ -114,4 +121,21 @@ public class ActivityContactList extends ActivityBase {
             }
         }
     };
+
+    private void sendChatRequestMessage(HostInfo hostInfo) {
+        try {
+            ChatMessage chatMessage = new ChatMessage();
+            chatMessage.setIpAddress(myIpAddress);
+            chatMessage.setDeviceId(Utils.getDeviceId(this, mSharedPref));
+            chatMessage.setDeviceName(Utils.getDeviceName(mSharedPref));
+            chatMessage.setType(ChatMessage.TYPE_ONE_TO_ONE_CHAT_REQUEST);
+            String message = chatMessage.getJsonString();
+            if (hostInfo != null ) {
+                SendMessageAsync sendMessageAsync = new SendMessageAsync();
+                sendMessageAsync.execute(hostInfo, message);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 }
