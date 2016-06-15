@@ -43,6 +43,7 @@ public class ChatMessage {
     public static final int TYPE_LEFT_APPLICATION = 10;
     public static final int TYPE_ONE_TO_ONE_CHAT_REQUEST = 11;
     public static final int TYPE_ONE_TO_ONE_CHAT_ACCEPT = 12;
+    public static final int TYPE_ONE_TO_ONE_CHAT_DECLINE = 13;
 
 
 
@@ -76,6 +77,7 @@ public class ChatMessage {
             case TYPE_LEFT_APPLICATION:
             case TYPE_ONE_TO_ONE_CHAT_REQUEST:
             case TYPE_ONE_TO_ONE_CHAT_ACCEPT:
+            case TYPE_ONE_TO_ONE_CHAT_DECLINE:
                 break;
 
             case TYPE_CHANNEL_FOUND:
@@ -195,6 +197,7 @@ public class ChatMessage {
             case TYPE_LEFT_APPLICATION:
             case TYPE_ONE_TO_ONE_CHAT_REQUEST:
             case TYPE_ONE_TO_ONE_CHAT_ACCEPT:
+            case TYPE_ONE_TO_ONE_CHAT_DECLINE:
                 break;
 
             case TYPE_CHANNEL_FOUND:

@@ -3,7 +3,9 @@ package com.siliconorchard.walkitalkiechat.utilities;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -17,6 +19,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.siliconorchard.walkitalkiechat.AppController;
+import com.siliconorchard.walkitalkiechat.R;
 import com.siliconorchard.walkitalkiechat.asynctasks.SendMessageAsync;
 import com.siliconorchard.walkitalkiechat.model.ChatMessage;
 import com.siliconorchard.walkitalkiechat.model.HostInfo;
@@ -342,5 +345,24 @@ public class Utils {
     public static int pxToDp(int px)
     {
         return (int) (px / Resources.getSystem().getDisplayMetrics().density);
+    }
+
+
+    public static AlertDialog.Builder createAlertDialog(Activity activity, String title, String message) {
+        AlertDialog.Builder  builder = new AlertDialog.Builder(activity);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setCancelable(false);
+        builder.setIcon(R.drawable.ic_info);
+        return builder;
+    }
+
+    public static AlertDialog.Builder createAlertDialog(Activity activity, int title, int message) {
+        AlertDialog.Builder  builder = new AlertDialog.Builder(activity);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setCancelable(false);
+        builder.setIcon(R.drawable.ic_info);
+        return builder;
     }
 }

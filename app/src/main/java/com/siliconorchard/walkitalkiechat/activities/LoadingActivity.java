@@ -132,11 +132,8 @@ public class LoadingActivity extends ActivityBase {
     }
 
     private void showWifiNotEnabledDialog() {
-        AlertDialog.Builder  builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.wifi_not_enabled);
-        builder.setMessage(R.string.error_wifi_not_enabled_please_enable);
-        builder.setCancelable(false);
-        builder.setIcon(R.drawable.ic_info);
+        AlertDialog.Builder  builder = Utils.createAlertDialog(this, R.string.wifi_not_enabled,
+                R.string.error_wifi_not_enabled_please_enable);
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -148,6 +145,7 @@ public class LoadingActivity extends ActivityBase {
         });
         mAlertDialog = builder.create();
         mAlertDialog.show();
+        mAlertDialog.getWindow().setBackgroundDrawable(this.getResources().getDrawable(R.drawable.shape_voice_activity_bg));
     }
 
     private ChatMessage generateChatMessageBasics() {

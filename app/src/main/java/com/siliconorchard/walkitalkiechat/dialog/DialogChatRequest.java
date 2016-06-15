@@ -73,11 +73,12 @@ public class DialogChatRequest extends DialogFragment implements
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_accept:
-                sendChatAcceptMessage();
+                sendChatAcceptMessage(ChatMessage.TYPE_ONE_TO_ONE_CHAT_ACCEPT);
                 startOne2OneChat();
                 dismiss();
                 break;
             case R.id.btn_decline:
+                sendChatAcceptMessage(ChatMessage.TYPE_ONE_TO_ONE_CHAT_DECLINE);
                 dismiss();
                 break;
             default:
@@ -94,13 +95,13 @@ public class DialogChatRequest extends DialogFragment implements
         getActivity().startActivity(intent);
     }
 
-    private void sendChatAcceptMessage() {
+    private void sendChatAcceptMessage(int messageType) {
         try {
             ChatMessage chatMessage = new ChatMessage();
             chatMessage.setIpAddress(myIpAddress);
             chatMessage.setDeviceId(Utils.getDeviceId(getActivity(), mSharedPref));
             chatMessage.setDeviceName(Utils.getDeviceName(mSharedPref));
-            chatMessage.setType(ChatMessage.TYPE_ONE_TO_ONE_CHAT_ACCEPT);
+            chatMessage.setType(messageType);
             String message = chatMessage.getJsonString();
             if (mHostInfo != null) {
                 SendMessageAsync sendMessageAsync = new SendMessageAsync();

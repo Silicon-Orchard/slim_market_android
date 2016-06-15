@@ -143,6 +143,17 @@ public class ChatMessageReceiver extends BroadcastReceiver {
             case ChatMessage.TYPE_ONE_TO_ONE_CHAT_ACCEPT: {
                 try {
                     HostInfo hInfo = Utils.getHostInfoFromChatMessage(receivedMessage);
+                    hInfo.setIsOnline(true);
+                    publishChatAcceptNotification(context, hInfo);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
+
+            case ChatMessage.TYPE_ONE_TO_ONE_CHAT_DECLINE: {
+                try {
+                    HostInfo hInfo = Utils.getHostInfoFromChatMessage(receivedMessage);
                     publishChatAcceptNotification(context, hInfo);
                 } catch (Exception e) {
                     e.printStackTrace();
