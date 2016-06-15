@@ -139,6 +139,16 @@ public class ChatMessageReceiver extends BroadcastReceiver {
                 }
                 break;
             }
+
+            case ChatMessage.TYPE_ONE_TO_ONE_CHAT_ACCEPT: {
+                try {
+                    HostInfo hInfo = Utils.getHostInfoFromChatMessage(receivedMessage);
+                    publishChatAcceptNotification(context, hInfo);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
         }
     }
 
@@ -164,6 +174,12 @@ public class ChatMessageReceiver extends BroadcastReceiver {
 
     private void publishChatRequestNotification(Context context, HostInfo hostInfo) {
         Intent intentContactModified = new Intent(Constant.RECEIVER_NOTIFICATION_CHAT_REQUEST);
+        intentContactModified.putExtra(Constant.KEY_HOST_INFO, hostInfo);
+        context.sendBroadcast(intentContactModified);
+    }
+
+    private void publishChatAcceptNotification(Context context, HostInfo hostInfo) {
+        Intent intentContactModified = new Intent(Constant.RECEIVER_NOTIFICATION_CHAT_ACCEPT);
         intentContactModified.putExtra(Constant.KEY_HOST_INFO, hostInfo);
         context.sendBroadcast(intentContactModified);
     }

@@ -76,6 +76,7 @@ public class ActivityContactList extends ActivityBase {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HostInfo hostInfo = mListHostInfo.get(position);
                 sendChatRequestMessage(hostInfo);
+                hostInfo.setIsChecked(false);
                 Intent intent = new Intent(ActivityContactList.this, ActivityChatOne2One.class);
                 intent.putExtra(Constant.KEY_HOST_INFO, hostInfo);
                 intent.putExtra(Constant.KEY_CHANNEL_NUMBER, 0);

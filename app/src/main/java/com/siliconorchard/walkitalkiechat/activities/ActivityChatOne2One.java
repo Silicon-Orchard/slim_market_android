@@ -1,5 +1,9 @@
 package com.siliconorchard.walkitalkiechat.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 
 import com.siliconorchard.walkitalkiechat.R;
@@ -12,6 +16,8 @@ import com.siliconorchard.walkitalkiechat.utilities.Constant;
  */
 public class ActivityChatOne2One extends ChatActivityAbstract{
 
+    private HostInfo mHostInfo;
+
     @Override
     protected int getLayoutID() {
         return R.layout.activity_chat;
@@ -19,11 +25,12 @@ public class ActivityChatOne2One extends ChatActivityAbstract{
 
     @Override
     protected void initSubView(Bundle bundle) {
-        HostInfo hostInfo = (HostInfo) bundle.getParcelable(Constant.KEY_HOST_INFO);
-        if(hostInfo != null) {
-            addToReceiverList(hostInfo, ClientType.TYPE_JOINER);
+        mHostInfo = (HostInfo) bundle.getParcelable(Constant.KEY_HOST_INFO);
+        if(mHostInfo == null) {
+            this.finish();
         }
-        mTvTitle.setText(hostInfo.getDeviceName());
+        addToReceiverList(mHostInfo, ClientType.TYPE_JOINER);
+        mTvTitle.setText(mHostInfo.getDeviceName());
     }
 
     @Override
@@ -43,10 +50,47 @@ public class ActivityChatOne2One extends ChatActivityAbstract{
 
     @Override
     protected boolean hasRecipient() {
-        if(mListHostInfo == null || mListHostInfo.size() < 1) {
+        if(!mHostInfo.isChecked()) {
             return false;
         } else {
             return true;
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(receiverChatAccept, new IntentFilter(Constant.RECEIVER_NOTIFICATION_CHAT_ACCEPT));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(receiverChatAccept);
+    }
+
+    public boolean isSameHost(HostInfo hostInfo) {
+        if(hostInfo.getIpAddress().equals(mHostInfo.getIpAddress())) {
+            mHostInfo.setIsChecked(true);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    private void showChatRequestDialog(Bundle bundle) {
+        HostInfo hostInfo = (HostInfo) bundle.getParcelable(Constant.KEY_HOST_INFO);
+        if(hostInfo.getIpAddress().equals(mHostInfo.getIpAddress())) {
+            mHostInfo.setIsChecked(true);
+        }
+    }
+
+    private BroadcastReceiver receiverChatAccept = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+            if (bundle != null) {
+                showChatRequestDialog(bundle);
+            }
+        }
+    };
 }

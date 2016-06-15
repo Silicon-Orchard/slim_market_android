@@ -42,6 +42,17 @@ public class ActivityBase extends Activity {
 
     private void showChatRequestDialog(Bundle bundle) {
         HostInfo hostInfo = (HostInfo) bundle.getParcelable(Constant.KEY_HOST_INFO);
+        if(AppController.getInstance().getCurrentActivity() instanceof ActivityChatOne2One) {
+            ActivityChatOne2One activityChatOne2One = (ActivityChatOne2One) AppController.getInstance().getCurrentActivity();
+            if(!activityChatOne2One.isSameHost(hostInfo)) {
+                showChatRequestDialog(hostInfo);
+            }
+        } else {
+            showChatRequestDialog(hostInfo);
+        }
+    }
+
+    private void showChatRequestDialog(HostInfo hostInfo) {
         DialogChatRequest dialogChatRequest = new DialogChatRequest();
         Bundle args = new Bundle();
         args.putParcelable(Constant.KEY_HOST_INFO, hostInfo);
@@ -49,7 +60,6 @@ public class ActivityBase extends Activity {
         dialogChatRequest.setArguments(args);
         dialogChatRequest.show(getFragmentManager(),"Test");
     }
-
     private BroadcastReceiver receiverChatReq = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
