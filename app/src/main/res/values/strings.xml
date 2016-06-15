@@ -204,4 +204,5 @@
     <string name="_wants_to_chat_with_you">%s wants to chat with you</string>
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
+    <string name="no_one_online">Currently no one is in online</string>
 </resources>
