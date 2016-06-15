@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.siliconorchard.walkitalkiechat.R;
 import com.siliconorchard.walkitalkiechat.model.ChatMessage;
@@ -72,6 +73,7 @@ public class ActivityChatOne2One extends ChatActivityAbstract{
     public boolean isSameHost(HostInfo hostInfo) {
         if(hostInfo.getIpAddress().equals(mHostInfo.getIpAddress())) {
             mHostInfo.setIsOnline(true);
+            adapterRecipientList.notifyDataSetChanged();
             return true;
         } else {
             return false;
