@@ -87,7 +87,7 @@ public class ServiceServer extends IntentService {
                     sDataGramSocket.receive(datagramPacket);
                     byte[] receivedData = datagramPacket.getData();
                     Log.e("TAG_LOG", "Ending message receiving from service");
-                    publishResults(receivedData);
+                    publishResults(receivedData, datagramPacket.getLength());
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (Exception e) {
@@ -100,8 +100,8 @@ public class ServiceServer extends IntentService {
             e.printStackTrace();
         }
     }
-    private void publishResults(byte[] data) {
-        String message = new String(data);
+    private void publishResults(byte[] data, int length) {
+        String message = new String(data, 0, length);
         publishResults(message);
     }
 
