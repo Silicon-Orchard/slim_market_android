@@ -41,6 +41,8 @@ public class ActivityContactList extends ActivityBase {
 
     private AdapterContactList adapterContactList;
 
+    private TextView mTvNoOnline;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +63,7 @@ public class ActivityContactList extends ActivityBase {
         mTvTitle.setText(R.string.contact_list);
 
         mLvRecipientList = (ListView) findViewById(R.id.lv_recipient_list);
+        mTvNoOnline = (TextView) findViewById(R.id.tv_no_online);
         initContactList();
     }
 
@@ -90,11 +93,29 @@ public class ActivityContactList extends ActivityBase {
         mListHostInfo = GlobalDataHolder.getInstance().getListHostInfo();
         adapterContactList = new AdapterContactList(this, mListHostInfo);
         mLvRecipientList.setAdapter(adapterContactList);
+        if(mListHostInfo == null || mListHostInfo.size()<1) {
+            mTvNoOnline.setVisibility(View.VISIBLE);
+            mLvRecipientList.setVisibility(View.GONE);
+        } else {
+            mTvNoOnline.setVisibility(View.GONE);
+            mLvRecipientList.setVisibility(View.VISIBLE);
+        }
     }
 
     private void updateContactList() {
+        if(mListHostInfo == null) {
+            initContactList();
+            return;
+        }
         mListHostInfo = GlobalDataHolder.getInstance().getListHostInfo();
         adapterContactList.notifyDataSetChanged();
+        if(mListHostInfo == null || mListHostInfo.size()<1) {
+            mTvNoOnline.setVisibility(View.VISIBLE);
+            mLvRecipientList.setVisibility(View.GONE);
+        } else {
+            mTvNoOnline.setVisibility(View.GONE);
+            mLvRecipientList.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

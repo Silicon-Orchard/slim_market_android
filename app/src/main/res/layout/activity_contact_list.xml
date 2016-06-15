@@ -30,6 +30,17 @@
             android:dividerHeight="0dp"
             android:divider="@null"/>
 
+        <TextView
+            android:id="@+id/tv_no_online"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/no_one_online"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/White"/>
+
     </LinearLayout>
 
 
