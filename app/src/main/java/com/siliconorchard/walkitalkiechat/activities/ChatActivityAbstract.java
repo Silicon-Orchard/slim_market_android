@@ -295,13 +295,13 @@ public abstract class ChatActivityAbstract extends ActivityBase {
         for(int i = 0; i< mListHostInfo.size(); i++) {
             HostInfo hostInfoInList = mListHostInfo.get(i);
             if(hostInfoInList.getIpAddress().equals(hostInfo.getIpAddress())) {
-                hostInfoInList.setIsChecked(true);
+                hostInfoInList.setIsOnline(true);
                 updateRecipientInfo(hostInfo, type);
                 return false;
             }
         }
         if(hostInfo.getIpAddress() != null && hostInfo.getIpAddress().length()>1) {
-            hostInfo.setIsChecked(true);
+            hostInfo.setIsOnline(true);
             mListHostInfo.add(hostInfo);
             updateRecipientInfo(hostInfo, type);
             return true;
@@ -318,7 +318,7 @@ public abstract class ChatActivityAbstract extends ActivityBase {
         for(int i = 0; i< mListHostInfo.size(); i++) {
             HostInfo hostInfoInList = mListHostInfo.get(i);
             if(hostInfoInList.getIpAddress().equals(hostInfo.getIpAddress())) {
-                mListHostInfo.get(i).setIsChecked(false);
+                mListHostInfo.get(i).setIsOnline(false);
                 updateRecipientInfo(hostInfo, ClientType.TYPE_QUIT);
                 return true;
             }

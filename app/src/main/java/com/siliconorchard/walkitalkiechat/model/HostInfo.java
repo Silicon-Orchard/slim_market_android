@@ -11,6 +11,7 @@ public class HostInfo implements Parcelable{
     private String deviceId;
     private String deviceName;
     private boolean isChecked;
+    private boolean isOnline;
 
     public HostInfo() {
 
@@ -21,6 +22,7 @@ public class HostInfo implements Parcelable{
         this.deviceId = in.readString();
         this.deviceName = in.readString();
         this.isChecked = in.readInt() == 1 ? true : false;
+        this.isOnline = in.readInt() == 1 ? true : false;
     }
 
     public String getIpAddress() {
@@ -55,12 +57,21 @@ public class HostInfo implements Parcelable{
         this.isChecked = isChecked;
     }
 
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    public void setIsOnline(boolean isOnline) {
+        this.isOnline = isOnline;
+    }
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.ipAddress);
         dest.writeString(this.deviceId);
         dest.writeString(this.deviceName);
         dest.writeInt(this.isChecked ? 1 : 0);
+        dest.writeInt(this.isOnline ? 1 : 0);
     }
 
     @Override

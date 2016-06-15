@@ -50,7 +50,7 @@ public class ActivityChatOne2One extends ChatActivityAbstract{
 
     @Override
     protected boolean hasRecipient() {
-        if(!mHostInfo.isChecked()) {
+        if(!mHostInfo.isOnline()) {
             return false;
         } else {
             return true;
@@ -71,7 +71,7 @@ public class ActivityChatOne2One extends ChatActivityAbstract{
 
     public boolean isSameHost(HostInfo hostInfo) {
         if(hostInfo.getIpAddress().equals(mHostInfo.getIpAddress())) {
-            mHostInfo.setIsChecked(true);
+            mHostInfo.setIsOnline(true);
             return true;
         } else {
             return false;
@@ -80,7 +80,7 @@ public class ActivityChatOne2One extends ChatActivityAbstract{
     private void showChatRequestDialog(Bundle bundle) {
         HostInfo hostInfo = (HostInfo) bundle.getParcelable(Constant.KEY_HOST_INFO);
         if(hostInfo.getIpAddress().equals(mHostInfo.getIpAddress())) {
-            mHostInfo.setIsChecked(true);
+            mHostInfo.setIsOnline(true);
         }
     }
 
