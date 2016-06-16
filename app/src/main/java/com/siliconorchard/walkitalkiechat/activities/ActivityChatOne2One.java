@@ -10,10 +10,13 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.siliconorchard.walkitalkiechat.R;
+import com.siliconorchard.walkitalkiechat.asynctasks.SendMessageAsync;
 import com.siliconorchard.walkitalkiechat.model.ChatMessage;
 import com.siliconorchard.walkitalkiechat.model.HostInfo;
 import com.siliconorchard.walkitalkiechat.utilities.Constant;
 import com.siliconorchard.walkitalkiechat.utilities.Utils;
+
+import org.json.JSONException;
 
 /**
  * Created by adminsiriconorchard on 6/14/16.
@@ -34,8 +37,9 @@ public class ActivityChatOne2One extends ChatActivityAbstract{
         if(mHostInfo == null) {
             this.finish();
         }
+        boolean isOnline = mHostInfo.isOnline();
         addToReceiverList(mHostInfo, ClientType.TYPE_JOINER);
-        mHostInfo.setIsOnline(false);
+        mHostInfo.setIsOnline(isOnline);
         mTvTitle.setText(mHostInfo.getDeviceName());
     }
 
@@ -77,6 +81,7 @@ public class ActivityChatOne2One extends ChatActivityAbstract{
 
     public boolean isSameHost(HostInfo hostInfo) {
         if(hostInfo.getIpAddress().equals(mHostInfo.getIpAddress())) {
+            sendChatAcceptMessage();
             mHostInfo.setIsOnline(true);
             adapterRecipientList.notifyDataSetChanged();
             return true;
@@ -108,6 +113,23 @@ public class ActivityChatOne2One extends ChatActivityAbstract{
                 mAlertDialog.show();
                 mAlertDialog.getWindow().setBackgroundDrawable(this.getResources().getDrawable(R.drawable.shape_voice_activity_bg));
             }
+        }
+    }
+
+    private void sendChatAcceptMessage() {
+        try {
+            ChatMessage chatMessage = new ChatMessage();
+            chatMessage.setIpAddress(myIpAddress);
+            chatMessage.setDeviceId(Utils.getDeviceId(this, mSharedPref));
+            chatMessage.setDeviceName(Utils.getDeviceName(mSharedPref));
+            chatMessage.setType(ChatMessage.TYPE_ONE_TO_ONE_CHAT_ACCEPT);
+            String message = chatMessage.getJsonString();
+            if (mHostInfo != null) {
+                SendMessageAsync sendMessageAsync = new SendMessageAsync();
+                sendMessageAsync.execute(mHostInfo, message);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 

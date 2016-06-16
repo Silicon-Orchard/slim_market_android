@@ -89,6 +89,7 @@ public class DialogChatRequest extends DialogFragment implements
 
     private void startOne2OneChat() {
         Intent intent = new Intent(getActivity(), ActivityChatOne2One.class);
+        mHostInfo.setIsOnline(true);
         intent.putExtra(Constant.KEY_HOST_INFO, mHostInfo);
         intent.putExtra(Constant.KEY_CHANNEL_NUMBER, 0);
         intent.putExtra(Constant.KEY_MY_IP_ADDRESS, myIpAddress);
