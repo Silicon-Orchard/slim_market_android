@@ -10,43 +10,44 @@
         android:scaleType="fitXY"
         android:src="@drawable/image_bg_p1" />
 
-    <include layout="@layout/layout_title"/>
+    <include layout="@layout/layout_title" />
 
     <ScrollView
         android:id="@+id/sv_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:layout_below="@+id/ll_title">
+        android:layout_below="@+id/ll_title"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
             <LinearLayout
                 android:id="@+id/ll_recipient"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
-                android:layout_margin="10dp"
                 android:layout_below="@+id/ll_title"
-                android:orientation="vertical"
-                android:background="@drawable/drawer_bg">
+                android:layout_margin="10dp"
+                android:background="@drawable/drawer_bg"
+                android:orientation="vertical">
 
                 <ListView
                     android:id="@+id/lv_recipient_list"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
+                    android:divider="@null"
                     android:dividerHeight="0dp"
-                    android:divider="@null"/>
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp" />
 
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="3dp"
-                    android:background="@color/orange4_new_theme"/>
+                    android:background="@color/orange4_new_theme" />
 
             </LinearLayout>
 
@@ -55,44 +56,45 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:minHeight="250dp"
-                android:padding="10dp"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+                android:padding="10dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:orientation="vertical" >
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/tv_chat_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:textSize="8sp"/>
+                        android:textSize="8sp" />
 
                     <ListView
                         android:id="@+id/lv_chat_history"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:padding="5dp"
+                        android:divider="@null"
                         android:dividerHeight="0dp"
-                        android:divider="@null"/>
+                        android:padding="5dp" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/ll_progress_bar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:background="@color/SkyBlue"
+                    android:orientation="vertical"
                     android:visibility="gone">
+
                     <TextView
                         android:id="@+id/tv_percent"
                         android:layout_width="250dp"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:text="0%"/>
+                        android:text="0%"
+                        android:textSize="14sp" />
 
                     <ProgressBar
                         android:id="@+id/progress_bar"
@@ -106,6 +108,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/drawer_bg"
                     android:orientation="horizontal">
 
                     <EditText
@@ -113,37 +116,94 @@
                         android:layout_width="0dp"
                         android:layout_height="40dp"
                         android:layout_weight="1"
-                        android:background="@drawable/drawer_bg"
+                        android:hint="Type your message"
                         android:textColor="@color/White"
                         android:textColorHint="@color/SlateBlue"
-                        android:textCursorDrawable="@null"
-                        android:hint="Type your message"/>
+                        android:background="@android:color/transparent"
+                        android:textCursorDrawable="@null" />
+
+                    <ImageView
+                        android:id="@+id/btn_send"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_margin="4dp"
+                        android:src="@drawable/ic_send"
+                        android:textAllCaps="false" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:background="@color/orange4_new_theme">
-                    <ImageView
-                        android:id="@+id/btn_send"
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:layout_margin="4dp"
-                        android:textAllCaps="false"
-                        android:src="@drawable/ic_send"/>
+                    android:background="@color/orange4_new_theme"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
 
                     <ImageView
                         android:id="@+id/btn_voice"
-                        android:layout_width="wrap_content"
+                        android:layout_width="45dp"
                         android:layout_height="40dp"
                         android:layout_margin="4dp"
-                        android:textAllCaps="false"
-                        android:src="@drawable/ic_record"/>
+                        android:src="@drawable/ic_voice_mail"
+                        android:textAllCaps="false" />
+
+                    <ImageView
+                        android:layout_width="45dp"
+                        android:layout_height="40dp"
+                        android:layout_margin="4dp"
+                        android:src="@drawable/ic_attach"
+                        android:textAllCaps="false" />
+
+                    <ImageView
+                        android:layout_width="45dp"
+                        android:layout_height="40dp"
+                        android:layout_margin="4dp"
+                        android:src="@drawable/ic_record"
+                        android:textAllCaps="false" />
+
+                    <ImageView
+                        android:layout_width="45dp"
+                        android:layout_height="40dp"
+                        android:layout_margin="4dp"
+                        android:src="@drawable/ic_video"
+                        android:textAllCaps="false" />
+
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="right">
+
+                        <LinearLayout
+                            android:layout_width="50dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="15dp"
+                                android:layout_height="15dp"
+                                android:src="@drawable/ic_location" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Share\nLocation"
+                                android:textColor="@color/White"
+                                android:textSize="6sp" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
                 </LinearLayout>
 
             </LinearLayout>
+
         </LinearLayout>
 
     </ScrollView>
