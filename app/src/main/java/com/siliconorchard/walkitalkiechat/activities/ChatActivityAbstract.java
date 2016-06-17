@@ -5,13 +5,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -77,6 +81,11 @@ public abstract class ChatActivityAbstract extends ActivityBase {
     private RunnableReceiveVoiceChat mRunnableReceiveVoiceChat;
     private Thread mThreadVoiceChat;
 
+    protected ImageView mIvAttachFile;
+    protected ImageView mIvStreamVoice;
+    protected ImageView mIvStreamVideo;
+    protected LinearLayout mLayoutShareLocation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,6 +121,11 @@ public abstract class ChatActivityAbstract extends ActivityBase {
         mBtnVoice = (ImageView) findViewById(R.id.btn_voice);
 
         mLvRecipientList = (ListView) findViewById(R.id.lv_recipient_list);
+
+        mIvAttachFile = (ImageView) findViewById(R.id.iv_attach_file);
+        mIvStreamVoice = (ImageView) findViewById(R.id.iv_stream_voice);
+        mIvStreamVideo = (ImageView) findViewById(R.id.iv_stream_video);
+        mLayoutShareLocation = (LinearLayout) findViewById(R.id.ll_share_location);
 
         initChatHistoryList();
 
@@ -176,6 +190,65 @@ public abstract class ChatActivityAbstract extends ActivityBase {
                 startActivity(intent);
             }
         });
+
+        mIvAttachFile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAttachPopup();
+            }
+        });
+        mIvStreamVoice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toastUnderConstructionMessage();
+            }
+        });
+        mIvStreamVideo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toastUnderConstructionMessage();
+            }
+        });
+        mLayoutShareLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toastUnderConstructionMessage();
+            }
+        });
+    }
+
+    private void toastUnderConstructionMessage () {
+        Toast.makeText(this,R.string.this_function_is_under_construction,Toast.LENGTH_LONG).show();
+    }
+
+    private void showAttachPopup() {
+        LayoutInflater layoutInflater
+                = (LayoutInflater)getBaseContext()
+                .getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = layoutInflater.inflate(R.layout.popup_attach_file, null);
+        final PopupWindow popupWindow = new PopupWindow(
+                popupView,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        LinearLayout llUploadFile = (LinearLayout)popupView.findViewById(R.id.ll_upload_file);
+        llUploadFile.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                toastUnderConstructionMessage();
+                popupWindow.dismiss();
+            }});
+
+        LinearLayout llUploadPhoto = (LinearLayout)popupView.findViewById(R.id.ll_upload_photo);
+        llUploadPhoto.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                toastUnderConstructionMessage();
+                popupWindow.dismiss();
+            }});
+        popupWindow.setBackgroundDrawable(new BitmapDrawable());
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.showAsDropDown(mIvAttachFile, 0-Utils.dpToPx(100)+(mIvAttachFile.getWidth()/3), 0-Utils.dpToPx(200)-(3*mIvAttachFile.getHeight()/2));
     }
 
     private void addChatMessage(String name, String msg, boolean isSent, String filePath) {

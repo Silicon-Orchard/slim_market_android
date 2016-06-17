@@ -206,4 +206,7 @@
     <string name="decline">Decline</string>
     <string name="no_one_online">Currently no one is in online</string>
     <string name="_declined_your_chat_request">%s declined your chat request</string>
+    <string name="this_function_is_under_construction">This function is under construction</string>
+    <string name="attach_file">Attach a file</string>
+    <string name="attach_photo">Attach a photo</string>
 </resources>

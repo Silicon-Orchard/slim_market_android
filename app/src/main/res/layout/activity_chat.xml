@@ -151,6 +151,7 @@
                         android:textAllCaps="false" />
 
                     <ImageView
+                        android:id="@+id/iv_attach_file"
                         android:layout_width="45dp"
                         android:layout_height="40dp"
                         android:layout_margin="4dp"
@@ -158,6 +159,7 @@
                         android:textAllCaps="false" />
 
                     <ImageView
+                        android:id="@+id/iv_stream_voice"
                         android:layout_width="45dp"
                         android:layout_height="40dp"
                         android:layout_margin="4dp"
@@ -165,6 +167,7 @@
                         android:textAllCaps="false" />
 
                     <ImageView
+                        android:id="@+id/iv_stream_video"
                         android:layout_width="45dp"
                         android:layout_height="40dp"
                         android:layout_margin="4dp"
@@ -179,6 +182,7 @@
                         android:gravity="right">
 
                         <LinearLayout
+                            android:id="@+id/ll_share_location"
                             android:layout_width="50dp"
                             android:layout_height="match_parent"
                             android:gravity="center"
