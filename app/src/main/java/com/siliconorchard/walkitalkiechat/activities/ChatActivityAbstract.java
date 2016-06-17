@@ -4,87 +4,41 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.siliconorchard.walkitalkiechat.R;
 import com.siliconorchard.walkitalkiechat.adapter.AdapterChatHistory;
-import com.siliconorchard.walkitalkiechat.adapter.AdapterRecipientList;
-import com.siliconorchard.walkitalkiechat.asynctasks.SendMessageAsync;
 import com.siliconorchard.walkitalkiechat.model.ChatMessage;
-import com.siliconorchard.walkitalkiechat.model.ChatMessageHistory;
 import com.siliconorchard.walkitalkiechat.model.HostInfo;
 import com.siliconorchard.walkitalkiechat.model.VoiceMessage;
 import com.siliconorchard.walkitalkiechat.runnable.RunnableReceiveFile;
 import com.siliconorchard.walkitalkiechat.runnable.RunnableReceiveVoiceChat;
 import com.siliconorchard.walkitalkiechat.utilities.Constant;
-import com.siliconorchard.walkitalkiechat.utilities.Utils;
 
 import org.json.JSONException;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.ListIterator;
 
 /**
  * Created by adminsiriconorchard on 5/3/16.
  */
-public abstract class ChatActivityAbstract extends ActivityBase {
-
-    //protected TextView mTvClientMsg;
-
-    protected TextView mTvTitle;
-    protected LinearLayout mLayoutBack;
-
-    protected EditText mEtChat;
-    protected ImageView mBtnSend;
-
-    protected List<HostInfo> mListHostInfo;
-
-    protected SharedPreferences mSharedPref;
-    protected String myIpAddress;
-
-    //protected TextView mTvRecipientList;
-    protected ListView mLvRecipientList;
-    protected int channelNumber;
-
-    protected LinearLayout mLayoutProgress;
-    protected TextView mTvPercent;
-    protected ProgressBar mProgress;
-    protected ImageView mBtnVoice;
-
-    protected static final int MAX_PROGRESS_BAR = 100;
-
-    private RunnableReceiveFile mRunnableReceiveFile;
-    private Thread mThread;
-
-    protected AdapterRecipientList adapterRecipientList;
-
-    protected ListView mLvChatHistory;
-    protected AdapterChatHistory adapterChatHistory;
-
+public abstract class ChatActivityAbstract extends ChatActivityBase {
 
     private RunnableReceiveVoiceChat mRunnableReceiveVoiceChat;
     private Thread mThreadVoiceChat;
-
-    protected ImageView mIvAttachFile;
-    protected ImageView mIvStreamVoice;
-    protected ImageView mIvStreamVideo;
-    protected LinearLayout mLayoutShareLocation;
+    private RunnableReceiveFile mRunnableReceiveFile;
+    private Thread mThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,18 +54,13 @@ public abstract class ChatActivityAbstract extends ActivityBase {
         myIpAddress = bundle.getString(Constant.KEY_MY_IP_ADDRESS, null);
         channelNumber = bundle.getInt(Constant.KEY_CHANNEL_NUMBER, 0);
 
-        //mTvClientMsg = (TextView) findViewById(R.id.tv_chat_history);
         mLvChatHistory = (ListView) findViewById(R.id.lv_chat_history);
         mTvTitle = (TextView) findViewById(R.id.tv_title_name);
         mLayoutBack = (LinearLayout) findViewById(R.id.layout_back);
-        mTvTitle.setText("Channel: "+channelNumber);
+        mTvTitle.setText("Channel: " + channelNumber);
 
         mEtChat = (EditText) findViewById(R.id.et_chat);
         mBtnSend = (ImageView) findViewById(R.id.btn_send);
-        //mTvClientMsg.setText(" ");
-
-        /*mTvRecipientList = (TextView) findViewById(R.id.tv_recipient_list);
-        mTvRecipientList.setText("");*/
 
         mLayoutProgress = (LinearLayout) findViewById(R.id.ll_progress_bar);
         mTvPercent = (TextView) findViewById(R.id.tv_percent);
@@ -150,7 +99,6 @@ public abstract class ChatActivityAbstract extends ActivityBase {
                     if (msg == null || msg.length() <= 0) {
                         return;
                     }
-                    //mTvClientMsg.append("\nMe: " + msg);
                     addChatMessage("Me", msg, true, null);
                     mEtChat.setText("");
                     try {
@@ -164,8 +112,6 @@ public abstract class ChatActivityAbstract extends ActivityBase {
 
             }
         });
-
-        //mTvClientMsg.setMovementMethod(new ScrollingMovementMethod());
 
         mLayoutBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -217,79 +163,6 @@ public abstract class ChatActivityAbstract extends ActivityBase {
         });
     }
 
-    private void toastUnderConstructionMessage () {
-        Toast.makeText(this,R.string.this_function_is_under_construction,Toast.LENGTH_LONG).show();
-    }
-
-    private void showAttachPopup() {
-        LayoutInflater layoutInflater
-                = (LayoutInflater)getBaseContext()
-                .getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = layoutInflater.inflate(R.layout.popup_attach_file, null);
-        final PopupWindow popupWindow = new PopupWindow(
-                popupView,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        LinearLayout llUploadFile = (LinearLayout)popupView.findViewById(R.id.ll_upload_file);
-        llUploadFile.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                toastUnderConstructionMessage();
-                popupWindow.dismiss();
-            }});
-
-        LinearLayout llUploadPhoto = (LinearLayout)popupView.findViewById(R.id.ll_upload_photo);
-        llUploadPhoto.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                toastUnderConstructionMessage();
-                popupWindow.dismiss();
-            }});
-        popupWindow.setBackgroundDrawable(new BitmapDrawable());
-        popupWindow.setOutsideTouchable(true);
-        popupWindow.showAsDropDown(mIvAttachFile, 0-Utils.dpToPx(100)+(mIvAttachFile.getWidth()/3), 0-Utils.dpToPx(200)-(3*mIvAttachFile.getHeight()/2));
-    }
-
-    private void addChatMessage(String name, String msg, boolean isSent, String filePath) {
-        ChatMessageHistory chatMessage = new ChatMessageHistory();
-        chatMessage.setDeviceName(name);
-        chatMessage.setMessage(msg);
-        chatMessage.setIsSent(isSent);
-        if(filePath != null) {
-            chatMessage.setFilePath(filePath);
-        }
-        adapterChatHistory.addMessage(chatMessage);
-        mLvChatHistory.post(new Runnable() {
-            public void run() {
-                mLvChatHistory.setSelection(mLvChatHistory.getCount() - 1);
-            }
-        });
-    }
-
-    protected ChatMessage generateChatMessage(String message) {
-        ChatMessage chatMessage = generateChatMessage();
-        chatMessage.setType(ChatMessage.TYPE_MESSAGE);
-        chatMessage.setMessage(message);
-        return chatMessage;
-    }
-
-    protected ChatMessage generateChatMessage(List<HostInfo> clientList) {
-        ChatMessage chatMessage = generateChatMessage();
-        chatMessage.setType(ChatMessage.TYPE_CHANNEL_FOUND);
-        chatMessage.setClientList(clientList);
-        return chatMessage;
-    }
-
-    protected ChatMessage generateChatMessage() {
-        ChatMessage chatMessage = new ChatMessage();
-        chatMessage.setIpAddress(myIpAddress);
-        chatMessage.setDeviceId(Utils.getDeviceId(this, mSharedPref));
-        chatMessage.setDeviceName(Utils.getDeviceName(mSharedPref));
-        chatMessage.setChannelNumber(channelNumber);
-        return chatMessage;
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -297,7 +170,6 @@ public abstract class ChatActivityAbstract extends ActivityBase {
         runThread();
         startVoiceChatThread();
     }
-
 
     @Override
     protected void onPause() {
@@ -324,12 +196,11 @@ public abstract class ChatActivityAbstract extends ActivityBase {
                 String message = bundle.getString(Constant.KEY_CLIENT_MESSAGE);
                 try {
                     ChatMessage chatMessage = new ChatMessage(message);
-                    if(channelNumber != chatMessage.getChannelNumber()) {
+                    if (channelNumber != chatMessage.getChannelNumber()) {
                         return;
                     }
                     switch (chatMessage.getType()) {
                         case ChatMessage.TYPE_MESSAGE:
-                            //mTvClientMsg.append("\n" + chatMessage.getDeviceName() + ": " + chatMessage.getMessage());
                             addChatMessage(chatMessage.getDeviceName(), chatMessage.getMessage(), false, null);
                             addToReceiverList(getHostInfoFromChatMessage(chatMessage), ClientType.TYPE_JOINER);
                             break;
@@ -351,115 +222,6 @@ public abstract class ChatActivityAbstract extends ActivityBase {
             }
         }
     };
-
-
-    protected HostInfo getHostInfoFromChatMessage(ChatMessage chatMessage) {
-        HostInfo hostInfo = new HostInfo();
-        hostInfo.setIpAddress(chatMessage.getIpAddress());
-        hostInfo.setDeviceId(chatMessage.getDeviceId());
-        hostInfo.setDeviceName(chatMessage.getDeviceName());
-        return hostInfo;
-    }
-
-    protected boolean addToReceiverList(HostInfo hostInfo, ClientType type) {
-        if(mListHostInfo == null) {
-            mListHostInfo = new ArrayList<>();
-        }
-        for(int i = 0; i< mListHostInfo.size(); i++) {
-            HostInfo hostInfoInList = mListHostInfo.get(i);
-            if(hostInfoInList.getIpAddress().equals(hostInfo.getIpAddress())) {
-                hostInfoInList.setIsOnline(true);
-                updateRecipientInfo(hostInfo, type);
-                return false;
-            }
-        }
-        if(hostInfo.getIpAddress() != null && hostInfo.getIpAddress().length()>1) {
-            hostInfo.setIsOnline(true);
-            mListHostInfo.add(hostInfo);
-            updateRecipientInfo(hostInfo, type);
-            return true;
-        }
-        return false;
-    }
-
-
-
-    protected boolean removeFromReceiverList(HostInfo hostInfo) {
-        if(mListHostInfo == null) {
-            return false;
-        }
-        for(int i = 0; i< mListHostInfo.size(); i++) {
-            HostInfo hostInfoInList = mListHostInfo.get(i);
-            if(hostInfoInList.getIpAddress().equals(hostInfo.getIpAddress())) {
-                mListHostInfo.get(i).setIsOnline(false);
-                updateRecipientInfo(hostInfo, ClientType.TYPE_QUIT);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    protected void updateRecipientInfo(HostInfo hostInfo, ClientType type) {
-        adapterRecipientList = new AdapterRecipientList(this, mListHostInfo);
-        mLvRecipientList.setAdapter(adapterRecipientList);
-        /*String name = hostInfo.getDeviceName();
-        switch (type) {
-            case TYPE_CREATOR:
-                mTvRecipientList.append(name+"\tCreated Channel\n");
-                break;
-            case TYPE_JOINER:
-                mTvRecipientList.append(name+"\tJoined\n");
-                break;
-            case TYPE_QUIT:
-                mTvRecipientList.append(name+"\tQuit\n");
-                break;
-        }*/
-    }
-
-
-
-    protected void sendChannelFoundMessage() {
-        List<HostInfo> clientList = new ArrayList<>();
-        if(isPrivateChannel() && mListHostInfo != null) {
-            clientList.addAll(mListHostInfo);
-        }
-
-        ChatMessage chatMessage = generateChatMessage(clientList);
-        try {
-            String message = chatMessage.getJsonString();
-            sendBroadCastMessage(message);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    protected void sendChannelLeftMessage() {
-        ChatMessage chatMessage = generateChatMessage();
-        chatMessage.setType(ChatMessage.TYPE_LEFT_CHANNEL);
-        try {
-            sendBroadCastMessage(chatMessage.getJsonString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    protected void sendBroadCastMessage(String message) {
-        if (mListHostInfo != null && mListHostInfo.size() > 0) {
-            for (int i = 0; i < mListHostInfo.size(); i++) {
-                HostInfo receiver = mListHostInfo.get(i);
-                if(!receiver.getIpAddress().equals(myIpAddress)) {
-                    SendMessageAsync sendMessageAsync = new SendMessageAsync();
-                    sendMessageAsync.execute(receiver, message);
-                }
-            }
-        }
-    }
-
-    protected enum ClientType {
-        TYPE_CREATOR,
-        TYPE_JOINER,
-        TYPE_QUIT
-    }
 
     protected void runThread() {
         mRunnableReceiveFile = new RunnableReceiveFile();
@@ -524,7 +286,7 @@ public abstract class ChatActivityAbstract extends ActivityBase {
     }
 
     protected void stopThread() {
-        if(mRunnableReceiveFile != null) {
+        if (mRunnableReceiveFile != null) {
             mRunnableReceiveFile.closeSocket();
             mRunnableReceiveFile.terminate();
             mThread = null;
@@ -540,7 +302,7 @@ public abstract class ChatActivityAbstract extends ActivityBase {
     }
 
     private void stopVoiceChatThread() {
-        if(mRunnableReceiveVoiceChat != null) {
+        if (mRunnableReceiveVoiceChat != null) {
             mRunnableReceiveVoiceChat.terminate();
             mRunnableReceiveVoiceChat.closeSocket();
             mThreadVoiceChat = null;
@@ -550,7 +312,6 @@ public abstract class ChatActivityAbstract extends ActivityBase {
 
     protected abstract int getLayoutID();
     protected abstract void initSubView(Bundle bundle);
-    protected abstract boolean isPrivateChannel();
     protected abstract void processJoinChannelMessage(ChatMessage chatMessage);
     protected abstract void updateRecipientList(ChatMessage chatMessage);
     protected abstract boolean hasRecipient();
