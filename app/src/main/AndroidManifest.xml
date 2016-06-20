@@ -15,6 +15,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:name=".AppController"
         android:allowBackup="true"
@@ -32,8 +34,10 @@
         <activity android:name=".activities.MainActivity" >
         </activity>
         <activity android:name=".activities.ChatActivity" />
-        <activity android:name=".activities.ActivityChatPrivateChannel" />
-        <activity android:name=".activities.ActivityChatPublicChannel" />
+        <activity android:name=".activities.ActivityChatPrivateChannel"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activities.ActivityChatPublicChannel"
+            android:screenOrientation="portrait"/>
         <activity android:name=".activities.SettingsActivity" />
         <activity android:name=".activities.ActivityChatWithIphone" />
         <activity android:name=".activities.DiscoveryActivity" />
@@ -46,7 +50,8 @@
         <activity android:name=".activities.ActivityJoinChannel"
             android:noHistory="true"/>
         <activity android:name=".activities.ActivityContactList" />
-        <activity android:name=".activities.ActivityChatOne2One" />
+        <activity android:name=".activities.ActivityChatOne2One"
+            android:screenOrientation="portrait"/>
 
         <receiver android:name=".broadcastreceiver.WifiReceiver">
             <intent-filter>

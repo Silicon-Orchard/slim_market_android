@@ -1,7 +1,9 @@
 package com.siliconorchard.walkitalkiechat.adapter;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -15,6 +17,8 @@ import android.widget.Toast;
 
 import com.siliconorchard.walkitalkiechat.R;
 import com.siliconorchard.walkitalkiechat.model.ChatMessageHistory;
+import com.siliconorchard.walkitalkiechat.utilities.Constant;
+import com.siliconorchard.walkitalkiechat.utilities.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -83,27 +87,71 @@ public class AdapterChatHistory extends BaseAdapter{
         viewHolder.tvName.setText(name+":");
         viewHolder.tvMsg.setText(chatMessage.getMessage());
         viewHolder.llPlay.setVisibility(View.GONE);
-        if(chatMessage.getFilePath() != null) {
+        if(chatMessage.getFileType() != 0) {
+            switch (chatMessage.getFileType()) {
+                case Constant.FILE_TYPE_AUDIO:
+                    initAudioLayout(viewHolder, position);
+                    break;
+                case Constant.FILE_TYPE_VIDEO:
+                    break;
+                case Constant.FILE_TYPE_PHOTO:
+                    initPhotoLayout(viewHolder, position);
+                    break;
+                case Constant.FILE_TYPE_OTHERS:
+                    break;
+            }
             viewHolder.llPlay.setVisibility(View.VISIBLE);
-            viewHolder.player = null;
-            viewHolder.llPlay.setTag(viewHolder);
-            viewHolder.ivPlay.setTag(position);
+        }
+        return convertView;
+    }
+
+    private void initAudioLayout(ViewHolder viewHolder, int position) {
+        viewHolder.player = null;
+        viewHolder.llPlay.setTag(viewHolder);
+        viewHolder.ivPlay.setTag(position);
+        viewHolder.ivPlay.setImageResource(R.drawable.ic_play);
+        viewHolder.llPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ViewHolder playHolder = (ViewHolder) v.getTag();
+                if(playHolder.player != null && playHolder.player.isPlaying()) {
+                    playHolder.ivPlay.setImageResource(R.drawable.ic_play);
+                    stopAudio(playHolder);
+                } else {
+                    playHolder.player = new MediaPlayer();
+                    playHolder.ivPlay.setImageResource(R.drawable.ic_stop);
+                    playAudio(playHolder);
+                }
+            }
+        });
+    }
+
+    private void initPhotoLayout(ViewHolder viewHolder, int position) {
+        String filePath = mListChat.get(position).getFilePath();
+        if(filePath == null) {
+            return;
+        }
+        try {
+            viewHolder.ivPlay.setImageBitmap(Utils.decodeFile(filePath, Utils.dpToPx(50)));
+            viewHolder.llPlay.setTag(filePath);
             viewHolder.llPlay.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ViewHolder playHolder = (ViewHolder) v.getTag();
-                    if(playHolder.player != null && playHolder.player.isPlaying()) {
-                        playHolder.ivPlay.setImageResource(R.drawable.ic_play);
-                        stopAudio(playHolder);
-                    } else {
-                        playHolder.player = new MediaPlayer();
-                        playHolder.ivPlay.setImageResource(R.drawable.ic_stop);
-                        playAudio(playHolder);
+                    String path = (String) v.getTag();
+                    if (path == null) {
+                        showToast();
+                        return;
                     }
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_VIEW);
+                    intent.setDataAndType(Uri.parse("file://" + path), "image/*");
+                    mActivity.startActivity(intent);
                 }
             });
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return convertView;
+
     }
 
     public void addMessage(ChatMessageHistory chatMessage) {
@@ -166,7 +214,7 @@ public class AdapterChatHistory extends BaseAdapter{
     protected void playAudio(ViewHolder viewHolder) {
         String filePath = mListChat.get((int)viewHolder.ivPlay.getTag()).getFilePath();
         if(filePath == null) {
-            Toast.makeText(mActivity, "No file recorded or received",Toast.LENGTH_LONG).show();
+            showToast();
             viewHolder.ivPlay.setImageResource(R.drawable.ic_play);
             return;
         }
@@ -178,6 +226,10 @@ public class AdapterChatHistory extends BaseAdapter{
         //isPlaying = false;
         //mBtnPlay.setText("Play");
         onPlay(false, viewHolder, null);
+    }
+
+    private void showToast() {
+        Toast.makeText(mActivity, "No file recorded or received",Toast.LENGTH_LONG).show();
     }
 
     class ViewHolder {

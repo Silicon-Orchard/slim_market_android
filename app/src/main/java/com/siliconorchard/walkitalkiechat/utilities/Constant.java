@@ -2,6 +2,8 @@ package com.siliconorchard.walkitalkiechat.utilities;
 
 import android.os.Environment;
 
+import java.io.File;
+
 /**
  * Created by siliconorchard on 4/11/2016.
  */
@@ -46,8 +48,7 @@ public class Constant {
     public static final int PUBLIC_CHANNEL_NUMBER_B = 2;
 
 
-    public static final String BASE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
-    public static final String FOLDER_NAME = "WalkieTalkie";
+    public static final String BASE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator + "WalkieTalkie"+ File.separator;
     public static final String FILE_NAME = "test.mp3";
 
     public static final int VOICE_SERVER_PORT = 43322;
@@ -57,4 +58,9 @@ public class Constant {
     public static final int FILE_TYPE_VIDEO = 2;
     public static final int FILE_TYPE_PHOTO = 3;
     public static final int FILE_TYPE_OTHERS = 4;
+
+    public static final String FOLDER_NAME_AUDIO = "audio";
+    public static final String FOLDER_NAME_VIDEO = "video";
+    public static final String FOLDER_NAME_PHOTO = "photo";
+    public static final String FOLDER_NAME_OTHER = "other";
 }

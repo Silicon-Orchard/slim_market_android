@@ -25,8 +25,6 @@ public class RunnableReceiveFile extends RunnableBase {
     private OnReceiveCallBacks mOnReceiveCallBacks;
     private int channelNumber;
 
-    private static final String FOLDER_NAME = Constant.BASE_PATH+File.separator+Constant.FOLDER_NAME;
-
     public int getChannelNumber() {
         return channelNumber;
     }
@@ -111,7 +109,22 @@ public class RunnableReceiveFile extends RunnableBase {
                     onError(errorMessage);
                     return;
                 }
-                File file = Utils.createFile(FOLDER_NAME, fileMessage.getFileName());
+                String path = null;
+                switch (fileMessage.getFileType()) {
+                    case Constant.FILE_TYPE_AUDIO:
+                        path = Constant.BASE_PATH+Constant.FOLDER_NAME_AUDIO;
+                        break;
+                    case Constant.FILE_TYPE_VIDEO:
+                        path = Constant.BASE_PATH+Constant.FOLDER_NAME_VIDEO;
+                        break;
+                    case Constant.FILE_TYPE_PHOTO:
+                        path = Constant.BASE_PATH+Constant.FOLDER_NAME_PHOTO;
+                        break;
+                    default:
+                        path = Constant.BASE_PATH+Constant.FOLDER_NAME_OTHER;
+                        break;
+                }
+                File file = Utils.createFile(path, fileMessage.getFileName());
                 if(file == null) {
                     onError("File cannot be created");
                     return;
@@ -121,6 +134,7 @@ public class RunnableReceiveFile extends RunnableBase {
                 byte[] filePart = Base64.decode(receivedDataString, Base64.NO_WRAP);
                 FileOutputStream out = new FileOutputStream(file.getAbsolutePath());
                 out.write(filePart);
+                out.flush();
                 out.close();
                 if(mOnReceiveCallBacks != null) {
                     mOnReceiveCallBacks.onPostReceive(fileMessage, file);

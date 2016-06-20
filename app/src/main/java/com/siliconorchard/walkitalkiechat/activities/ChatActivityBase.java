@@ -2,6 +2,7 @@ package com.siliconorchard.walkitalkiechat.activities;
 
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,14 +19,17 @@ import com.siliconorchard.walkitalkiechat.R;
 import com.siliconorchard.walkitalkiechat.adapter.AdapterChatHistory;
 import com.siliconorchard.walkitalkiechat.adapter.AdapterRecipientList;
 import com.siliconorchard.walkitalkiechat.asynctasks.SendMessageAsync;
+import com.siliconorchard.walkitalkiechat.asynctasks.SendVoiceDataAsync;
 import com.siliconorchard.walkitalkiechat.model.ChatMessage;
 import com.siliconorchard.walkitalkiechat.model.ChatMessageHistory;
 import com.siliconorchard.walkitalkiechat.model.FileMessage;
 import com.siliconorchard.walkitalkiechat.model.HostInfo;
+import com.siliconorchard.walkitalkiechat.utilities.Constant;
 import com.siliconorchard.walkitalkiechat.utilities.Utils;
 
 import org.json.JSONException;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -244,6 +248,60 @@ public abstract class ChatActivityBase extends ActivitySelectFileAndPhotoBase {
                 }
             }
         }
+    }
+
+    protected FileMessage sendFileMessage(File file, String fileName, int fileType) {
+        if(fileName == null) {
+            Toast.makeText(this,"No file to send",Toast.LENGTH_LONG).show();
+        }
+        FileMessage fileMessage = new FileMessage();
+        fileMessage.setDeviceName(Utils.getDeviceName(mSharedPref));
+        fileMessage.setChannelNumber(channelNumber);
+        fileMessage.setFileName(fileName);
+        fileMessage.setFileType(fileType);
+
+        try {
+            SendVoiceDataAsync sendVoiceDataAsync = new SendVoiceDataAsync();
+            sendVoiceDataAsync.setFile(file);
+            sendVoiceDataAsync.setClientIPAddressList(mListHostInfo);
+            sendVoiceDataAsync.setMyIpAddress(myIpAddress);
+            sendVoiceDataAsync.setOnPreExecute(new SendVoiceDataAsync.OnPreExecute() {
+                @Override
+                public void onPreExecute() {
+                    mLayoutProgress.setVisibility(View.VISIBLE);
+                }
+            });
+            sendVoiceDataAsync.setOnProgressUpdate(new SendVoiceDataAsync.OnProgressUpdate() {
+                @Override
+                public void onProgressUpdate(int progress) {
+                    if (progress > 100) {
+                        progress = 100;
+                    }
+                    Log.e("TAG_LOG", "Progress Value: " + progress);
+                    mTvPercent.setText("" + progress + "%");
+                    mProgress.setProgress(progress);
+                    mProgress.setProgress(progress);
+                }
+            });
+
+            sendVoiceDataAsync.setOnPostExecute(new SendVoiceDataAsync.OnPostExecute() {
+                @Override
+                public void onPostExecute(boolean isExecuted) {
+                    if(isExecuted) {
+                        //addChatMessage("$", "Voice mail sent");
+                        Toast.makeText(getApplicationContext(), "File sent",Toast.LENGTH_LONG).show();
+                    } else {
+                        //addChatMessage("$", "Voice mail sending failed");
+                        Toast.makeText(getApplicationContext(), "File sending failed",Toast.LENGTH_LONG).show();
+                    }
+                    mLayoutProgress.setVisibility(View.GONE);
+                }
+            });
+            sendVoiceDataAsync.execute(fileMessage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return fileMessage;
     }
 
     protected enum ClientType {

@@ -388,6 +388,15 @@ public class Utils {
     }
 
 
+    public static Bitmap decodeFile(String filePath, int desiredSize) throws FileNotFoundException, IOException{
+        File file = new File(filePath);
+        if(desiredSize <= 0) {
+            return decodeFile(file);
+        } else {
+            return decodeFile(file, desiredSize);
+        }
+    }
+
     /**
      * Decodes bitmap from file to a desired scale
      * @param file {Image file}

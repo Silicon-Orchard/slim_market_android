@@ -1,5 +1,6 @@
 package com.siliconorchard.walkitalkiechat.activities;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +24,7 @@ import com.siliconorchard.walkitalkiechat.model.FileMessage;
 import com.siliconorchard.walkitalkiechat.runnable.RunnableReceiveFile;
 import com.siliconorchard.walkitalkiechat.runnable.RunnableReceiveVoiceChat;
 import com.siliconorchard.walkitalkiechat.utilities.Constant;
+import com.siliconorchard.walkitalkiechat.utilities.Utils;
 
 import org.json.JSONException;
 
@@ -261,7 +263,22 @@ public abstract class ChatActivityAbstract extends ChatActivityBase {
                         @Override
                         public void run() {
                             //mTvClientMsg.append("\nYou received a voice mail from " + voiceMessage.getDeviceName());
-                            addFileMessage(fileMessage, "Voice mail received.", false, file.getAbsolutePath());
+                            String message = null;
+                            switch (fileMessage.getFileType()) {
+                                case Constant.FILE_TYPE_AUDIO:
+                                    message = "Voice mail received.";
+                                    break;
+                                case Constant.FILE_TYPE_VIDEO:
+                                    message = "Video message received.";
+                                    break;
+                                case Constant.FILE_TYPE_PHOTO:
+                                    message = "Photo received.";
+                                    break;
+                                default:
+                                    message = "File received.";
+                                    break;
+                            }
+                            addFileMessage(fileMessage, message, false, file.getAbsolutePath());
                             //mLayoutPlay.setVisibility(View.VISIBLE);
                             //mLayoutProgress.setVisibility(View.GONE);
                         }
@@ -307,6 +324,17 @@ public abstract class ChatActivityAbstract extends ChatActivityBase {
             mRunnableReceiveVoiceChat.closeSocket();
             mThreadVoiceChat = null;
             mRunnableReceiveVoiceChat = null;
+        }
+    }
+
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == Constant.REQUEST_CODE_SELECT_SINGLE_PICTURE && resultCode == Activity.RESULT_OK) {
+            initUriAndFile(data);
+            FileMessage fileMessage = sendFileMessage(mSelectedFile, mSelectedFile.getName(), Constant.FILE_TYPE_PHOTO);
+            addFileMessage(fileMessage, "Photo sent", true, mSelectedFile.getAbsolutePath());
         }
     }
 

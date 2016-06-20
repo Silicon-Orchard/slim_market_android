@@ -102,7 +102,22 @@ public class RunnableReceiveFileTCP extends RunnableBase {
                 mOnReceiveCallBacks.onPreReceive(fileMessage);
             }
             if(mFile == null) {
-                mFile = Utils.createFile(Constant.BASE_PATH + File.separator + Constant.FOLDER_NAME, fileMessage.getDeviceName() + ".mp3");
+                String path = null;
+                switch (fileMessage.getFileType()) {
+                    case Constant.FILE_TYPE_AUDIO:
+                        path = Constant.BASE_PATH+Constant.FOLDER_NAME_AUDIO;
+                        break;
+                    case Constant.FILE_TYPE_VIDEO:
+                        path = Constant.BASE_PATH+Constant.FOLDER_NAME_VIDEO;
+                        break;
+                    case Constant.FILE_TYPE_PHOTO:
+                        path = Constant.BASE_PATH+Constant.FOLDER_NAME_PHOTO;
+                        break;
+                    default:
+                        path = Constant.BASE_PATH+Constant.FOLDER_NAME_OTHER;
+                        break;
+                }
+                mFile = Utils.createFile(path, fileMessage.getFileName());
             }
             if(mFile == null) {
                 onError("File cannot be created");

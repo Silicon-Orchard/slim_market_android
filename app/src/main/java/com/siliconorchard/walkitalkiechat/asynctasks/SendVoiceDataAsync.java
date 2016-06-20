@@ -27,13 +27,12 @@ public class SendVoiceDataAsync extends AsyncTask<FileMessage, Integer, Boolean>
     private OnProgressUpdate mOnProgressUpdate;
     private OnPreExecute mOnPreExecute;
     private OnPostExecute mOnPostExecute;
-    private static final int FILE_PACKET_LENGTH = 2000;
+    private static final int FILE_PACKET_LENGTH = 16384;
 
     private File mFile;
     private List<HostInfo> mHostClientList;
 
     private String myIpAddress;
-    private int fileType;
 
     public String getMyIpAddress() {
         return myIpAddress;
@@ -83,14 +82,6 @@ public class SendVoiceDataAsync extends AsyncTask<FileMessage, Integer, Boolean>
         this.mFile = file;
     }
 
-    public int getFileType() {
-        return fileType;
-    }
-
-    public void setFileType(int fileType) {
-        this.fileType = fileType;
-    }
-
     @Override
     protected void onPreExecute() {
         if(mOnPreExecute != null) {
@@ -120,7 +111,7 @@ public class SendVoiceDataAsync extends AsyncTask<FileMessage, Integer, Boolean>
                 numOfMessages++;
             }
             fileMessage.setTotalChunkCount(numOfMessages);
-            fileMessage.setFileType(fileType);
+            fileMessage.setFileType(fileMessage.getFileType());
 
             int sentSize = 0;
             int currentMessage = 0;

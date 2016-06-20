@@ -51,8 +51,6 @@ public class RecordVoiceActivityForResult extends ActivityBase{
     private boolean isRecording;
     private boolean isPlaying;
 
-    private static final String BASE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
-    private static final String FOLDER_NAME = "WalkieTalkie";
     private String FILE_NAME;
     private File mFile;
     private BroadcastReceiver mReceiverBluetoothSco;
@@ -226,7 +224,7 @@ public class RecordVoiceActivityForResult extends ActivityBase{
 
     private void createFile(String fileName) {
         try {
-            String folderPath = BASE_PATH+File.separator+FOLDER_NAME;
+            String folderPath = Constant.BASE_PATH+Constant.FOLDER_NAME_AUDIO;
             File folder = new File(folderPath);
             Log.e("TAG_LOG","Folder Path: "+folderPath);
             if(!folder.exists()) {
@@ -391,11 +389,11 @@ public class RecordVoiceActivityForResult extends ActivityBase{
         fileMessage.setDeviceName(Utils.getDeviceName(mSharedPref));
         fileMessage.setChannelNumber(channelNumber);
         fileMessage.setFileName(FILE_NAME);
+        fileMessage.setFileType(Constant.FILE_TYPE_AUDIO);
 
         try {
             SendVoiceDataAsync sendVoiceDataAsync = new SendVoiceDataAsync();
             sendVoiceDataAsync.setFile(mFile);
-            sendVoiceDataAsync.setFileType(Constant.FILE_TYPE_AUDIO);
             sendVoiceDataAsync.setClientIPAddressList(mListHostInfo);
             sendVoiceDataAsync.setMyIpAddress(myIpAddress);
             sendVoiceDataAsync.setOnPreExecute(new SendVoiceDataAsync.OnPreExecute() {
