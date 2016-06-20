@@ -3,7 +3,7 @@ package com.siliconorchard.walkitalkiechat.asynctasks;
 import android.os.AsyncTask;
 
 import com.siliconorchard.walkitalkiechat.model.HostInfo;
-import com.siliconorchard.walkitalkiechat.model.VoiceMessage;
+import com.siliconorchard.walkitalkiechat.model.FileMessage;
 import com.siliconorchard.walkitalkiechat.utilities.Constant;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by adminsiriconorchard on 5/16/16.
  */
-public class SendVoiceChatAsync extends AsyncTask<VoiceMessage, Integer, Boolean> {
+public class SendVoiceChatAsync extends AsyncTask<FileMessage, Integer, Boolean> {
 
     private byte[] voiceBytes;
 
@@ -47,15 +47,15 @@ public class SendVoiceChatAsync extends AsyncTask<VoiceMessage, Integer, Boolean
     }
 
     @Override
-    protected Boolean doInBackground(VoiceMessage... params) {
+    protected Boolean doInBackground(FileMessage... params) {
         if(mHostClientList == null || mHostClientList.size() < 1) {
             return false;
         }
         try {
-            VoiceMessage voiceMessage = null;//params[0];
+            FileMessage fileMessage = null;//params[0];
             String message = null;
-            if(voiceMessage != null) {
-                message = voiceMessage.getJsonString();
+            if(fileMessage != null) {
+                message = fileMessage.getJsonString();
             }
             for(int i = 0; i<mHostClientList.size(); i++) {
                 if(!mHostClientList.get(i).getIpAddress().equals(myIpAddress)) {

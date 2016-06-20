@@ -5,7 +5,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.siliconorchard.walkitalkiechat.model.HostInfo;
-import com.siliconorchard.walkitalkiechat.model.VoiceMessage;
+import com.siliconorchard.walkitalkiechat.model.FileMessage;
 import com.siliconorchard.walkitalkiechat.utilities.Constant;
 import com.siliconorchard.walkitalkiechat.utilities.Utils;
 
@@ -13,16 +13,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.util.List;
 
 /**
  * Created by adminsiriconorchard on 5/6/16.
  */
-public class SendVoiceDataAsyncTCP extends AsyncTask<VoiceMessage, Integer, Boolean> {
+public class SendVoiceDataAsyncTCP extends AsyncTask<FileMessage, Integer, Boolean> {
 
     private int totalSize;
 
@@ -91,7 +88,7 @@ public class SendVoiceDataAsyncTCP extends AsyncTask<VoiceMessage, Integer, Bool
     }
 
     @Override
-    protected Boolean doInBackground(VoiceMessage... params) {
+    protected Boolean doInBackground(FileMessage... params) {
         boolean isSuccess = false;
         if(mFile == null || mHostClientList == null || mHostClientList.size() < 1) {
             return false;
@@ -104,9 +101,9 @@ public class SendVoiceDataAsyncTCP extends AsyncTask<VoiceMessage, Integer, Bool
 
             Log.e("TAG_LOG", "Sending Message\n" + wholeMessage);
 
-            VoiceMessage voiceMessage = params[0];
-            voiceMessage.setVoiceMessage(wholeMessage);
-            String message = voiceMessage.getJsonString();
+            FileMessage fileMessage = params[0];
+            fileMessage.setVoiceMessage(wholeMessage);
+            String message = fileMessage.getJsonString();
             for(int i = 0; i<mHostClientList.size(); i++) {
                 String ipAddress = mHostClientList.get(i).getIpAddress();
                 if(!ipAddress.equals(myIpAddress)) {

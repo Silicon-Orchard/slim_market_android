@@ -6,7 +6,7 @@ import org.json.JSONObject;
 /**
  * Created by adminsiriconorchard on 5/10/16.
  */
-public class VoiceMessage {
+public class FileMessage {
     private String deviceName;
     private int totalChunkCount;
     private int currentChunkNo;
@@ -22,11 +22,11 @@ public class VoiceMessage {
     private static final String JSON_KEY_FILE_NAME = "file_name";
 
 
-    public VoiceMessage() {
+    public FileMessage() {
 
     }
 
-    public VoiceMessage(String jsonString) throws JSONException {
+    public FileMessage(String jsonString) throws JSONException {
         JSONObject jsonObject = new JSONObject(jsonString);
         this.deviceName = jsonObject.getString(JSON_KEY_DEVICE_NAME);
         if(jsonObject.has(JSON_KEY_TOTAL_CHUNK_COUNT)) {

@@ -5,7 +5,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.siliconorchard.walkitalkiechat.model.HostInfo;
-import com.siliconorchard.walkitalkiechat.model.VoiceMessage;
+import com.siliconorchard.walkitalkiechat.model.FileMessage;
 import com.siliconorchard.walkitalkiechat.utilities.Constant;
 import com.siliconorchard.walkitalkiechat.utilities.Utils;
 
@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Created by adminsiriconorchard on 5/6/16.
  */
-public class SendVoiceDataAsync extends AsyncTask<VoiceMessage, Integer, Boolean> {
+public class SendVoiceDataAsync extends AsyncTask<FileMessage, Integer, Boolean> {
 
     private int totalSize;
 
@@ -90,7 +90,7 @@ public class SendVoiceDataAsync extends AsyncTask<VoiceMessage, Integer, Boolean
     }
 
     @Override
-    protected Boolean doInBackground(VoiceMessage... params) {
+    protected Boolean doInBackground(FileMessage... params) {
         if(mFile == null || mHostClientList == null || mHostClientList.size() < 1) {
             return false;
         }
@@ -102,7 +102,7 @@ public class SendVoiceDataAsync extends AsyncTask<VoiceMessage, Integer, Boolean
 
             Log.e("TAG_LOG", "Sending Message\n" + wholeMessage);
 
-            VoiceMessage voiceMessage = params[0];
+            FileMessage fileMessage = params[0];
 
             totalSize = wholeMessage.length();
             Log.e("TAG_LOG", "Total size: " + totalSize);
@@ -110,7 +110,7 @@ public class SendVoiceDataAsync extends AsyncTask<VoiceMessage, Integer, Boolean
             if(totalSize % FILE_PACKET_LENGTH != 0) {
                 numOfMessages++;
             }
-            voiceMessage.setTotalChunkCount(numOfMessages);
+            fileMessage.setTotalChunkCount(numOfMessages);
 
             int sentSize = 0;
             int currentMessage = 0;
@@ -123,9 +123,9 @@ public class SendVoiceDataAsync extends AsyncTask<VoiceMessage, Integer, Boolean
                     isContinue = false;
                 }
                 String filePart = wholeMessage.substring(prevIndex, sentSize);
-                voiceMessage.setCurrentChunkNo(++currentMessage);
-                voiceMessage.setVoiceMessage(filePart);
-                String message = voiceMessage.getJsonString();
+                fileMessage.setCurrentChunkNo(++currentMessage);
+                fileMessage.setVoiceMessage(filePart);
+                String message = fileMessage.getJsonString();
 
 
 

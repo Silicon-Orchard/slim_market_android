@@ -27,7 +27,7 @@ import com.siliconorchard.walkitalkiechat.R;
 import com.siliconorchard.walkitalkiechat.asynctasks.SendVoiceChatAsync;
 import com.siliconorchard.walkitalkiechat.asynctasks.SendVoiceDataAsync;
 import com.siliconorchard.walkitalkiechat.model.HostInfo;
-import com.siliconorchard.walkitalkiechat.model.VoiceMessage;
+import com.siliconorchard.walkitalkiechat.model.FileMessage;
 import com.siliconorchard.walkitalkiechat.runnable.RunnableVoiceRecordProgress;
 import com.siliconorchard.walkitalkiechat.utilities.Constant;
 import com.siliconorchard.walkitalkiechat.utilities.Utils;
@@ -387,10 +387,10 @@ public class RecordVoiceActivityForResult extends ActivityBase{
         if(mFile == null) {
             Toast.makeText(this,"No file to send",Toast.LENGTH_LONG).show();
         }
-        VoiceMessage voiceMessage = new VoiceMessage();
-        voiceMessage.setDeviceName(Utils.getDeviceName(mSharedPref));
-        voiceMessage.setChannelNumber(channelNumber);
-        voiceMessage.setFileName(FILE_NAME);
+        FileMessage fileMessage = new FileMessage();
+        fileMessage.setDeviceName(Utils.getDeviceName(mSharedPref));
+        fileMessage.setChannelNumber(channelNumber);
+        fileMessage.setFileName(FILE_NAME);
 
         try {
             SendVoiceDataAsync sendVoiceDataAsync = new SendVoiceDataAsync();
@@ -430,7 +430,7 @@ public class RecordVoiceActivityForResult extends ActivityBase{
                     mLayoutProgress.setVisibility(View.GONE);
                 }
             });
-            sendVoiceDataAsync.execute(voiceMessage);
+            sendVoiceDataAsync.execute(fileMessage);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -457,9 +457,9 @@ public class RecordVoiceActivityForResult extends ActivityBase{
                     minBufferSize);
 
             audioRecord.startRecording();
-            VoiceMessage voiceMessage = new VoiceMessage();
-            voiceMessage.setDeviceName(Utils.getDeviceName(mSharedPref));
-            voiceMessage.setChannelNumber(channelNumber);
+            //VoiceMessage voiceMessage = new VoiceMessage();
+            //voiceMessage.setDeviceName(Utils.getDeviceName(mSharedPref));
+            //voiceMessage.setChannelNumber(channelNumber);
 
             while(isStreaming){
                 int numberOfShort = audioRecord.read(audioData, 0, minBufferSize);

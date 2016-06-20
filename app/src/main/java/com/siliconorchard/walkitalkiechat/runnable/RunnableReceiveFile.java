@@ -3,7 +3,7 @@ package com.siliconorchard.walkitalkiechat.runnable;
 import android.util.Base64;
 import android.util.Log;
 
-import com.siliconorchard.walkitalkiechat.model.VoiceMessage;
+import com.siliconorchard.walkitalkiechat.model.FileMessage;
 import com.siliconorchard.walkitalkiechat.utilities.Constant;
 import com.siliconorchard.walkitalkiechat.utilities.Utils;
 
@@ -79,12 +79,12 @@ public class RunnableReceiveFile extends RunnableBase {
     private synchronized void processData(byte[] receivedData) {
         try {
             String message = new String(receivedData);
-            VoiceMessage voiceMessage = new VoiceMessage(message);
-            if(voiceMessage.getChannelNumber() != channelNumber) {
+            FileMessage fileMessage = new FileMessage(message);
+            if(fileMessage.getChannelNumber() != channelNumber) {
                 return;
             }
             if(numOfReceivedMsg == 0 && mOnReceiveCallBacks != null) {
-                mOnReceiveCallBacks.onPreReceive(voiceMessage);
+                mOnReceiveCallBacks.onPreReceive(fileMessage);
             }
             numOfReceivedMsg++;
             //Log.e("TAG_LOG","Received message\n"+message);
@@ -96,22 +96,22 @@ public class RunnableReceiveFile extends RunnableBase {
 
 
 
-            final boolean isContinue = voiceMessage.getCurrentChunkNo()<voiceMessage.getTotalChunkCount();
-            Log.e("TAG_LOG","Current/Total, isContinue: "+voiceMessage.getCurrentChunkNo()+"/"+voiceMessage.getTotalChunkCount()+","+isContinue);
+            final boolean isContinue = fileMessage.getCurrentChunkNo()< fileMessage.getTotalChunkCount();
+            Log.e("TAG_LOG","Current/Total, isContinue: "+ fileMessage.getCurrentChunkNo()+"/"+ fileMessage.getTotalChunkCount()+","+isContinue);
             if(mOnReceiveCallBacks != null && isContinue) {
-                mOnReceiveCallBacks.onProgressUpdate(voiceMessage);
+                mOnReceiveCallBacks.onProgressUpdate(fileMessage);
             }
 
             if(isContinue) {
-                receivedDataString = receivedDataString + voiceMessage.getVoiceMessage();
+                receivedDataString = receivedDataString + fileMessage.getVoiceMessage();
             } else {
-                receivedDataString = receivedDataString + voiceMessage.getVoiceMessage();
-                if(numOfReceivedMsg != voiceMessage.getTotalChunkCount()) {
-                    String errorMessage = "Data missing occurs,(Received/Sent) "+numOfReceivedMsg+"/"+voiceMessage.getTotalChunkCount();
+                receivedDataString = receivedDataString + fileMessage.getVoiceMessage();
+                if(numOfReceivedMsg != fileMessage.getTotalChunkCount()) {
+                    String errorMessage = "Data missing occurs,(Received/Sent) "+numOfReceivedMsg+"/"+ fileMessage.getTotalChunkCount();
                     onError(errorMessage);
                     return;
                 }
-                File file = Utils.createFile(FOLDER_NAME, voiceMessage.getFileName());
+                File file = Utils.createFile(FOLDER_NAME, fileMessage.getFileName());
                 if(file == null) {
                     onError("File cannot be created");
                     return;
@@ -123,7 +123,7 @@ public class RunnableReceiveFile extends RunnableBase {
                 out.write(filePart);
                 out.close();
                 if(mOnReceiveCallBacks != null) {
-                    mOnReceiveCallBacks.onPostReceive(voiceMessage, file);
+                    mOnReceiveCallBacks.onPostReceive(fileMessage, file);
                 }
                 receivedDataString = null;
                 numOfReceivedMsg = 0;
@@ -145,9 +145,9 @@ public class RunnableReceiveFile extends RunnableBase {
 
 
     public static interface OnReceiveCallBacks {
-        public abstract void onPreReceive(VoiceMessage voiceMessage);
-        public abstract void onProgressUpdate(final VoiceMessage voiceMessage);
-        public abstract void onPostReceive(VoiceMessage voiceMessage, File file);
+        public abstract void onPreReceive(FileMessage fileMessage);
+        public abstract void onProgressUpdate(final FileMessage fileMessage);
+        public abstract void onPostReceive(FileMessage fileMessage, File file);
         public abstract void onErrorOccur(String errorText);
     }
 

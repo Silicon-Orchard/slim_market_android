@@ -19,7 +19,7 @@ import com.siliconorchard.walkitalkiechat.R;
 import com.siliconorchard.walkitalkiechat.adapter.AdapterChatHistory;
 import com.siliconorchard.walkitalkiechat.model.ChatMessage;
 import com.siliconorchard.walkitalkiechat.model.HostInfo;
-import com.siliconorchard.walkitalkiechat.model.VoiceMessage;
+import com.siliconorchard.walkitalkiechat.model.FileMessage;
 import com.siliconorchard.walkitalkiechat.runnable.RunnableReceiveFile;
 import com.siliconorchard.walkitalkiechat.runnable.RunnableReceiveVoiceChat;
 import com.siliconorchard.walkitalkiechat.utilities.Constant;
@@ -227,7 +227,7 @@ public abstract class ChatActivityAbstract extends ChatActivityBase {
         mRunnableReceiveFile = new RunnableReceiveFile();
         mRunnableReceiveFile.setOnReceiveCallBacks(new RunnableReceiveFile.OnReceiveCallBacks() {
             @Override
-            public void onPreReceive(final VoiceMessage voiceMessage) {
+            public void onPreReceive(final FileMessage fileMessage) {
                 mTvPercent.post(new Runnable() {
                     @Override
                     public void run() {
@@ -238,13 +238,13 @@ public abstract class ChatActivityAbstract extends ChatActivityBase {
             }
 
             @Override
-            public void onProgressUpdate(final VoiceMessage voiceMessage) {
+            public void onProgressUpdate(final FileMessage fileMessage) {
                 mTvPercent.post(new Runnable() {
                     @Override
                     public void run() {
                         mProgress.setVisibility(View.VISIBLE);
                         mTvPercent.setVisibility(View.VISIBLE);
-                        int progress = voiceMessage.getCurrentChunkNo() * 100 / voiceMessage.getTotalChunkCount();
+                        int progress = fileMessage.getCurrentChunkNo() * 100 / fileMessage.getTotalChunkCount();
                         if (progress > 100) {
                             progress = 100;
                         }
@@ -255,13 +255,13 @@ public abstract class ChatActivityAbstract extends ChatActivityBase {
             }
 
             @Override
-            public void onPostReceive(final VoiceMessage voiceMessage, final File file) {
-                if (voiceMessage.getCurrentChunkNo() >= voiceMessage.getTotalChunkCount()) {
+            public void onPostReceive(final FileMessage fileMessage, final File file) {
+                if (fileMessage.getCurrentChunkNo() >= fileMessage.getTotalChunkCount()) {
                     mTvPercent.post(new Runnable() {
                         @Override
                         public void run() {
                             //mTvClientMsg.append("\nYou received a voice mail from " + voiceMessage.getDeviceName());
-                            addChatMessage(voiceMessage.getDeviceName(), "Voice mail received.", false, file.getAbsolutePath());
+                            addChatMessage(fileMessage.getDeviceName(), "Voice mail received.", false, file.getAbsolutePath());
                             //mLayoutPlay.setVisibility(View.VISIBLE);
                             //mLayoutProgress.setVisibility(View.GONE);
                         }

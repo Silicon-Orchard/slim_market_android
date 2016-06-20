@@ -3,7 +3,7 @@ package com.siliconorchard.walkitalkiechat.runnable;
 import android.util.Base64;
 import android.util.Log;
 
-import com.siliconorchard.walkitalkiechat.model.VoiceMessage;
+import com.siliconorchard.walkitalkiechat.model.FileMessage;
 import com.siliconorchard.walkitalkiechat.utilities.Constant;
 import com.siliconorchard.walkitalkiechat.utilities.Utils;
 
@@ -94,26 +94,26 @@ public class RunnableReceiveFileTCP extends RunnableBase {
     private synchronized void processVoiceMessage(String message) {
         try{
             Log.e("TAG_LOG",message);
-            VoiceMessage voiceMessage = new VoiceMessage(message);
-            if(voiceMessage.getChannelNumber() != channelNumber) {
+            FileMessage fileMessage = new FileMessage(message);
+            if(fileMessage.getChannelNumber() != channelNumber) {
                 return;
             }
             if(mOnReceiveCallBacks != null) {
-                mOnReceiveCallBacks.onPreReceive(voiceMessage);
+                mOnReceiveCallBacks.onPreReceive(fileMessage);
             }
             if(mFile == null) {
-                mFile = Utils.createFile(Constant.BASE_PATH + File.separator + Constant.FOLDER_NAME, voiceMessage.getDeviceName() + ".mp3");
+                mFile = Utils.createFile(Constant.BASE_PATH + File.separator + Constant.FOLDER_NAME, fileMessage.getDeviceName() + ".mp3");
             }
             if(mFile == null) {
                 onError("File cannot be created");
                 return;
             }
-            byte[] filePart = Base64.decode(voiceMessage.getVoiceMessage(), Base64.NO_WRAP);
+            byte[] filePart = Base64.decode(fileMessage.getVoiceMessage(), Base64.NO_WRAP);
             FileOutputStream out = new FileOutputStream(mFile.getAbsolutePath());
             out.write(filePart);
             out.close();
             if(mOnReceiveCallBacks != null) {
-                mOnReceiveCallBacks.onPostReceive(voiceMessage, mFile);
+                mOnReceiveCallBacks.onPostReceive(fileMessage, mFile);
             }
             mFile = null;
         } catch (Exception e) {
@@ -146,9 +146,9 @@ public class RunnableReceiveFileTCP extends RunnableBase {
     }
 
     public static interface OnReceiveCallBacks {
-        public abstract void onPreReceive(VoiceMessage voiceMessage);
-        public abstract void onProgressUpdate(final VoiceMessage voiceMessage);
-        public abstract void onPostReceive(VoiceMessage voiceMessage, File file);
+        public abstract void onPreReceive(FileMessage fileMessage);
+        public abstract void onProgressUpdate(final FileMessage fileMessage);
+        public abstract void onPostReceive(FileMessage fileMessage, File file);
         public abstract void onErrorOccur(String errorText);
     }
 }

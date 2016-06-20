@@ -52,4 +52,9 @@ public class Constant {
 
     public static final int VOICE_SERVER_PORT = 43322;
     public static final int VOICE_CHAT_PORT = 43323;
+
+    public static final int FILE_TYPE_AUDIO = 1;
+    public static final int FILE_TYPE_VIDEO = 2;
+    public static final int FILE_TYPE_PHOTO = 3;
+    public static final int FILE_TYPE_OTHERS = 4;
 }

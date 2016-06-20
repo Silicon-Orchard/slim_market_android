@@ -122,10 +122,4 @@ public class ChatMessageHistory implements Parcelable {
             return new ChatMessageHistory[size];
         }
     };
-
-
-    public static final int FILE_TYPE_AUDIO = 1;
-    public static final int FILE_TYPE_VIDEO = 2;
-    public static final int FILE_TYPE_PHOTO = 3;
-    public static final int FILE_TYPE_OTHERS = 4;
 }
