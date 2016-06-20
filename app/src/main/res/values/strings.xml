@@ -209,4 +209,6 @@
     <string name="this_function_is_under_construction">This function is under construction</string>
     <string name="attach_file">Attach a file</string>
     <string name="attach_photo">Attach a photo</string>
+    <string name="select_option">Select Options</string>
+    <string name="capture">Capture</string>
 </resources>

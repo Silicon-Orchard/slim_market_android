@@ -10,9 +10,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
@@ -31,6 +36,7 @@ import org.json.JSONException;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -364,5 +370,75 @@ public class Utils {
         builder.setCancelable(false);
         builder.setIcon(R.drawable.ic_info);
         return builder;
+    }
+
+    public static String getRealPathFromURI(Context context, Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = context.getContentResolver().query(contentUri,  proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+
+    /**
+     * Decodes bitmap from file to a desired scale
+     * @param file {Image file}
+     * @param desiredSize {Desired size of the image}
+     * @return {Bitmap}
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public static Bitmap decodeFile(File file, int desiredSize) throws FileNotFoundException, IOException{
+        Bitmap bitmap = null;
+
+        //Decode image size
+        BitmapFactory.Options options1 = new BitmapFactory.Options();
+        options1.inJustDecodeBounds = true;
+
+        FileInputStream fis = new FileInputStream(file);
+        BitmapFactory.decodeStream(fis, null, options1);
+        fis.close();
+
+        int scale = 1;
+        if (options1.outHeight > desiredSize || options1.outWidth > desiredSize) {
+            scale = (int)Math.pow(2, (int) Math.ceil(Math.log(desiredSize /
+                    (double) Math.max(options1.outHeight, options1.outWidth)) / Math.log(0.5)));
+        }
+
+        //Decode with inSampleSize
+        BitmapFactory.Options options2 = new BitmapFactory.Options();
+        options2.inSampleSize = scale;
+        fis = new FileInputStream(file);
+        bitmap = BitmapFactory.decodeStream(fis, null, options2);
+        fis.close();
+
+        return bitmap;
+    }
+
+
+    /**
+     * Decodes bitmap from file to a desired scale
+     * @param file {Image file}
+     * @return {Bitmap}
+     * @throws FileNotFoundException
+     * @throws IOException
+     */
+    public static Bitmap decodeFile(File file) throws FileNotFoundException, IOException{
+        Bitmap bitmap = null;
+
+
+        FileInputStream fis = new FileInputStream(file);
+        bitmap = BitmapFactory.decodeStream(fis);
+        fis.close();
+
+        return bitmap;
     }
 }

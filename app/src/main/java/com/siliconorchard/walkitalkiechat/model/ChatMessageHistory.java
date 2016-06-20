@@ -15,6 +15,7 @@ public class ChatMessageHistory implements Parcelable {
     private boolean isSent;
     private String filePath;
     private String fileName;
+    private int fileType;
 
     public ChatMessageHistory() {
 
@@ -28,6 +29,7 @@ public class ChatMessageHistory implements Parcelable {
         this.isSent = in.readInt() == 1 ? true : false;
         this.filePath = in.readString();
         this.fileName = in.readString();
+        this.fileType = in.readInt();
     }
 
     public String getIpAddress() {
@@ -86,6 +88,14 @@ public class ChatMessageHistory implements Parcelable {
         this.fileName = fileName;
     }
 
+    public int getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(int fileType) {
+        this.fileType = fileType;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -100,6 +110,7 @@ public class ChatMessageHistory implements Parcelable {
         dest.writeInt(this.isSent ? 1 : 0);
         dest.writeString(this.filePath);
         dest.writeString(this.fileName);
+        dest.writeInt(this.fileType);
     }
 
     public static final Creator CREATOR = new Creator() {
@@ -111,4 +122,10 @@ public class ChatMessageHistory implements Parcelable {
             return new ChatMessageHistory[size];
         }
     };
+
+
+    public static final int FILE_TYPE_AUDIO = 1;
+    public static final int FILE_TYPE_VIDEO = 2;
+    public static final int FILE_TYPE_PHOTO = 3;
+    public static final int FILE_TYPE_OTHERS = 4;
 }

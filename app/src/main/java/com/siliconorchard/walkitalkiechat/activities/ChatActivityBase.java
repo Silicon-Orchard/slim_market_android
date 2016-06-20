@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Created by adminsiriconorchard on 6/17/16.
  */
-public abstract class ChatActivityBase extends ActivityBase {
+public abstract class ChatActivityBase extends ActivitySelectFileAndPhotoBase {
 
     protected TextView mTvTitle;
     protected LinearLayout mLayoutBack;
@@ -133,7 +133,8 @@ public abstract class ChatActivityBase extends ActivityBase {
         llUploadPhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toastUnderConstructionMessage();
+                //toastUnderConstructionMessage();
+                selectPictureOption();
                 popupWindow.dismiss();
             }
         });

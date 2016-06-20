@@ -39,6 +39,7 @@ public class Constant {
 
     public static final int ACTIVITY_RESULT_ADD_CLIENT = 1111;
     public static final int ACTIVITY_RESULT_RECORD_VOICE = 1112;
+    public static final int REQUEST_CODE_SELECT_SINGLE_PICTURE = 4551;
 
     public static final long WAITING_TIME = 2000;
     public static final int PUBLIC_CHANNEL_NUMBER_A = 1;
