@@ -13,6 +13,7 @@ public class FileMessage {
     private String voiceMessage;
     private int channelNumber;
     private String fileName;
+    private int fileType;
 
     private static final String JSON_KEY_DEVICE_NAME = "device_name";
     private static final String JSON_KEY_TOTAL_CHUNK_COUNT = "voice_message_chunkCount";
@@ -20,6 +21,7 @@ public class FileMessage {
     private static final String JSON_KEY_VOICE_MESSAGE = "voice_message";
     private static final String JSON_KEY_CHANNEL_NUMBER = "channel_id";
     private static final String JSON_KEY_FILE_NAME = "file_name";
+    private static final String JSON_KEY_FILE_TYPE = "file_type";
 
 
     public FileMessage() {
@@ -36,6 +38,7 @@ public class FileMessage {
         this.voiceMessage = jsonObject.getString(JSON_KEY_VOICE_MESSAGE);
         this.channelNumber = jsonObject.getInt(JSON_KEY_CHANNEL_NUMBER);
         this.fileName = jsonObject.getString(JSON_KEY_FILE_NAME);
+        this.fileType = jsonObject.getInt(JSON_KEY_FILE_TYPE);
     }
 
     public String getJsonString() throws JSONException {
@@ -46,6 +49,7 @@ public class FileMessage {
         jsonObject.put(JSON_KEY_VOICE_MESSAGE, this.voiceMessage);
         jsonObject.put(JSON_KEY_CHANNEL_NUMBER, this.channelNumber);
         jsonObject.put(JSON_KEY_FILE_NAME, this.fileName);
+        jsonObject.put(JSON_KEY_FILE_TYPE, this.fileType);
         return jsonObject.toString();
     }
 
@@ -95,5 +99,13 @@ public class FileMessage {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public int getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(int fileType) {
+        this.fileType = fileType;
     }
 }

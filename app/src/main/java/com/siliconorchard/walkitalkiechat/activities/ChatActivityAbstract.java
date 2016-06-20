@@ -261,7 +261,7 @@ public abstract class ChatActivityAbstract extends ChatActivityBase {
                         @Override
                         public void run() {
                             //mTvClientMsg.append("\nYou received a voice mail from " + voiceMessage.getDeviceName());
-                            addChatMessage(fileMessage.getDeviceName(), "Voice mail received.", false, file.getAbsolutePath());
+                            addFileMessage(fileMessage, "Voice mail received.", false, file.getAbsolutePath());
                             //mLayoutPlay.setVisibility(View.VISIBLE);
                             //mLayoutProgress.setVisibility(View.GONE);
                         }

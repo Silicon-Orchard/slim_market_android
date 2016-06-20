@@ -395,6 +395,7 @@ public class RecordVoiceActivityForResult extends ActivityBase{
         try {
             SendVoiceDataAsync sendVoiceDataAsync = new SendVoiceDataAsync();
             sendVoiceDataAsync.setFile(mFile);
+            sendVoiceDataAsync.setFileType(Constant.FILE_TYPE_AUDIO);
             sendVoiceDataAsync.setClientIPAddressList(mListHostInfo);
             sendVoiceDataAsync.setMyIpAddress(myIpAddress);
             sendVoiceDataAsync.setOnPreExecute(new SendVoiceDataAsync.OnPreExecute() {

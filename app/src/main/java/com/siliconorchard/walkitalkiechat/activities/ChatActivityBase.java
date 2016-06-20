@@ -20,6 +20,7 @@ import com.siliconorchard.walkitalkiechat.adapter.AdapterRecipientList;
 import com.siliconorchard.walkitalkiechat.asynctasks.SendMessageAsync;
 import com.siliconorchard.walkitalkiechat.model.ChatMessage;
 import com.siliconorchard.walkitalkiechat.model.ChatMessageHistory;
+import com.siliconorchard.walkitalkiechat.model.FileMessage;
 import com.siliconorchard.walkitalkiechat.model.HostInfo;
 import com.siliconorchard.walkitalkiechat.utilities.Utils;
 
@@ -74,6 +75,21 @@ public abstract class ChatActivityBase extends ActivitySelectFileAndPhotoBase {
         if (filePath != null) {
             chatMessage.setFilePath(filePath);
         }
+        adapterChatHistory.addMessage(chatMessage);
+        mLvChatHistory.post(new Runnable() {
+            public void run() {
+                mLvChatHistory.setSelection(mLvChatHistory.getCount() - 1);
+            }
+        });
+    }
+
+    protected void addFileMessage(FileMessage fileMessage, String msg, boolean isSent, String filePath) {
+        ChatMessageHistory chatMessage = new ChatMessageHistory();
+        chatMessage.setDeviceName(fileMessage.getDeviceName());
+        chatMessage.setMessage(msg);
+        chatMessage.setIsSent(isSent);
+        chatMessage.setFilePath(filePath);
+        chatMessage.setFileType(fileMessage.getFileType());
         adapterChatHistory.addMessage(chatMessage);
         mLvChatHistory.post(new Runnable() {
             public void run() {
