@@ -35,9 +35,11 @@
         </activity>
         <activity android:name=".activities.ChatActivity" />
         <activity android:name=".activities.ActivityChatPrivateChannel"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize"/>
         <activity android:name=".activities.ActivityChatPublicChannel"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize"/>
         <activity android:name=".activities.SettingsActivity" />
         <activity android:name=".activities.ActivityChatWithIphone" />
         <activity android:name=".activities.DiscoveryActivity" />
@@ -51,7 +53,8 @@
             android:noHistory="true"/>
         <activity android:name=".activities.ActivityContactList" />
         <activity android:name=".activities.ActivityChatOne2One"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize"/>
 
         <receiver android:name=".broadcastreceiver.WifiReceiver">
             <intent-filter>
