@@ -230,7 +230,8 @@ public class Utils {
     }
 
     public static File createFile(String folderPath, String fileName) {
-        final File dir = new File(AppController.getInstance().getFilesDir() + "/WalkiTalkie");
+        //final File dir = new File(AppController.getInstance().getFilesDir() + "/WalkiTalkie");
+        final File dir = new File(folderPath);
         dir.mkdirs();
         folderPath = dir.getAbsolutePath();
 
