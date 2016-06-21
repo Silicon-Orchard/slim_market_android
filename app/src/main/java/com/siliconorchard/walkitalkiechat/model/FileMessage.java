@@ -16,9 +16,9 @@ public class FileMessage {
     private int fileType;
 
     private static final String JSON_KEY_DEVICE_NAME = "device_name";
-    private static final String JSON_KEY_TOTAL_CHUNK_COUNT = "voice_message_chunkCount";
-    private static final String JSON_KEY_CURRENT_CHUNK_NO = "voice_message_current_chunk";
-    private static final String JSON_KEY_VOICE_MESSAGE = "voice_message";
+    private static final String JSON_KEY_TOTAL_CHUNK_COUNT = "file_chunk_count";
+    private static final String JSON_KEY_CURRENT_CHUNK_NO = "file_current_chunk";
+    private static final String JSON_KEY_VOICE_MESSAGE = "file_message";
     private static final String JSON_KEY_CHANNEL_NUMBER = "channel_id";
     private static final String JSON_KEY_FILE_NAME = "file_name";
     private static final String JSON_KEY_FILE_TYPE = "file_type";
