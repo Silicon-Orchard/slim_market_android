@@ -42,6 +42,7 @@ public class Constant {
     public static final int ACTIVITY_RESULT_ADD_CLIENT = 1111;
     public static final int ACTIVITY_RESULT_RECORD_VOICE = 1112;
     public static final int REQUEST_CODE_SELECT_SINGLE_PICTURE = 4551;
+    public static final int REQUEST_CODE_SELECT_ANY_FILE = 4552;
 
     public static final long WAITING_TIME = 2000;
     public static final int PUBLIC_CHANNEL_NUMBER_A = 1;
@@ -63,4 +64,46 @@ public class Constant {
     public static final String FOLDER_NAME_VIDEO = "video";
     public static final String FOLDER_NAME_PHOTO = "photo";
     public static final String FOLDER_NAME_OTHER = "other";
+
+
+    //Hash values for audio formats
+    public static final int[] AUDIO_FORMAT_HASH_VALUES = {
+            1335, //aac
+            295527, //flac
+            17454, //mp3
+            17965, //m4a
+            17176, //mid
+            31578, //xmf
+            20161, //ota
+            12157, //imy
+            19699, //ogg
+            29866, //wav
+            1782 //amr
+    };
+
+
+    //Hash values for image formats
+    public static final int[] IMAGE_FORMAT_HASH_VALUES = {
+            13543, //jpg
+            9402, //gif
+            21247, //png
+            3076, //bmp
+            1079656 //webp
+    };
+
+    //Hash values for video formats
+    public static final int[] VIDEO_FORMAT_HASH_VALUES = {
+            39148, //3gp
+            17455, //mp4
+            739, //ts
+            1079653, //webm
+            17266, //mkv
+            8230, //flv
+            30298, //wmv
+            17431, //mpg
+            627451 //mpeg
+    };
+
+
+
 }

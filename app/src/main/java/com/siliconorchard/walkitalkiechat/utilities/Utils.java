@@ -451,4 +451,22 @@ public class Utils {
 
         return bitmap;
     }
+
+
+
+    public static final int getFileFormatHashValue(String fileFormat) {
+        String s = fileFormat.toLowerCase();
+        int hashValue = 0;
+        for(int i = 0; i<s.length(); i++) {
+            char c = s.charAt(i);
+            int curValue;
+            if(c>='0' && c<='9') {
+                curValue = 27 + c -'0';
+            } else {
+                curValue = c - 'a' + 1;
+            }
+            hashValue = hashValue * 36 + curValue;
+        }
+        return hashValue;
+    }
 }

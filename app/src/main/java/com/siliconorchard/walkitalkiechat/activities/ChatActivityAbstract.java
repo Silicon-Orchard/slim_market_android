@@ -332,9 +332,15 @@ public abstract class ChatActivityAbstract extends ChatActivityBase {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == Constant.REQUEST_CODE_SELECT_SINGLE_PICTURE && resultCode == Activity.RESULT_OK) {
-            initUriAndFile(data);
+            initUriAndFile(data, true);
             FileMessage fileMessage = sendFileMessage(mSelectedFile, mSelectedFile.getName(), Constant.FILE_TYPE_PHOTO);
             addFileMessage(fileMessage, "Photo sent", true, mSelectedFile.getAbsolutePath());
+        } else if(requestCode == Constant.REQUEST_CODE_SELECT_ANY_FILE && resultCode == Activity.RESULT_OK) {
+            initUriAndFile(data, false);
+            String fileName = mSelectedFile.getName();
+            int fileType = extractFileType(fileName);
+            FileMessage fileMessage = sendFileMessage(mSelectedFile, fileName, fileType);
+            addFileMessage(fileMessage, "File sent", true, mSelectedFile.getAbsolutePath());
         }
     }
 

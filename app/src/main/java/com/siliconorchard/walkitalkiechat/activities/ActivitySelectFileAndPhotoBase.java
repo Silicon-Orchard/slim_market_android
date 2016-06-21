@@ -28,10 +28,15 @@ public class ActivitySelectFileAndPhotoBase extends ActivityBase {
     private static final String FILE_PATH = Constant.BASE_PATH+Constant.FOLDER_NAME_PHOTO;
     private String uriPath;
 
-    protected void initUriAndFile(Intent data) {
+    protected void initUriAndFile(Intent data, boolean isImage) {
         if(uriPath == null) {
-            Uri uriImage = data.getData();
-            mSelectedFile = new File(Utils.getRealPathFromURI(this, uriImage));
+            Uri fileUri = data.getData();
+            if(isImage){
+                mSelectedFile = new File(Utils.getRealPathFromURI(this, fileUri));
+            } else {
+                mSelectedFile = new File(fileUri.getPath());
+            }
+
         } else {
             mSelectedFile = new File(uriPath);
         }
@@ -81,6 +86,40 @@ public class ActivitySelectFileAndPhotoBase extends ActivityBase {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImage);
         startActivityForResult(intent, Constant.REQUEST_CODE_SELECT_SINGLE_PICTURE);
+    }
+
+    protected void selectAnyFile() {
+        Intent filePickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        filePickerIntent.setType("file/*");
+        startActivityForResult(filePickerIntent, Constant.REQUEST_CODE_SELECT_ANY_FILE);
+    }
+
+    protected int extractFileType(String fileName) {
+        int index = fileName.lastIndexOf('.');
+        if(index<0) {
+            return Constant.FILE_TYPE_OTHERS;
+        }
+        String fileFormat = fileName.substring(index + 1);
+        if(fileFormat == null || fileFormat.length()>4) {
+            return Constant.FILE_TYPE_OTHERS;
+        }
+        int formatValue = Utils.getFileFormatHashValue(fileFormat);
+        for(int i = 0; i<Constant.AUDIO_FORMAT_HASH_VALUES.length; i++) {
+            if(formatValue == Constant.AUDIO_FORMAT_HASH_VALUES[i]) {
+                return Constant.FILE_TYPE_AUDIO;
+            }
+        }
+        for(int i = 0; i<Constant.VIDEO_FORMAT_HASH_VALUES.length; i++) {
+            if(formatValue == Constant.VIDEO_FORMAT_HASH_VALUES[i]) {
+                return Constant.FILE_TYPE_VIDEO;
+            }
+        }
+        for(int i = 0; i<Constant.IMAGE_FORMAT_HASH_VALUES.length; i++) {
+            if(formatValue == Constant.IMAGE_FORMAT_HASH_VALUES[i]) {
+                return Constant.FILE_TYPE_PHOTO;
+            }
+        }
+        return Constant.FILE_TYPE_OTHERS;
     }
 
     @Override

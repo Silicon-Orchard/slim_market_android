@@ -1,6 +1,7 @@
 package com.siliconorchard.walkitalkiechat.adapter;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -9,6 +10,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -93,11 +95,13 @@ public class AdapterChatHistory extends BaseAdapter{
                     initAudioLayout(viewHolder, position);
                     break;
                 case Constant.FILE_TYPE_VIDEO:
+                    initVideoLayout(viewHolder, position);
                     break;
                 case Constant.FILE_TYPE_PHOTO:
                     initPhotoLayout(viewHolder, position);
                     break;
                 case Constant.FILE_TYPE_OTHERS:
+                    initOtherFileLayout(viewHolder, position);
                     break;
             }
             viewHolder.llPlay.setVisibility(View.VISIBLE);
@@ -152,6 +156,91 @@ public class AdapterChatHistory extends BaseAdapter{
             e.printStackTrace();
         }
 
+    }
+
+    private void initVideoLayout(ViewHolder viewHolder, int position) {
+        String filePath = mListChat.get(position).getFilePath();
+        if(filePath == null) {
+            return;
+        }
+        try {
+            viewHolder.ivPlay.setImageResource(R.drawable.ic_play);
+            viewHolder.llPlay.setTag(filePath);
+            viewHolder.llPlay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String path = (String) v.getTag();
+                    if (path == null) {
+                        showToast();
+                        return;
+                    }
+
+                    String videoPath = "file://" + path;
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(videoPath));
+                    intent.setDataAndType(Uri.parse(videoPath), "video/*");
+                    mActivity.startActivity(intent);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initOtherFileLayout(ViewHolder viewHolder, int position) {
+        String filePath = mListChat.get(position).getFilePath();
+        if(filePath == null) {
+            return;
+        }
+        try {
+            viewHolder.ivPlay.setImageResource(R.drawable.ic_file);
+            viewHolder.llPlay.setTag(filePath);
+            viewHolder.llPlay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String path = (String) v.getTag();
+                    if (path == null) {
+                        showToast();
+                        return;
+                    }
+                    String filePath = "file://" + path;
+                    openUnknownFile(filePath);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void openUnknownFile(String filePath) {
+        MimeTypeMap myMime = MimeTypeMap.getSingleton();
+        Intent newIntent = new Intent(Intent.ACTION_VIEW);
+        String mimeType = myMime.getMimeTypeFromExtension(fileExt(filePath).substring(1));
+        newIntent.setDataAndType(Uri.parse(filePath),mimeType);
+        newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        try {
+            mActivity.startActivity(newIntent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(mActivity, "No handler for this type of file.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private String fileExt(String url) {
+        if (url.indexOf("?") > -1) {
+            url = url.substring(0, url.indexOf("?"));
+        }
+        if (url.lastIndexOf(".") == -1) {
+            return null;
+        } else {
+            String ext = url.substring(url.lastIndexOf(".") + 1);
+            if (ext.indexOf("%") > -1) {
+                ext = ext.substring(0, ext.indexOf("%"));
+            }
+            if (ext.indexOf("/") > -1) {
+                ext = ext.substring(0, ext.indexOf("/"));
+            }
+            return ext.toLowerCase();
+
+        }
     }
 
     public void addMessage(ChatMessageHistory chatMessage) {

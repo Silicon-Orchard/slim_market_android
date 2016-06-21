@@ -144,7 +144,8 @@ public abstract class ChatActivityBase extends ActivitySelectFileAndPhotoBase {
         llUploadFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toastUnderConstructionMessage();
+                //toastUnderConstructionMessage();
+                selectAnyFile();
                 popupWindow.dismiss();
             }
         });
