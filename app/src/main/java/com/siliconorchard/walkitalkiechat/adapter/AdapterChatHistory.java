@@ -22,6 +22,7 @@ import com.siliconorchard.walkitalkiechat.model.ChatMessageHistory;
 import com.siliconorchard.walkitalkiechat.utilities.Constant;
 import com.siliconorchard.walkitalkiechat.utilities.Utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -202,8 +203,7 @@ public class AdapterChatHistory extends BaseAdapter{
                         showToast();
                         return;
                     }
-                    String filePath = "file://" + path;
-                    openUnknownFile(filePath);
+                    openUnknownFile(path);
                 }
             });
         } catch (Exception e) {
@@ -212,35 +212,17 @@ public class AdapterChatHistory extends BaseAdapter{
     }
 
     private void openUnknownFile(String filePath) {
-        MimeTypeMap myMime = MimeTypeMap.getSingleton();
-        Intent newIntent = new Intent(Intent.ACTION_VIEW);
-        String mimeType = myMime.getMimeTypeFromExtension(fileExt(filePath).substring(1));
-        newIntent.setDataAndType(Uri.parse(filePath),mimeType);
-        newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        try {
-            mActivity.startActivity(newIntent);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(mActivity, "No handler for this type of file.", Toast.LENGTH_LONG).show();
-        }
-    }
+        Intent intent = new Intent();
+        intent.setAction(android.content.Intent.ACTION_VIEW);
+        File file = new File(filePath);
 
-    private String fileExt(String url) {
-        if (url.indexOf("?") > -1) {
-            url = url.substring(0, url.indexOf("?"));
-        }
-        if (url.lastIndexOf(".") == -1) {
-            return null;
-        } else {
-            String ext = url.substring(url.lastIndexOf(".") + 1);
-            if (ext.indexOf("%") > -1) {
-                ext = ext.substring(0, ext.indexOf("%"));
-            }
-            if (ext.indexOf("/") > -1) {
-                ext = ext.substring(0, ext.indexOf("/"));
-            }
-            return ext.toLowerCase();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        String ext = file.getName().substring(file.getName().indexOf(".")+1);
+        String type = mime.getMimeTypeFromExtension(ext);
 
-        }
+        intent.setDataAndType(Uri.fromFile(file),type);
+
+        mActivity.startActivity(intent);
     }
 
     public void addMessage(ChatMessageHistory chatMessage) {
