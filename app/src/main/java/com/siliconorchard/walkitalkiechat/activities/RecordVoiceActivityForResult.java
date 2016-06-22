@@ -104,7 +104,7 @@ public class RecordVoiceActivityForResult extends ActivityBase{
         mTvPercent = (TextView) findViewById(R.id.tv_percent);
         mProgress = (ProgressBar) findViewById(R.id.progress_bar);
         mProgress.setMax(MAX_PROGRESS_BAR);
-        FILE_NAME = Utils.getDeviceName(mSharedPref)+"_"+System.currentTimeMillis()+".mp3";
+        FILE_NAME = "Voice_Message_"+Utils.getDeviceName(mSharedPref)+"_"+System.currentTimeMillis()+".mp3";
     }
 
 

@@ -264,19 +264,10 @@ public abstract class ChatActivityAbstract extends ChatActivityBase {
                         public void run() {
                             //mTvClientMsg.append("\nYou received a voice mail from " + voiceMessage.getDeviceName());
                             String message = null;
-                            switch (fileMessage.getFileType()) {
-                                case Constant.FILE_TYPE_AUDIO:
-                                    message = "Voice mail received.";
-                                    break;
-                                case Constant.FILE_TYPE_VIDEO:
-                                    message = "Video message received.";
-                                    break;
-                                case Constant.FILE_TYPE_PHOTO:
-                                    message = "Photo received.";
-                                    break;
-                                default:
-                                    message = "File received.";
-                                    break;
+                            if(fileMessage.getFileType() == Constant.FILE_TYPE_AUDIO) {
+                                message = "Voice mail received.";
+                            } else {
+                                message = fileMessage.getFileName();
                             }
                             addFileMessage(fileMessage, message, false, file.getAbsolutePath());
                             //mLayoutPlay.setVisibility(View.VISIBLE);
@@ -334,13 +325,13 @@ public abstract class ChatActivityAbstract extends ChatActivityBase {
         if(requestCode == Constant.REQUEST_CODE_SELECT_SINGLE_PICTURE && resultCode == Activity.RESULT_OK) {
             initUriAndFile(data, true);
             FileMessage fileMessage = sendFileMessage(mSelectedFile, mSelectedFile.getName(), Constant.FILE_TYPE_PHOTO);
-            addFileMessage(fileMessage, "Photo sent", true, mSelectedFile.getAbsolutePath());
+            addFileMessage(fileMessage, fileMessage.getFileName(), true, mSelectedFile.getAbsolutePath());
         } else if(requestCode == Constant.REQUEST_CODE_SELECT_ANY_FILE && resultCode == Activity.RESULT_OK) {
             initUriAndFile(data, false);
             String fileName = mSelectedFile.getName();
             int fileType = extractFileType(fileName);
             FileMessage fileMessage = sendFileMessage(mSelectedFile, fileName, fileType);
-            addFileMessage(fileMessage, "File sent", true, mSelectedFile.getAbsolutePath());
+            addFileMessage(fileMessage, fileMessage.getFileName(), true, mSelectedFile.getAbsolutePath());
         }
     }
 

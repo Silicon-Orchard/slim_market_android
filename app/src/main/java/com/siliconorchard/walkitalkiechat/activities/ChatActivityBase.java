@@ -89,7 +89,11 @@ public abstract class ChatActivityBase extends ActivitySelectFileAndPhotoBase {
 
     protected void addFileMessage(FileMessage fileMessage, String msg, boolean isSent, String filePath) {
         ChatMessageHistory chatMessage = new ChatMessageHistory();
-        chatMessage.setDeviceName(fileMessage.getDeviceName());
+        if(isSent) {
+            chatMessage.setDeviceName("Me");
+        } else {
+            chatMessage.setDeviceName(fileMessage.getDeviceName());
+        }
         chatMessage.setMessage(msg);
         chatMessage.setIsSent(isSent);
         chatMessage.setFilePath(filePath);
