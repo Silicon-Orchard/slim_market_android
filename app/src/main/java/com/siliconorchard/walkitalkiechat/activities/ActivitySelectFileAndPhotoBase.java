@@ -1,5 +1,6 @@
 package com.siliconorchard.walkitalkiechat.activities;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -89,9 +90,16 @@ public class ActivitySelectFileAndPhotoBase extends ActivityBase {
     }
 
     protected void selectAnyFile() {
-        Intent filePickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        filePickerIntent.setType("file/*");
-        startActivityForResult(filePickerIntent, Constant.REQUEST_CODE_SELECT_ANY_FILE);
+        try {
+            Intent filePickerIntent = new Intent("com.sec.android.app.myfiles.PICK_DATA");
+            filePickerIntent.putExtra("CONTENT_TYPE", "*/*");
+            filePickerIntent.addCategory(Intent.CATEGORY_DEFAULT);
+            startActivityForResult(filePickerIntent, Constant.REQUEST_CODE_SELECT_ANY_FILE);
+        } catch (ActivityNotFoundException e) {
+            Intent filePickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
+            filePickerIntent.setType("file/*");
+            startActivityForResult(filePickerIntent, Constant.REQUEST_CODE_SELECT_ANY_FILE);
+        }
     }
 
     protected int extractFileType(String fileName) {
