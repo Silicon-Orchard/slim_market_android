@@ -38,7 +38,9 @@ public class RunnableReceiveFile extends RunnableBase {
     }
 
     public void closeSocket() {
-        sDataGramSocket.close();
+        if(sDataGramSocket != null) {
+            sDataGramSocket.close();
+        }
         terminate();
     }
 
