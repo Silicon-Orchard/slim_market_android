@@ -16,30 +16,74 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tv_msg"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/White"
-            android:gravity="center_horizontal"
-            android:text="Hi"/>
+        <LinearLayout
+            android:id="@+id/ll_sent_space"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"/>
 
         <LinearLayout
-            android:id="@+id/ll_play"
-            android:layout_width="80dp"
-            android:layout_height="40dp"
+            android:id="@+id/rl_chat_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:gravity="center"
-            android:layout_gravity="center_horizontal"
-            android:visibility="gone">
-            <ImageView
-                android:id="@+id/iv_play"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"/>
+            android:layout_marginTop="-10dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/ll_arrow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/shape_right_triangle"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/shape_chat_item_drawable"
+                android:padding="10dp">
+                <LinearLayout
+                    android:id="@+id/ll_file"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+                    <LinearLayout
+                        android:id="@+id/ll_play"
+                        android:layout_width="80dp"
+                        android:layout_height="40dp"
+                        android:orientation="vertical"
+                        android:gravity="center">
+                        <ImageView
+                            android:id="@+id/iv_play"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_msg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/White"
+                    android:gravity="center_horizontal"
+                    android:text="Hi"/>
+            </LinearLayout>
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_received_space"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"/>
 
     </LinearLayout>
 

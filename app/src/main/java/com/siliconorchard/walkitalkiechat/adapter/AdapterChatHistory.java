@@ -1,7 +1,6 @@
 package com.siliconorchard.walkitalkiechat.adapter;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -72,8 +71,12 @@ public class AdapterChatHistory extends BaseAdapter{
             viewHolder = new ViewHolder();
             viewHolder.tvName = (TextView)convertView.findViewById(R.id.tv_name);
             viewHolder.tvMsg = (TextView)convertView.findViewById(R.id.tv_msg);
+            viewHolder.llArrowImage = (LinearLayout) convertView.findViewById(R.id.ll_arrow);
+            viewHolder.llFile = (LinearLayout) convertView.findViewById(R.id.ll_file);
             viewHolder.llPlay = (LinearLayout) convertView.findViewById(R.id.ll_play);
             viewHolder.ivPlay = (ImageView) convertView.findViewById(R.id.iv_play);
+            viewHolder.llReceived = (LinearLayout) convertView.findViewById(R.id.ll_received_space);
+            viewHolder.llSent = (LinearLayout) convertView.findViewById(R.id.ll_sent_space);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -83,14 +86,25 @@ public class AdapterChatHistory extends BaseAdapter{
         if(chatMessage.isSent()) {
             viewHolder.tvName.setGravity(Gravity.RIGHT);
             viewHolder.tvMsg.setGravity(Gravity.RIGHT);
+            viewHolder.llReceived.setVisibility(View.GONE);
+            viewHolder.llSent.setVisibility(View.VISIBLE);
+            viewHolder.llArrowImage.setGravity(Gravity.RIGHT);
         } else {
             viewHolder.tvName.setGravity(Gravity.LEFT);
             viewHolder.tvMsg.setGravity(Gravity.LEFT);
+            viewHolder.llReceived.setVisibility(View.VISIBLE);
+            viewHolder.llSent.setVisibility(View.GONE);
+            viewHolder.llArrowImage.setGravity(Gravity.LEFT);
         }
         viewHolder.tvName.setText(name+":");
         viewHolder.tvMsg.setText(chatMessage.getMessage());
-        viewHolder.llPlay.setVisibility(View.GONE);
+        viewHolder.llFile.setVisibility(View.GONE);
         if(chatMessage.getFileType() != 0) {
+            if(chatMessage.isSent()) {
+                viewHolder.llFile.setGravity(Gravity.RIGHT);
+            } else {
+                viewHolder.llFile.setGravity(Gravity.LEFT);
+            }
             switch (chatMessage.getFileType()) {
                 case Constant.FILE_TYPE_AUDIO:
                     initAudioLayout(viewHolder, position);
@@ -105,7 +119,7 @@ public class AdapterChatHistory extends BaseAdapter{
                     initOtherFileLayout(viewHolder, position);
                     break;
             }
-            viewHolder.llPlay.setVisibility(View.VISIBLE);
+            viewHolder.llFile.setVisibility(View.VISIBLE);
         }
         return convertView;
     }
@@ -306,8 +320,12 @@ public class AdapterChatHistory extends BaseAdapter{
     class ViewHolder {
         TextView tvName;
         TextView tvMsg;
+        LinearLayout llArrowImage;
+        LinearLayout llFile;
         LinearLayout llPlay;
         ImageView ivPlay;
         MediaPlayer player;
+        LinearLayout llReceived;
+        LinearLayout llSent;
     }
 }
