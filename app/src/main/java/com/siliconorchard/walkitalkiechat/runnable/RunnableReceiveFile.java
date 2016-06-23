@@ -1,17 +1,17 @@
 package com.siliconorchard.walkitalkiechat.runnable;
 
-import android.util.Base64;
 import android.util.Log;
 
 import com.siliconorchard.walkitalkiechat.model.FileMessage;
+import com.siliconorchard.walkitalkiechat.model.ReceiveFile;
 import com.siliconorchard.walkitalkiechat.utilities.Constant;
-import com.siliconorchard.walkitalkiechat.utilities.Utils;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.util.HashMap;
 
 /**
  * Created by adminsiriconorchard on 5/6/16.
@@ -20,10 +20,10 @@ public class RunnableReceiveFile extends RunnableBase {
 
     private DatagramSocket sDataGramSocket;
     public static final int DATA_PACKET_LENGTH = 65508;//16384;
-    private String receivedDataString = null;
-    private int numOfReceivedMsg = 0;
     private OnReceiveCallBacks mOnReceiveCallBacks;
     private int channelNumber;
+
+    private HashMap<String, ReceiveFile> mReceivingQueue;
 
     public int getChannelNumber() {
         return channelNumber;
@@ -53,6 +53,7 @@ public class RunnableReceiveFile extends RunnableBase {
     @Override
     public void run() {
         try {
+            mReceivingQueue = new HashMap<>();
             sDataGramSocket = new DatagramSocket(Constant.VOICE_SERVER_PORT);
             while (isRunThread()) {
                 byte[] buffer = new byte[DATA_PACKET_LENGTH];
@@ -63,7 +64,7 @@ public class RunnableReceiveFile extends RunnableBase {
                 sDataGramSocket.receive(datagramPacket);
                 Log.e("TAG_LOG", "Ending message receiving from service");
                 byte[] receivedData = datagramPacket.getData();
-                processReceivedVoiceData(receivedData);
+                processReceivedVoiceData(receivedData, datagramPacket.getAddress());
 
             }
         } catch (IOException e) {
@@ -74,74 +75,25 @@ public class RunnableReceiveFile extends RunnableBase {
     }
 
 
-    private synchronized void processData(byte[] receivedData) {
+    private void processData(byte[] receivedData, InetAddress inetAddress) {
         try {
             String message = new String(receivedData);
             FileMessage fileMessage = new FileMessage(message);
             if(fileMessage.getChannelNumber() != channelNumber) {
                 return;
             }
-            if(numOfReceivedMsg == 0 && mOnReceiveCallBacks != null) {
-                mOnReceiveCallBacks.onPreReceive(fileMessage);
+            String keyIpString = inetAddress.getHostAddress();
+            Log.e("TAG_LOG","Host Name: "+keyIpString);
+            ReceiveFile receiveFile = mReceivingQueue.get(keyIpString);
+            if(receiveFile == null) {
+                receiveFile = new ReceiveFile();
+                mReceivingQueue.put(keyIpString, receiveFile);
             }
-            numOfReceivedMsg++;
-            //Log.e("TAG_LOG","Received message\n"+message);
-            if(receivedDataString == null) {
-                String nullText = "";
-                receivedDataString = Base64.encodeToString(nullText.getBytes(), Base64.NO_WRAP);
-            }
-
-
-
-
-            final boolean isContinue = fileMessage.getCurrentChunkNo()< fileMessage.getTotalChunkCount();
-            Log.e("TAG_LOG","Current/Total, isContinue: "+ fileMessage.getCurrentChunkNo()+"/"+ fileMessage.getTotalChunkCount()+","+isContinue);
-            if(mOnReceiveCallBacks != null && isContinue) {
-                mOnReceiveCallBacks.onProgressUpdate(fileMessage);
+            while(receiveFile.isBusy()) { }
+            if(receiveFile.processFileMessage(mOnReceiveCallBacks, fileMessage)) {
+                mReceivingQueue.remove(keyIpString);
             }
 
-            if(isContinue) {
-                receivedDataString = receivedDataString + fileMessage.getVoiceMessage();
-            } else {
-                receivedDataString = receivedDataString + fileMessage.getVoiceMessage();
-                if(numOfReceivedMsg != fileMessage.getTotalChunkCount()) {
-                    String errorMessage = "Data missing occurs,(Received/Sent) "+numOfReceivedMsg+"/"+ fileMessage.getTotalChunkCount();
-                    onError(errorMessage);
-                    return;
-                }
-                String path = null;
-                switch (fileMessage.getFileType()) {
-                    case Constant.FILE_TYPE_AUDIO:
-                        path = Constant.BASE_PATH+Constant.FOLDER_NAME_AUDIO;
-                        break;
-                    case Constant.FILE_TYPE_VIDEO:
-                        path = Constant.BASE_PATH+Constant.FOLDER_NAME_VIDEO;
-                        break;
-                    case Constant.FILE_TYPE_PHOTO:
-                        path = Constant.BASE_PATH+Constant.FOLDER_NAME_PHOTO;
-                        break;
-                    default:
-                        path = Constant.BASE_PATH+Constant.FOLDER_NAME_OTHER;
-                        break;
-                }
-                File file = Utils.createFile(path, fileMessage.getFileName());
-                if(file == null) {
-                    onError("File cannot be created");
-                    return;
-                }
-                //Log.e("TAG_LOG","Received/Sent: "+numOfReceivedMsg+"/"+voiceMessage.getTotalChunkCount());
-                //Log.e("TAG_LOG","ReceivedData: \n"+receivedDataString);
-                byte[] filePart = Base64.decode(receivedDataString, Base64.NO_WRAP);
-                FileOutputStream out = new FileOutputStream(file.getAbsolutePath());
-                out.write(filePart);
-                out.flush();
-                out.close();
-                if(mOnReceiveCallBacks != null) {
-                    mOnReceiveCallBacks.onPostReceive(fileMessage, file);
-                }
-                receivedDataString = null;
-                numOfReceivedMsg = 0;
-            }
         } catch (Exception e) {
             e.printStackTrace();
             onError(e.toString());
@@ -153,8 +105,6 @@ public class RunnableReceiveFile extends RunnableBase {
         if(mOnReceiveCallBacks != null) {
             mOnReceiveCallBacks.onErrorOccur(errorMessage);
         }
-        receivedDataString = null;
-        numOfReceivedMsg = 0;
     }
 
 
@@ -165,19 +115,21 @@ public class RunnableReceiveFile extends RunnableBase {
         public abstract void onErrorOccur(String errorText);
     }
 
-    private void processReceivedVoiceData(byte[] data) {
-        new Thread(new RunnableProcessVoiceBytes(data)).start();
+    private void processReceivedVoiceData(byte[] data, InetAddress inetAddress) {
+        new Thread(new RunnableProcessVoiceBytes(data, inetAddress)).start();
     }
     private class RunnableProcessVoiceBytes extends RunnableBase{
         private byte[] receivedBytes;
-        public RunnableProcessVoiceBytes(byte[] data) {
+        private InetAddress inetAddress;
+        public RunnableProcessVoiceBytes(byte[] data, InetAddress address) {
             super(true);
             this.receivedBytes = data;
+            this.inetAddress = address;
         }
 
         @Override
         public void run() {
-            processData(receivedBytes);
+            processData(receivedBytes, inetAddress);
         }
     }
 }
