@@ -74,8 +74,8 @@ public class ActivityChatOne2One extends ChatActivityAbstract{
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onPause() {
+        super.onPause();
         unregisterReceiver(receiverChatAccept);
     }
 

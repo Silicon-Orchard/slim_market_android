@@ -173,18 +173,17 @@ public abstract class ChatActivityAbstract extends ChatActivityBase {
         startVoiceChatThread();
     }
 
-   /* @Override
+    @Override
     protected void onPause() {
         super.onPause();
         unregisterReceiver(receiver);
         stopThread();
         stopVoiceChatThread();
-    }*/
+    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(receiver);
         sendChannelLeftMessage();
         stopThread();
         stopVoiceChatThread();
