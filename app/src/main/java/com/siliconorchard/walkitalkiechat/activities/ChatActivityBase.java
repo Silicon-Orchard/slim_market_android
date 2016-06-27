@@ -2,6 +2,9 @@ package com.siliconorchard.walkitalkiechat.activities;
 
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.AudioFormat;
+import android.media.AudioRecord;
+import android.media.MediaRecorder;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,12 +22,12 @@ import com.siliconorchard.walkitalkiechat.R;
 import com.siliconorchard.walkitalkiechat.adapter.AdapterChatHistory;
 import com.siliconorchard.walkitalkiechat.adapter.AdapterRecipientList;
 import com.siliconorchard.walkitalkiechat.asynctasks.SendMessageAsync;
+import com.siliconorchard.walkitalkiechat.asynctasks.SendVoiceChatAsync;
 import com.siliconorchard.walkitalkiechat.asynctasks.SendVoiceDataAsync;
 import com.siliconorchard.walkitalkiechat.model.ChatMessage;
 import com.siliconorchard.walkitalkiechat.model.ChatMessageHistory;
 import com.siliconorchard.walkitalkiechat.model.FileMessage;
 import com.siliconorchard.walkitalkiechat.model.HostInfo;
-import com.siliconorchard.walkitalkiechat.utilities.Constant;
 import com.siliconorchard.walkitalkiechat.utilities.Utils;
 
 import org.json.JSONException;
@@ -70,6 +73,8 @@ public abstract class ChatActivityBase extends ActivitySelectFileAndPhotoBase {
     protected ImageView mIvStreamVideo;
     protected LinearLayout mLayoutShareLocation;
 
+    protected static final int SAMPLE_RATE_IN_HZ = 11025;
+    protected boolean isStreaming;
 
     protected void addChatMessage(String name, String msg, boolean isSent, String filePath) {
         ChatMessageHistory chatMessage = new ChatMessageHistory();
@@ -293,10 +298,8 @@ public abstract class ChatActivityBase extends ActivitySelectFileAndPhotoBase {
                 @Override
                 public void onPostExecute(boolean isExecuted) {
                     if(isExecuted) {
-                        //addChatMessage("$", "Voice mail sent");
                         Toast.makeText(getApplicationContext(), "File sent",Toast.LENGTH_LONG).show();
                     } else {
-                        //addChatMessage("$", "Voice mail sending failed");
                         Toast.makeText(getApplicationContext(), "File sending failed",Toast.LENGTH_LONG).show();
                     }
                     mLayoutProgress.setVisibility(View.GONE);
@@ -307,6 +310,58 @@ public abstract class ChatActivityBase extends ActivitySelectFileAndPhotoBase {
             e.printStackTrace();
         }
         return fileMessage;
+    }
+
+    protected void makeVoiceCall() {
+        if(isStreaming) {
+            stopStreaming();
+            mIvStreamVoice.setImageResource(R.drawable.ic_record);
+        } else {
+            Thread recordThread = new Thread(new Runnable(){
+                @Override
+                public void run() {
+                    isStreaming = true;
+                    startStreaming();
+                }
+            });
+            recordThread.start();
+            mIvStreamVoice.setImageResource(R.drawable.ic_stop);
+        }
+    }
+
+    protected void stopStreaming() {
+        isStreaming = false;
+    }
+
+    protected void startStreaming(){
+        try {
+            int minBufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE_IN_HZ,
+                    AudioFormat.CHANNEL_IN_MONO,
+                    AudioFormat.ENCODING_PCM_16BIT);
+
+            short[] audioData = new short[minBufferSize];
+            AudioRecord audioRecord = new AudioRecord(MediaRecorder.AudioSource.VOICE_COMMUNICATION,
+                    SAMPLE_RATE_IN_HZ,
+                    AudioFormat.CHANNEL_IN_MONO,
+                    AudioFormat.ENCODING_PCM_16BIT,
+                    minBufferSize);
+            audioRecord.startRecording();
+            while(isStreaming){
+                int numberOfShort = audioRecord.read(audioData, 0, minBufferSize);
+                if(numberOfShort>0) {
+                    byte[] audioBytes = Utils.shortArrayToByteArray(audioData);
+                    SendVoiceChatAsync sendVoiceChatAsync = new SendVoiceChatAsync();
+                    sendVoiceChatAsync.setVoiceBytes(audioBytes);
+                    sendVoiceChatAsync.setMyIpAddress(myIpAddress);
+                    sendVoiceChatAsync.setClientIPAddressList(mListHostInfo);
+                    sendVoiceChatAsync.execute();
+                }
+            }
+            audioRecord.stop();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     protected enum ClientType {

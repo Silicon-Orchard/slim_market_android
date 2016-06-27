@@ -6,17 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.media.AudioFormat;
 import android.media.AudioManager;
-import android.media.AudioRecord;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -24,7 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.siliconorchard.walkitalkiechat.R;
-import com.siliconorchard.walkitalkiechat.asynctasks.SendVoiceChatAsync;
 import com.siliconorchard.walkitalkiechat.asynctasks.SendVoiceDataAsync;
 import com.siliconorchard.walkitalkiechat.model.HostInfo;
 import com.siliconorchard.walkitalkiechat.model.FileMessage;
@@ -44,7 +39,6 @@ public class RecordVoiceActivityForResult extends ActivityBase{
 
     private ImageView mIvRecord;
     private ImageView mIvPlay;
-    private Button mBtnStream;
     private ImageView mIvCancel;
 
 
@@ -77,10 +71,6 @@ public class RecordVoiceActivityForResult extends ActivityBase{
     private static final int MAX_PROGRESS_BAR = 100;
 
 
-    private static final int SAMPLE_RATE_IN_HZ = 11025;
-    private boolean isStreaming;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,7 +84,6 @@ public class RecordVoiceActivityForResult extends ActivityBase{
         initInfos();
         mIvRecord = (ImageView) findViewById(R.id.iv_record);
         mIvPlay = (ImageView) findViewById(R.id.iv_play);
-        mBtnStream = (Button) findViewById(R.id.btn_ok);
         mIvCancel = (ImageView) findViewById(R.id.iv_close);
         mTvRecordProgress = (TextView) findViewById(R.id.tv_record_progress);
         mTvRecordProgress.setText("");
@@ -144,44 +133,6 @@ public class RecordVoiceActivityForResult extends ActivityBase{
                 } else {
                     createFile(null);
                     playAudio();
-                }
-            }
-        });
-
-        /*mBtnStream.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                Bundle bundle = new Bundle();
-                bundle.putString(Constant.KEY_ABSOLUTE_FILE_PATH, mFile.getAbsolutePath());
-                intent.putExtras(bundle);
-                setResult(RESULT_OK, intent);
-                RecordVoiceActivityForResult.this.finish();
-            }
-        });*/
-
-        mBtnStream.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isStreaming) {
-                    stopStreaming();
-                    mBtnStream.setText(R.string.start_streaming);
-                    mIvRecord.setEnabled(true);
-                    mIvPlay.setEnabled(true);
-                    //mBtnStream.setImageResource(R.drawable.ic_record);
-                } else {
-                    Thread recordThread = new Thread(new Runnable(){
-                        @Override
-                        public void run() {
-                            isStreaming = true;
-                            startStreaming();
-                        }
-                    });
-                    recordThread.start();
-                    mBtnStream.setText(R.string.stop_streaming);
-                    mIvRecord.setEnabled(false);
-                    mIvPlay.setEnabled(false);
-                    //mBtnStream.setImageResource(R.drawable.ic_stop);
                 }
             }
         });
@@ -251,9 +202,7 @@ public class RecordVoiceActivityForResult extends ActivityBase{
 
     private void startAudioRecord() {
         mIvRecord.setImageResource(R.drawable.ic_stop);
-        mBtnStream.setEnabled(false);
         mIvPlay.setEnabled(false);
-        //mIvRecord.setText("Stop");
         isRecording = true;
         AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         mReceiverBluetoothSco = new BroadcastReceiver() {
@@ -273,9 +222,7 @@ public class RecordVoiceActivityForResult extends ActivityBase{
 
     private void stopAudioRecord() {
         mIvRecord.setImageResource(R.drawable.ic_record_start);
-        mBtnStream.setEnabled(true);
         mIvPlay.setEnabled(true);
-        //mIvRecord.setText("Record");
         onRecord(false);
         isRecording = false;
     }
@@ -298,11 +245,7 @@ public class RecordVoiceActivityForResult extends ActivityBase{
             onPlay(false);
             stopPlaying();
         }
-
-        stopStreaming();
     }
-
-
 
     private void onPlay(boolean start) {
         if (start) {
@@ -399,7 +342,6 @@ public class RecordVoiceActivityForResult extends ActivityBase{
             sendVoiceDataAsync.setOnPreExecute(new SendVoiceDataAsync.OnPreExecute() {
                 @Override
                 public void onPreExecute() {
-                    //addChatMessage("$", "Sending voice mail...");
                     mLayoutProgress.setVisibility(View.VISIBLE);
                 }
             });
@@ -420,10 +362,8 @@ public class RecordVoiceActivityForResult extends ActivityBase{
                 @Override
                 public void onPostExecute(boolean isExecuted) {
                     if(isExecuted) {
-                        //addChatMessage("$", "Voice mail sent");
                         Toast.makeText(getApplicationContext(), "Voice mail sent",Toast.LENGTH_LONG).show();
                     } else {
-                        //addChatMessage("$", "Voice mail sending failed");
                         Toast.makeText(getApplicationContext(), "Voice mail sending failed",Toast.LENGTH_LONG).show();
                     }
                     mLayoutProgress.setVisibility(View.GONE);
@@ -435,50 +375,4 @@ public class RecordVoiceActivityForResult extends ActivityBase{
         }
     }
 
-
-
-    private void stopStreaming() {
-        isStreaming = false;
-    }
-
-    private void startStreaming(){
-        try {
-            int minBufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE_IN_HZ,
-                    AudioFormat.CHANNEL_IN_MONO,
-                    AudioFormat.ENCODING_PCM_16BIT);
-
-            short[] audioData = new short[minBufferSize];
-
-            AudioRecord audioRecord = new AudioRecord(MediaRecorder.AudioSource.VOICE_COMMUNICATION,
-                    SAMPLE_RATE_IN_HZ,
-                    AudioFormat.CHANNEL_IN_MONO,
-                    AudioFormat.ENCODING_PCM_16BIT,
-                    minBufferSize);
-
-            audioRecord.startRecording();
-            //VoiceMessage voiceMessage = new VoiceMessage();
-            //voiceMessage.setDeviceName(Utils.getDeviceName(mSharedPref));
-            //voiceMessage.setChannelNumber(channelNumber);
-
-            while(isStreaming){
-                int numberOfShort = audioRecord.read(audioData, 0, minBufferSize);
-                if(numberOfShort>0) {
-                    byte[] audioBytes = Utils.shortArrayToByteArray(audioData);
-                    //voiceMessage.setVoiceMessage(Base64.encodeToString(audioBytes, Base64.NO_WRAP));
-                    SendVoiceChatAsync sendVoiceChatAsync = new SendVoiceChatAsync();
-                    sendVoiceChatAsync.setVoiceBytes(audioBytes);
-                    sendVoiceChatAsync.setMyIpAddress(myIpAddress);
-                    sendVoiceChatAsync.setClientIPAddressList(mListHostInfo);
-                    sendVoiceChatAsync.execute();
-                }
-            }
-
-            audioRecord.stop();
-            //dataOutputStream.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
 }

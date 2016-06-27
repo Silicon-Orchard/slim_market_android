@@ -24,7 +24,6 @@ import com.siliconorchard.walkitalkiechat.model.FileMessage;
 import com.siliconorchard.walkitalkiechat.runnable.RunnableReceiveFile;
 import com.siliconorchard.walkitalkiechat.runnable.RunnableReceiveVoiceChat;
 import com.siliconorchard.walkitalkiechat.utilities.Constant;
-import com.siliconorchard.walkitalkiechat.utilities.Utils;
 
 import org.json.JSONException;
 
@@ -148,7 +147,7 @@ public abstract class ChatActivityAbstract extends ChatActivityBase {
         mIvStreamVoice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toastUnderConstructionMessage();
+                makeVoiceCall();
             }
         });
         mIvStreamVideo.setOnClickListener(new View.OnClickListener() {
@@ -179,6 +178,7 @@ public abstract class ChatActivityAbstract extends ChatActivityBase {
         unregisterReceiver(receiver);
         stopThread();
         stopVoiceChatThread();
+        stopStreaming();
     }
 
     @Override
