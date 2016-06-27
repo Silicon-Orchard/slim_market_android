@@ -69,13 +69,15 @@ public class ActivityChatOne2One extends ChatActivityAbstract{
 
     @Override
     protected void onResume() {
+        if(!doNotInitThread) {
+            registerReceiver(receiverChatAccept, new IntentFilter(Constant.RECEIVER_NOTIFICATION_CHAT_ACCEPT));
+        }
         super.onResume();
-        registerReceiver(receiverChatAccept, new IntentFilter(Constant.RECEIVER_NOTIFICATION_CHAT_ACCEPT));
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onDestroy() {
+        super.onDestroy();
         unregisterReceiver(receiverChatAccept);
     }
 

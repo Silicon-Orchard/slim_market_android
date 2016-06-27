@@ -40,6 +40,7 @@ public abstract class ChatActivityAbstract extends ChatActivityBase {
     private Thread mThreadVoiceChat;
     private RunnableReceiveFile mRunnableReceiveFile;
     private Thread mThread;
+    protected boolean doNotInitThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,26 +168,38 @@ public abstract class ChatActivityAbstract extends ChatActivityBase {
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(receiver, new IntentFilter(Constant.SERVICE_NOTIFICATION_STRING_CHAT_FOREGROUND));
-        runThread();
-        startVoiceChatThread();
+        if(!doNotInitThread) {
+            registerReceiver(receiver, new IntentFilter(Constant.SERVICE_NOTIFICATION_STRING_CHAT_FOREGROUND));
+            runThread();
+            startVoiceChatThread();
+            doNotInitThread = true;
+        }
     }
 
-    @Override
+    /*@Override
     protected void onPause() {
         super.onPause();
         unregisterReceiver(receiver);
         stopThread();
         stopVoiceChatThread();
         stopStreaming();
-    }
+    }*/
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(doNotInitThread) {
+            doOnDestroy();
+        }
+    }
+
+    public void doOnDestroy() {
         sendChannelLeftMessage();
+        unregisterReceiver(receiver);
         stopThread();
         stopVoiceChatThread();
+        stopStreaming();
+        doNotInitThread = false;
     }
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {

@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.siliconorchard.walkitalkiechat.R;
 import com.siliconorchard.walkitalkiechat.activities.ActivityChatOne2One;
+import com.siliconorchard.walkitalkiechat.activities.ChatActivityAbstract;
 import com.siliconorchard.walkitalkiechat.asynctasks.SendMessageAsync;
 import com.siliconorchard.walkitalkiechat.model.ChatMessage;
 import com.siliconorchard.walkitalkiechat.model.HostInfo;
@@ -73,9 +74,16 @@ public class DialogChatRequest extends DialogFragment implements
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_accept:
+                boolean isChatActivity = getActivity() instanceof ChatActivityAbstract;
+                if(isChatActivity) {
+                    ((ChatActivityAbstract) getActivity()).doOnDestroy();
+                }
                 sendChatAcceptMessage(ChatMessage.TYPE_ONE_TO_ONE_CHAT_ACCEPT);
                 startOne2OneChat();
                 dismiss();
+                if(isChatActivity) {
+                    getActivity().finish();
+                }
                 break;
             case R.id.btn_decline:
                 sendChatAcceptMessage(ChatMessage.TYPE_ONE_TO_ONE_CHAT_DECLINE);
