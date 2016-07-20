@@ -211,4 +211,10 @@
     <string name="attach_photo">Attach a photo</string>
     <string name="select_option">Select Options</string>
     <string name="capture">Capture</string>
+
+    <string name="user_name">User Name</string>
+    <string name="user_comment">User Comment</string>
+    <string name="status">Status</string>
+    <string name="select_pic">Select Picture</string>
+    <string name="post">Post</string>
 </resources>

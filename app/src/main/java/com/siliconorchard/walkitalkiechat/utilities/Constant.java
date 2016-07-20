@@ -64,7 +64,9 @@ public class Constant {
     public static final String FOLDER_NAME_VIDEO = "video";
     public static final String FOLDER_NAME_PHOTO = "photo";
     public static final String FOLDER_NAME_OTHER = "other";
-
+    public static final String FOLDER_PROFILE_PIC = "profile_pic";
+    public static final String PROFILE_PIC_NAME = "profile.png";
+    public static final String KEY_USER_STATUS = "user_status";
 
     //Hash values for audio formats
     public static final int[] AUDIO_FORMAT_HASH_VALUES = {

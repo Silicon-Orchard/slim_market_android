@@ -31,11 +31,17 @@
         android:textColor="@color/White"/>
 
     <LinearLayout
-        android:id="@+id/layout_map_icon"
+        android:id="@+id/layout_settings"
         android:layout_width="80dp"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="right">
+        android:gravity="right"
+        android:visibility="invisible">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_settings" />
     </LinearLayout>
 
 </LinearLayout>

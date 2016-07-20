@@ -157,4 +157,5 @@
     <color name="orange3">#ff3300</color>
     <color name="orange4_new_theme">#e84d37</color>
     <color name="loading_panel_bg">#aa100d08</color>
+    <color name="theme_color">#2c3e51</color>
 </resources>

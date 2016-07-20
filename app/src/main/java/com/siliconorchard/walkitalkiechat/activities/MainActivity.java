@@ -30,7 +30,7 @@ public class MainActivity extends ActivityBase {
 
     private TextView mTvTitle;
     private LinearLayout mLayoutBack;
-    private LinearLayout mLayoutRight;
+    private LinearLayout mLayoutSettings;
 
 
     @Override
@@ -48,9 +48,9 @@ public class MainActivity extends ActivityBase {
         mBtnCreateChannel = (Button) findViewById(R.id.btn_create_channel);
         mTvTitle = (TextView) findViewById(R.id.tv_title_name);
         mLayoutBack = (LinearLayout) findViewById(R.id.layout_back);
-        mLayoutRight = (LinearLayout) findViewById(R.id.layout_map_icon);
-        mLayoutBack.setVisibility(View.GONE);
-        mLayoutRight.setVisibility(View.GONE);
+        mLayoutSettings = (LinearLayout) findViewById(R.id.layout_settings);
+        mLayoutBack.setVisibility(View.INVISIBLE);
+        mLayoutSettings.setVisibility(View.VISIBLE);
         mTvTitle.setText(R.string.main_menu);
         ipAddress = Utils.getDeviceIpAddress();
     }
@@ -72,6 +72,12 @@ public class MainActivity extends ActivityBase {
             @Override
             public void onClick(View v) {
                 startContactListActivity();
+            }
+        });
+        mLayoutSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
             }
         });
     }

@@ -37,6 +37,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -468,5 +469,30 @@ public class Utils {
             hashValue = hashValue * 36 + curValue;
         }
         return hashValue;
+    }
+
+    public static boolean saveSaveImageBitmap(String filePath, String fileName, Bitmap bitmap) {
+        boolean ret = false;
+        File file = createFile(filePath, fileName);
+        if(file == null) {
+            return false;
+        }
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            ret = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return ret;
     }
 }
