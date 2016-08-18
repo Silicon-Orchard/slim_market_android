@@ -52,8 +52,7 @@
                     android:id="@+id/ll_file"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="gone">
+                    android:orientation="horizontal">
                     <LinearLayout
                         android:id="@+id/ll_play"
                         android:layout_width="80dp"
@@ -64,6 +63,31 @@
                             android:id="@+id/iv_play"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_progress_bar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_percent"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:text="0%"
+                            android:textSize="14sp"
+                            android:textColor="@color/White"/>
+
+                        <ProgressBar
+                            android:id="@+id/progress_bar"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:layout_width="match_parent"
+                            android:layout_marginLeft="5dp"
+                            android:layout_height="15dp"
+                            android:indeterminate="false"
+                            android:progressDrawable="@drawable/custom_progress_drawable" />
                     </LinearLayout>
                 </LinearLayout>
 

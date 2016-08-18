@@ -92,7 +92,18 @@ public abstract class ChatActivityBase extends ActivitySelectFileAndPhotoBase {
         });
     }
 
-    protected void addFileMessage(FileMessage fileMessage, String msg, boolean isSent, String filePath) {
+    protected int addFileMessage(FileMessage fileMessage, String msg, boolean isSent, String filePath) {
+        ChatMessageHistory chatMessage = generateChatHistoryMessage(fileMessage, msg, isSent, filePath);
+        int addedIndex = adapterChatHistory.addMessage(chatMessage);
+        mLvChatHistory.post(new Runnable() {
+            public void run() {
+                mLvChatHistory.setSelection(mLvChatHistory.getCount() - 1);
+            }
+        });
+        return addedIndex;
+    }
+
+    protected ChatMessageHistory generateChatHistoryMessage(FileMessage fileMessage, String msg, boolean isSent, String filePath) {
         ChatMessageHistory chatMessage = new ChatMessageHistory();
         if(isSent) {
             chatMessage.setDeviceName("Me");
@@ -103,12 +114,7 @@ public abstract class ChatActivityBase extends ActivitySelectFileAndPhotoBase {
         chatMessage.setIsSent(isSent);
         chatMessage.setFilePath(filePath);
         chatMessage.setFileType(fileMessage.getFileType());
-        adapterChatHistory.addMessage(chatMessage);
-        mLvChatHistory.post(new Runnable() {
-            public void run() {
-                mLvChatHistory.setSelection(mLvChatHistory.getCount() - 1);
-            }
-        });
+        return chatMessage;
     }
 
     protected ChatMessage generateChatMessage(String message) {
@@ -260,15 +266,19 @@ public abstract class ChatActivityBase extends ActivitySelectFileAndPhotoBase {
         }
     }
 
-    protected FileMessage sendFileMessage(File file, String fileName, int fileType) {
-        if(fileName == null) {
-            Toast.makeText(this,"No file to send",Toast.LENGTH_LONG).show();
-        }
+    protected FileMessage generateFileMessage(String fileName, int fileType) {
         FileMessage fileMessage = new FileMessage();
         fileMessage.setDeviceName(Utils.getDeviceName(mSharedPref));
         fileMessage.setChannelNumber(channelNumber);
         fileMessage.setFileName(fileName);
         fileMessage.setFileType(fileType);
+
+        return fileMessage;
+    }
+    protected void sendFileMessage(File file, FileMessage fileMessage, final int chatHistoryIndex) {
+        if(fileMessage.getFileName() == null) {
+            Toast.makeText(this,"No file to send",Toast.LENGTH_LONG).show();
+        }
 
         try {
             SendFileDataTCP sendFileDataTCP = new SendFileDataTCP();
@@ -278,19 +288,21 @@ public abstract class ChatActivityBase extends ActivitySelectFileAndPhotoBase {
             sendFileDataTCP.setOnPreExecute(new SendFileDataTCP.OnPreExecute() {
                 @Override
                 public void onPreExecute() {
-                    mLayoutProgress.setVisibility(View.VISIBLE);
+                    //mLayoutProgress.setVisibility(View.VISIBLE);
+                    adapterChatHistory.updateProgress(chatHistoryIndex, 0, false);
                 }
             });
             sendFileDataTCP.setOnProgressUpdate(new SendFileDataTCP.OnProgressUpdate() {
                 @Override
                 public void onProgressUpdate(int progress) {
-                    if (progress > 100) {
+                    /*if (progress > 100) {
                         progress = 100;
                     }
                     Log.e("TAG_LOG", "Progress Value: " + progress);
                     mTvPercent.setText("" + progress + "%");
                     mProgress.setProgress(progress);
-                    mProgress.setProgress(progress);
+                    mProgress.setProgress(progress);*/
+                    adapterChatHistory.updateProgress(chatHistoryIndex, progress, false);
                 }
             });
 
@@ -301,6 +313,7 @@ public abstract class ChatActivityBase extends ActivitySelectFileAndPhotoBase {
                         Toast.makeText(getApplicationContext(), "File sent", Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(getApplicationContext(), "File sending failed", Toast.LENGTH_LONG).show();
+                        adapterChatHistory.updateProgress(chatHistoryIndex, -1, true);
                     }
                     mLayoutProgress.setVisibility(View.GONE);
                 }
@@ -309,7 +322,6 @@ public abstract class ChatActivityBase extends ActivitySelectFileAndPhotoBase {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return fileMessage;
     }
 
     protected void makeVoiceCall() {

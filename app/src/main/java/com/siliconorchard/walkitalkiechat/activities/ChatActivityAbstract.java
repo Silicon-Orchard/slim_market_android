@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.siliconorchard.walkitalkiechat.R;
 import com.siliconorchard.walkitalkiechat.adapter.AdapterChatHistory;
 import com.siliconorchard.walkitalkiechat.model.ChatMessage;
+import com.siliconorchard.walkitalkiechat.model.ChatMessageHistory;
 import com.siliconorchard.walkitalkiechat.model.HostInfo;
 import com.siliconorchard.walkitalkiechat.model.FileMessage;
 import com.siliconorchard.walkitalkiechat.runnable.RunnableReceiveFileTCP;
@@ -242,35 +243,40 @@ public abstract class ChatActivityAbstract extends ChatActivityBase {
         mRunnableReceiveFileWhole = new RunnableReceiveFileTCP();
         mRunnableReceiveFileWhole.setOnReceiveCallBacks(new RunnableReceiveFileTCP.OnReceiveCallBacks() {
             @Override
-            public void onPreReceive(final FileMessage fileMessage) {
+            public int onPreReceive(final FileMessage fileMessage) {
+                int ret = adapterChatHistory.getCount();
                 mTvPercent.post(new Runnable() {
                     @Override
                     public void run() {
                         //mTvClientMsg.append("\n" + voiceMessage.getDeviceName() + ": Sending voice mail...");
                         //addChatMessage(voiceMessage.getDeviceName(), "Sending voice mail..");
+                        addFileMessage(fileMessage, fileMessage.getFileName(), false, null);
                     }
                 });
+                return ret;
             }
 
             @Override
-            public void onProgressUpdate(final FileMessage fileMessage) {
+            public void onProgressUpdate(final FileMessage fileMessage, final int position) {
                 mTvPercent.post(new Runnable() {
                     @Override
                     public void run() {
-                        mProgress.setVisibility(View.VISIBLE);
+                        /*mProgress.setVisibility(View.VISIBLE);
                         mTvPercent.setVisibility(View.VISIBLE);
                         int progress = fileMessage.getCurrentChunkNo() * 100 / fileMessage.getTotalChunkCount();
                         if (progress > 100) {
                             progress = 100;
                         }
                         mTvPercent.setText("" + progress + "%");
-                        mProgress.setProgress(progress);
+                        mProgress.setProgress(progress);*/
+                        int progress = fileMessage.getCurrentChunkNo() * 100 / fileMessage.getTotalChunkCount();
+                        adapterChatHistory.updateProgress(position, progress, false);
                     }
                 });
             }
 
             @Override
-            public void onPostReceive(final FileMessage fileMessage, final File file) {
+            public void onPostReceive(final FileMessage fileMessage, final File file, final int position) {
                 if (fileMessage.getCurrentChunkNo() >= fileMessage.getTotalChunkCount()) {
                     mTvPercent.post(new Runnable() {
                         @Override
@@ -282,7 +288,8 @@ public abstract class ChatActivityAbstract extends ChatActivityBase {
                             } else {
                                 message = fileMessage.getFileName();
                             }
-                            addFileMessage(fileMessage, message, false, file.getAbsolutePath());
+                            ChatMessageHistory chatMessageHistory = generateChatHistoryMessage(fileMessage, message, false, file.getAbsolutePath());
+                            adapterChatHistory.updateMessage(chatMessageHistory, position);
                             //mLayoutPlay.setVisibility(View.VISIBLE);
                             //mLayoutProgress.setVisibility(View.GONE);
                         }
@@ -291,11 +298,12 @@ public abstract class ChatActivityAbstract extends ChatActivityBase {
             }
 
             @Override
-            public void onErrorOccur(final String errorText) {
+            public void onErrorOccur(final String errorText, final int position) {
                 mTvPercent.post(new Runnable() {
                     @Override
                     public void run() {
                         Toast.makeText(getApplicationContext(), errorText, Toast.LENGTH_LONG).show();
+                        adapterChatHistory.updateProgress(position, -1, true);
                         //mTvClientMsg.append("\n" + errorText);
                     }
                 });
@@ -337,14 +345,16 @@ public abstract class ChatActivityAbstract extends ChatActivityBase {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == Constant.REQUEST_CODE_SELECT_SINGLE_PICTURE && resultCode == Activity.RESULT_OK) {
             initUriAndFile(data, true);
-            FileMessage fileMessage = sendFileMessage(mSelectedFile, mSelectedFile.getName(), Constant.FILE_TYPE_PHOTO);
-            addFileMessage(fileMessage, fileMessage.getFileName(), true, mSelectedFile.getAbsolutePath());
+            FileMessage fileMessage = generateFileMessage(mSelectedFile.getName(), Constant.FILE_TYPE_PHOTO);
+            int index = addFileMessage(fileMessage, fileMessage.getFileName(), true, mSelectedFile.getAbsolutePath());
+            sendFileMessage(mSelectedFile, fileMessage, index);
         } else if(requestCode == Constant.REQUEST_CODE_SELECT_ANY_FILE && resultCode == Activity.RESULT_OK) {
             initUriAndFile(data, false);
             String fileName = mSelectedFile.getName();
             int fileType = extractFileType(fileName);
-            FileMessage fileMessage = sendFileMessage(mSelectedFile, fileName, fileType);
-            addFileMessage(fileMessage, fileMessage.getFileName(), true, mSelectedFile.getAbsolutePath());
+            FileMessage fileMessage = generateFileMessage(mSelectedFile.getName(), fileType);
+            int index = addFileMessage(fileMessage, fileMessage.getFileName(), true, mSelectedFile.getAbsolutePath());
+            sendFileMessage(mSelectedFile, fileMessage, index);
         }
     }
 

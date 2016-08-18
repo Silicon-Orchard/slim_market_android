@@ -13,6 +13,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,6 +78,11 @@ public class AdapterChatHistory extends BaseAdapter{
             viewHolder.ivPlay = (ImageView) convertView.findViewById(R.id.iv_play);
             viewHolder.llReceived = (LinearLayout) convertView.findViewById(R.id.ll_received_space);
             viewHolder.llSent = (LinearLayout) convertView.findViewById(R.id.ll_sent_space);
+
+            viewHolder.llProgress = (LinearLayout) convertView.findViewById(R.id.ll_progress_bar);
+            viewHolder.tvPercent = (TextView) convertView.findViewById(R.id.tv_percent);
+            viewHolder.progressBar = (ProgressBar) convertView.findViewById(R.id.progress_bar);
+
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -99,6 +105,7 @@ public class AdapterChatHistory extends BaseAdapter{
         viewHolder.tvName.setText(name+":");
         viewHolder.tvMsg.setText(chatMessage.getMessage());
         viewHolder.llFile.setVisibility(View.GONE);
+        viewHolder.progressBar.setMax(100);
         if(chatMessage.getFileType() != 0) {
             if(chatMessage.isSent()) {
                 viewHolder.llFile.setGravity(Gravity.RIGHT);
@@ -120,6 +127,20 @@ public class AdapterChatHistory extends BaseAdapter{
                     break;
             }
             viewHolder.llFile.setVisibility(View.VISIBLE);
+
+            if(chatMessage.getFileProgress()>=100) {
+                chatMessage.setFileProgress(-1);
+            }
+            if(chatMessage.getFileProgress()>=0) {
+                viewHolder.progressBar.setProgress(chatMessage.getFileProgress());
+                viewHolder.tvPercent.setText("" + chatMessage.getFileProgress() + "%");
+                viewHolder.llProgress.setVisibility(View.VISIBLE);
+            } else {
+                viewHolder.llProgress.setVisibility(View.GONE);
+                if(chatMessage.isFileTransferError()) {
+                    viewHolder.tvMsg.append(": Error");
+                }
+            }
         }
         return convertView;
     }
@@ -157,7 +178,7 @@ public class AdapterChatHistory extends BaseAdapter{
                 @Override
                 public void onClick(View v) {
                     String path = (String) v.getTag();
-                    if (path == null) {
+                    if (path == null || path.length()<5) {
                         showToast();
                         return;
                     }
@@ -234,20 +255,34 @@ public class AdapterChatHistory extends BaseAdapter{
         String ext = file.getName().substring(file.getName().indexOf(".")+1);
         String type = mime.getMimeTypeFromExtension(ext);
 
-        intent.setDataAndType(Uri.fromFile(file),type);
+        intent.setDataAndType(Uri.fromFile(file), type);
 
         mActivity.startActivity(intent);
     }
 
-    public void addMessage(ChatMessageHistory chatMessage) {
+    public int addMessage(ChatMessageHistory chatMessage) {
         if(mListChat == null) {
             mListChat = new ArrayList<>();
         }
         mListChat.add(chatMessage);
         notifyDataSetChanged();
+        return mListChat.size()-1;
     }
 
+    public void updateMessage(ChatMessageHistory chatMessage, int position) {
+        mListChat.set(position, chatMessage);
+        notifyDataSetChanged();
+    }
 
+    public void updateProgress(int position, int progress, boolean isTransferError) {
+        ChatMessageHistory chatMessageHistory = mListChat.get(position);
+        chatMessageHistory.setFileProgress(progress);
+        chatMessageHistory.setIsFileTransferError(isTransferError);
+        if(isTransferError) {
+            chatMessageHistory.setFilePath(null);
+        }
+        notifyDataSetChanged();
+    }
 
     private void onPlay(boolean start, ViewHolder viewHolder, String filePath) {
         if (start) {
@@ -317,6 +352,7 @@ public class AdapterChatHistory extends BaseAdapter{
         Toast.makeText(mActivity, "No file recorded or received",Toast.LENGTH_LONG).show();
     }
 
+
     class ViewHolder {
         TextView tvName;
         TextView tvMsg;
@@ -327,5 +363,9 @@ public class AdapterChatHistory extends BaseAdapter{
         MediaPlayer player;
         LinearLayout llReceived;
         LinearLayout llSent;
+
+        LinearLayout llProgress;
+        TextView tvPercent;
+        ProgressBar progressBar;
     }
 }

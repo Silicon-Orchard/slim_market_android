@@ -16,9 +16,11 @@ public class ChatMessageHistory implements Parcelable {
     private String filePath;
     private String fileName;
     private int fileType;
+    private int fileProgress;
+    private boolean isFileTransferError;
 
     public ChatMessageHistory() {
-
+        fileProgress = -1;
     }
 
     public ChatMessageHistory(Parcel in) {
@@ -30,6 +32,8 @@ public class ChatMessageHistory implements Parcelable {
         this.filePath = in.readString();
         this.fileName = in.readString();
         this.fileType = in.readInt();
+        this.fileProgress = in.readInt();
+        this.isFileTransferError = in.readInt() == 1 ? true : false;
     }
 
     public String getIpAddress() {
@@ -96,6 +100,22 @@ public class ChatMessageHistory implements Parcelable {
         this.fileType = fileType;
     }
 
+    public int getFileProgress() {
+        return fileProgress;
+    }
+
+    public void setFileProgress(int progress) {
+        this.fileProgress = progress;
+    }
+
+    public boolean isFileTransferError() {
+        return isFileTransferError;
+    }
+
+    public void setIsFileTransferError(boolean isFileTransferError) {
+        this.isFileTransferError = isFileTransferError;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -111,6 +131,8 @@ public class ChatMessageHistory implements Parcelable {
         dest.writeString(this.filePath);
         dest.writeString(this.fileName);
         dest.writeInt(this.fileType);
+        dest.writeInt(this.fileProgress);
+        dest.writeInt(this.isFileTransferError ? 1 : 0);
     }
 
     public static final Creator CREATOR = new Creator() {

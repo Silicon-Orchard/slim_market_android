@@ -122,9 +122,9 @@ public class RunnableReceiveFileTCP extends RunnableBase {
     }
 
     public interface OnReceiveCallBacks {
-        void onPreReceive(FileMessage fileMessage);
-        void onProgressUpdate(final FileMessage fileMessage);
-        void onPostReceive(FileMessage fileMessage, File file);
-        void onErrorOccur(String errorText);
+        int onPreReceive(FileMessage fileMessage);
+        void onProgressUpdate(final FileMessage fileMessage, int position);
+        void onPostReceive(FileMessage fileMessage, File file, int position);
+        void onErrorOccur(String errorText, int position);
     }
 }

@@ -22,6 +22,7 @@ public class ReceiveFileTCP {
 
     private File mFile;
     private FileOutputStream fileOutputStream;
+    private int chatPosition;
 
     private RunnableReceiveFileTCP.OnReceiveCallBacks mOnReceiveCallBacks;
 
@@ -40,13 +41,13 @@ public class ReceiveFileTCP {
         isBusy = true;
         try {
             if(numOfReceivedMsg == 0 && mOnReceiveCallBacks != null) {
-                mOnReceiveCallBacks.onPreReceive(fileMessage);
+                chatPosition = mOnReceiveCallBacks.onPreReceive(fileMessage);
             }
             numOfReceivedMsg++;
             final boolean isContinue = fileMessage.getCurrentChunkNo()< fileMessage.getTotalChunkCount();
             Log.e("TAG_LOG", "Current/Total, isContinue: " + fileMessage.getCurrentChunkNo() + "/" + fileMessage.getTotalChunkCount() + "," + isContinue);
             if(mOnReceiveCallBacks != null && isContinue) {
-                mOnReceiveCallBacks.onProgressUpdate(fileMessage);
+                mOnReceiveCallBacks.onProgressUpdate(fileMessage, chatPosition);
             }
 
             if(isContinue) {
@@ -91,7 +92,7 @@ public class ReceiveFileTCP {
             fileOutputStream.flush();
             fileOutputStream.close();
             if(mOnReceiveCallBacks != null) {
-                mOnReceiveCallBacks.onPostReceive(fileMessage, mFile);
+                mOnReceiveCallBacks.onPostReceive(fileMessage, mFile, chatPosition);
             }
             numOfReceivedMsg = 0;
         }
@@ -120,7 +121,7 @@ public class ReceiveFileTCP {
     private void onError(String errorMessage) {
         Log.e("TAG_LOG", errorMessage);
         if(mOnReceiveCallBacks != null) {
-            mOnReceiveCallBacks.onErrorOccur(errorMessage);
+            mOnReceiveCallBacks.onErrorOccur(errorMessage, chatPosition);
         }
         numOfReceivedMsg = 0;
     }
