@@ -236,6 +236,17 @@ public class Utils {
         dir.mkdirs();
         folderPath = dir.getAbsolutePath();
 
+        int index = fileName.lastIndexOf('.');
+        String extension = null;
+        String name = null;
+        if(index>=0) {
+            extension = fileName.substring(index);
+            name = fileName.substring(0, index);
+        } else {
+            name = fileName;
+            extension = "";
+        }
+
         if(fileName == null) {
             fileName = Constant.FILE_NAME;
         }
@@ -252,6 +263,13 @@ public class Utils {
             }
             mFile = new File(folderPath, fileName);
             if(!mFile.exists()) {
+                mFile.createNewFile();
+            } else {
+                int i = 1;
+                while(mFile.exists()) {
+                    mFile = new File(folderPath, name+"_"+i+extension);
+                    i++;
+                }
                 mFile.createNewFile();
             }
         } catch (IOException e) {

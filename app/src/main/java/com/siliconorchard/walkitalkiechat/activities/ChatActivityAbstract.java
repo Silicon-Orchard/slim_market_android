@@ -21,7 +21,7 @@ import com.siliconorchard.walkitalkiechat.adapter.AdapterChatHistory;
 import com.siliconorchard.walkitalkiechat.model.ChatMessage;
 import com.siliconorchard.walkitalkiechat.model.HostInfo;
 import com.siliconorchard.walkitalkiechat.model.FileMessage;
-import com.siliconorchard.walkitalkiechat.runnable.RunnableReceiveFile;
+import com.siliconorchard.walkitalkiechat.runnable.RunnableReceiveFileTCP;
 import com.siliconorchard.walkitalkiechat.runnable.RunnableReceiveVoiceChat;
 import com.siliconorchard.walkitalkiechat.utilities.Constant;
 
@@ -38,7 +38,7 @@ public abstract class ChatActivityAbstract extends ChatActivityBase {
 
     private RunnableReceiveVoiceChat mRunnableReceiveVoiceChat;
     private Thread mThreadVoiceChat;
-    private RunnableReceiveFile mRunnableReceiveFile;
+    private RunnableReceiveFileTCP mRunnableReceiveFileWhole;
     private Thread mThread;
     protected boolean doNotInitThread;
 
@@ -239,8 +239,8 @@ public abstract class ChatActivityAbstract extends ChatActivityBase {
     };
 
     protected void runThread() {
-        mRunnableReceiveFile = new RunnableReceiveFile();
-        mRunnableReceiveFile.setOnReceiveCallBacks(new RunnableReceiveFile.OnReceiveCallBacks() {
+        mRunnableReceiveFileWhole = new RunnableReceiveFileTCP();
+        mRunnableReceiveFileWhole.setOnReceiveCallBacks(new RunnableReceiveFileTCP.OnReceiveCallBacks() {
             @Override
             public void onPreReceive(final FileMessage fileMessage) {
                 mTvPercent.post(new Runnable() {
@@ -301,17 +301,17 @@ public abstract class ChatActivityAbstract extends ChatActivityBase {
                 });
             }
         });
-        mThread = new Thread(mRunnableReceiveFile);
-        mRunnableReceiveFile.setChannelNumber(channelNumber);
+        mThread = new Thread(mRunnableReceiveFileWhole);
+        mRunnableReceiveFileWhole.setChannelNumber(channelNumber);
         mThread.start();
     }
 
     protected void stopThread() {
-        if (mRunnableReceiveFile != null) {
-            mRunnableReceiveFile.closeSocket();
-            mRunnableReceiveFile.terminate();
+        if (mRunnableReceiveFileWhole != null) {
+            mRunnableReceiveFileWhole.closeSocket();
+            mRunnableReceiveFileWhole.terminate();
             mThread = null;
-            mRunnableReceiveFile = null;
+            mRunnableReceiveFileWhole = null;
         }
     }
 

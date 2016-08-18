@@ -7,7 +7,6 @@ import android.util.Log;
 import com.siliconorchard.walkitalkiechat.model.HostInfo;
 import com.siliconorchard.walkitalkiechat.model.FileMessage;
 import com.siliconorchard.walkitalkiechat.utilities.Constant;
-import com.siliconorchard.walkitalkiechat.utilities.Utils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,7 +18,7 @@ import java.util.List;
 /**
  * Created by adminsiriconorchard on 5/6/16.
  */
-public class SendVoiceDataAsyncTCP extends AsyncTask<FileMessage, Integer, Boolean> {
+public class SendFileDataTCP extends AsyncTask<FileMessage, Integer, Boolean> {
 
     private int totalSize;
 
@@ -31,6 +30,8 @@ public class SendVoiceDataAsyncTCP extends AsyncTask<FileMessage, Integer, Boole
     private List<HostInfo> mHostClientList;
 
     private String myIpAddress;
+
+    private static final int FILE_PACKET_LENGTH = 16384;
 
     public String getMyIpAddress() {
         return myIpAddress;
@@ -96,22 +97,46 @@ public class SendVoiceDataAsyncTCP extends AsyncTask<FileMessage, Integer, Boole
         try {
 
             FileInputStream fileinputstream = new FileInputStream(mFile);
-            byte[] fileData = Utils.inputStreamToByteArray(fileinputstream);
-            String wholeMessage = Base64.encodeToString(fileData, Base64.NO_WRAP);
-
-            Log.e("TAG_LOG", "Sending Message\n" + wholeMessage);
-
             FileMessage fileMessage = params[0];
-            fileMessage.setVoiceMessage(wholeMessage);
-            String message = fileMessage.getJsonString();
-            for(int i = 0; i<mHostClientList.size(); i++) {
-                String ipAddress = mHostClientList.get(i).getIpAddress();
-                if(!ipAddress.equals(myIpAddress)) {
-                    if(sendVoiceMessage(ipAddress, message)) {
-                        isSuccess = true;
+
+            totalSize = (int) mFile.length();
+            Log.e("TAG_LOG", "Total size: " + totalSize);
+            int numOfMessages = totalSize/FILE_PACKET_LENGTH;
+            if(totalSize % FILE_PACKET_LENGTH != 0) {
+                numOfMessages++;
+            }
+            fileMessage.setTotalChunkCount(numOfMessages);
+            fileMessage.setFileType(fileMessage.getFileType());
+
+            int sentSize = 0;
+            int currentMessage = 0;
+            byte[] bufferStream = new byte[FILE_PACKET_LENGTH];
+            while(true) {
+                boolean isContinue = true;
+                int prevIndex = sentSize;
+                sentSize += FILE_PACKET_LENGTH;
+                if(sentSize>=totalSize) {
+                    sentSize = totalSize;
+                    isContinue = false;
+                }
+                fileinputstream.read(bufferStream);
+                String filePart = Base64.encodeToString(bufferStream, Base64.NO_WRAP);
+                fileMessage.setCurrentChunkNo(++currentMessage);
+                fileMessage.setVoiceMessage(filePart);
+                String message = fileMessage.getJsonString();
+
+                for(int i = 0; i<mHostClientList.size(); i++) {
+                    String clientIP = mHostClientList.get(i).getIpAddress();
+                    if(!clientIP.equals(myIpAddress)) {
+                        sendVoiceMessage(clientIP, message);
                     }
                 }
+                publishProgress(sentSize);
+                if(!isContinue) {
+                    break;
+                }
             }
+            return true;
 
         } catch (NumberFormatException e) {
             e.printStackTrace();
@@ -146,6 +171,7 @@ public class SendVoiceDataAsyncTCP extends AsyncTask<FileMessage, Integer, Boole
         }
         return retVal;
     }
+
     @Override
     protected void onProgressUpdate(Integer... values) {
         int sentSize = values[0];

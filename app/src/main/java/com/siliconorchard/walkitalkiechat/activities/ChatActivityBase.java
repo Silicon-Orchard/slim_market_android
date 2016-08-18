@@ -23,7 +23,7 @@ import com.siliconorchard.walkitalkiechat.adapter.AdapterChatHistory;
 import com.siliconorchard.walkitalkiechat.adapter.AdapterRecipientList;
 import com.siliconorchard.walkitalkiechat.asynctasks.SendMessageAsync;
 import com.siliconorchard.walkitalkiechat.asynctasks.SendVoiceChatAsync;
-import com.siliconorchard.walkitalkiechat.asynctasks.SendVoiceDataAsync;
+import com.siliconorchard.walkitalkiechat.asynctasks.SendFileDataTCP;
 import com.siliconorchard.walkitalkiechat.model.ChatMessage;
 import com.siliconorchard.walkitalkiechat.model.ChatMessageHistory;
 import com.siliconorchard.walkitalkiechat.model.FileMessage;
@@ -271,17 +271,17 @@ public abstract class ChatActivityBase extends ActivitySelectFileAndPhotoBase {
         fileMessage.setFileType(fileType);
 
         try {
-            SendVoiceDataAsync sendVoiceDataAsync = new SendVoiceDataAsync();
-            sendVoiceDataAsync.setFile(file);
-            sendVoiceDataAsync.setClientIPAddressList(mListHostInfo);
-            sendVoiceDataAsync.setMyIpAddress(myIpAddress);
-            sendVoiceDataAsync.setOnPreExecute(new SendVoiceDataAsync.OnPreExecute() {
+            SendFileDataTCP sendFileDataTCP = new SendFileDataTCP();
+            sendFileDataTCP.setFile(file);
+            sendFileDataTCP.setClientIPAddressList(mListHostInfo);
+            sendFileDataTCP.setMyIpAddress(myIpAddress);
+            sendFileDataTCP.setOnPreExecute(new SendFileDataTCP.OnPreExecute() {
                 @Override
                 public void onPreExecute() {
                     mLayoutProgress.setVisibility(View.VISIBLE);
                 }
             });
-            sendVoiceDataAsync.setOnProgressUpdate(new SendVoiceDataAsync.OnProgressUpdate() {
+            sendFileDataTCP.setOnProgressUpdate(new SendFileDataTCP.OnProgressUpdate() {
                 @Override
                 public void onProgressUpdate(int progress) {
                     if (progress > 100) {
@@ -294,18 +294,18 @@ public abstract class ChatActivityBase extends ActivitySelectFileAndPhotoBase {
                 }
             });
 
-            sendVoiceDataAsync.setOnPostExecute(new SendVoiceDataAsync.OnPostExecute() {
+            sendFileDataTCP.setOnPostExecute(new SendFileDataTCP.OnPostExecute() {
                 @Override
                 public void onPostExecute(boolean isExecuted) {
-                    if(isExecuted) {
-                        Toast.makeText(getApplicationContext(), "File sent",Toast.LENGTH_LONG).show();
+                    if (isExecuted) {
+                        Toast.makeText(getApplicationContext(), "File sent", Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(getApplicationContext(), "File sending failed",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "File sending failed", Toast.LENGTH_LONG).show();
                     }
                     mLayoutProgress.setVisibility(View.GONE);
                 }
             });
-            sendVoiceDataAsync.execute(fileMessage);
+            sendFileDataTCP.execute(fileMessage);
         } catch (Exception e) {
             e.printStackTrace();
         }
