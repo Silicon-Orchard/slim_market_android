@@ -21,20 +21,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/user_name"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="@color/White"/>
+                android:textColor="@color/White"
+                android:textSize="24sp" />
 
             <EditText
                 android:id="@+id/et_user_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:background="@drawable/edit_text_bg_gradient"
-                android:hint="@string/user_name"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/edit_text_border"
+                android:gravity="center_vertical"
+                android:hint="@string/your_name"
+                android:inputType="text"
                 android:padding="10dp"
-                android:textSize="22sp"
-                android:inputType="text"/>
+                android:textColor="@color/LightGrey"
+                android:textColorHint="@color/Gray"
+                android:textSize="16sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -44,20 +46,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/status"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="@color/White" />
+                android:textColor="@color/White"
+                android:textSize="24sp" />
 
             <EditText
                 android:id="@+id/et_user_comment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:background="@drawable/edit_text_bg_gradient"
-                android:hint="@string/status"
-                android:gravity="top|left"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/edit_text_border"
+                android:gravity="center_vertical"
+                android:hint="@string/your_name"
                 android:inputType="textMultiLine"
-                android:padding="10dp" />
+                android:padding="10dp"
+                android:textColor="@color/LightGrey"
+                android:textColorHint="@color/Gray"
+                android:textSize="16sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -69,7 +73,7 @@
                 android:layout_height="200dp"
                 android:layout_gravity="center_horizontal"
                 android:scaleType="fitXY"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -85,8 +89,10 @@
                     android:layout_width="0dp"
                     android:layout_height="fill_parent"
                     android:layout_weight="1"
+                    android:textColor="@color/White"
                     android:text="@string/select_pic"
-                    android:textAllCaps="false" />
+                    android:textAllCaps="false"
+                    android:background="@drawable/btn_orrange_bg" />
 
                 <LinearLayout
                     android:layout_width="10dp"
@@ -98,7 +104,10 @@
                     android:layout_height="fill_parent"
                     android:layout_weight="1"
                     android:text="@string/post"
-                    android:textAllCaps="false" />
+                    android:textColor="@color/White"
+                    android:textAllCaps="false"
+                    android:background="@drawable/btn_orrange_bg" />
+
             </LinearLayout>
 
         </LinearLayout>
