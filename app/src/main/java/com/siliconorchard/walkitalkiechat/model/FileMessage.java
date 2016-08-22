@@ -7,6 +7,7 @@ import org.json.JSONObject;
  * Created by adminsiriconorchard on 5/10/16.
  */
 public class FileMessage {
+
     private String deviceName;
     private int totalChunkCount;
     private int currentChunkNo;
@@ -14,6 +15,7 @@ public class FileMessage {
     private int channelNumber;
     private String fileName;
     private int fileType;
+    private String fileUniqueId;
 
     private static final String JSON_KEY_DEVICE_NAME = "device_name";
     private static final String JSON_KEY_TOTAL_CHUNK_COUNT = "file_chunk_count";
@@ -22,6 +24,7 @@ public class FileMessage {
     private static final String JSON_KEY_CHANNEL_NUMBER = "channel_id";
     private static final String JSON_KEY_FILE_NAME = "file_name";
     private static final String JSON_KEY_FILE_TYPE = "file_type";
+    private static final String JSON_KEY_FILE_UNIQUE_ID = "file_unique_id";
 
 
     public FileMessage() {
@@ -39,6 +42,7 @@ public class FileMessage {
         this.channelNumber = jsonObject.getInt(JSON_KEY_CHANNEL_NUMBER);
         this.fileName = jsonObject.getString(JSON_KEY_FILE_NAME);
         this.fileType = jsonObject.getInt(JSON_KEY_FILE_TYPE);
+        this.fileUniqueId = jsonObject.getString(JSON_KEY_FILE_UNIQUE_ID);
     }
 
     public String getJsonString() throws JSONException {
@@ -50,6 +54,7 @@ public class FileMessage {
         jsonObject.put(JSON_KEY_CHANNEL_NUMBER, this.channelNumber);
         jsonObject.put(JSON_KEY_FILE_NAME, this.fileName);
         jsonObject.put(JSON_KEY_FILE_TYPE, this.fileType);
+        jsonObject.put(JSON_KEY_FILE_UNIQUE_ID, this.fileUniqueId);
         return jsonObject.toString();
     }
 
@@ -107,5 +112,13 @@ public class FileMessage {
 
     public void setFileType(int fileType) {
         this.fileType = fileType;
+    }
+
+    public String getFileUniqueId() {
+        return fileUniqueId;
+    }
+
+    public void setFileUniqueId(String fileUniqueId) {
+        this.fileUniqueId = fileUniqueId;
     }
 }

@@ -34,6 +34,7 @@ import org.json.JSONException;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -272,7 +273,10 @@ public abstract class ChatActivityBase extends ActivitySelectFileAndPhotoBase {
         fileMessage.setChannelNumber(channelNumber);
         fileMessage.setFileName(fileName);
         fileMessage.setFileType(fileType);
-
+        StringBuilder uniqueId = new StringBuilder();
+        uniqueId.append(fileName).append('_');
+        uniqueId.append(new Date().toString());
+        fileMessage.setFileUniqueId(uniqueId.toString());
         return fileMessage;
     }
     protected void sendFileMessage(File file, FileMessage fileMessage, final int chatHistoryIndex) {

@@ -69,7 +69,7 @@ public class ReceiveFileTCP {
 
     private void writeToFile(FileMessage fileMessage, boolean isFinish) throws IOException {
         if(isFinish && numOfReceivedMsg != fileMessage.getTotalChunkCount()) {
-            String errorMessage = "Data missing occurs,(Received/Sent) "+numOfReceivedMsg+"/"+ fileMessage.getTotalChunkCount();
+            String errorMessage = "Error occurred during receiving file";//+numOfReceivedMsg+"/"+ fileMessage.getTotalChunkCount();
             onError(errorMessage);
             fileOutputStream.flush();
             fileOutputStream.close();
@@ -83,7 +83,7 @@ public class ReceiveFileTCP {
         }
 
         if(mFile == null) {
-            onError("File cannot be created");
+            onError("File cannot be created. Please give permission to write external storage.");
             return;
         }
         byte[] filePart = Base64.decode(fileMessage.getVoiceMessage(), Base64.NO_WRAP);

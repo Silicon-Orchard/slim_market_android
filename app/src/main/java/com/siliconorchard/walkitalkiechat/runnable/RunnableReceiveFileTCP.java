@@ -104,7 +104,7 @@ public class RunnableReceiveFileTCP extends RunnableBase {
         if(fileMessage.getChannelNumber() != channelNumber) {
             return;
         }
-        String keyIpString = inetAddress.getHostAddress();
+        String keyIpString = fileMessage.getFileUniqueId();
         Log.e("TAG_LOG","Host Name: "+keyIpString);
         ReceiveFileTCP receiveFile = mReceivingQueue.get(keyIpString);
         if(receiveFile == null) {
