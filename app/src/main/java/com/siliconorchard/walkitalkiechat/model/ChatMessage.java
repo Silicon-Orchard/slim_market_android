@@ -20,6 +20,10 @@ public class ChatMessage {
     private HostInfo clientInfo;
     private int channelNumber;
 
+    private String fileName;
+    private int fileType;
+    private String fileUniqueId;
+
     private List<HostInfo> clientList;
 
     private static final String JSON_KEY_IP_ADDRESS = "ip_address";
@@ -30,6 +34,10 @@ public class ChatMessage {
     private static final String JSON_KEY_CHANNEL_NUMBER = "channel_id";
     private static final String JSON_KEY_CLIENT_ARRAY = "channel_members";
     private static final String JSON_KEY_CLIENT_INFO = "client_info";
+
+    private static final String JSON_KEY_FILE_NAME = "file_name";
+    private static final String JSON_KEY_FILE_TYPE = "file_type";
+    private static final String JSON_KEY_FILE_UNIQUE_ID = "file_unique_id";
 
     public static final int TYPE_MESSAGE = 1;
     public static final int TYPE_ADD_CLIENT = 2;
@@ -44,6 +52,9 @@ public class ChatMessage {
     public static final int TYPE_ONE_TO_ONE_CHAT_REQUEST = 11;
     public static final int TYPE_ONE_TO_ONE_CHAT_ACCEPT = 12;
     public static final int TYPE_ONE_TO_ONE_CHAT_DECLINE = 13;
+
+    public static final int TYPE_SEND_FILE = 14;
+    public static final int TYPE_ACCEPT_FILE = 15;
 
 
 
@@ -101,6 +112,14 @@ public class ChatMessage {
             case TYPE_LEFT_CHANNEL:
                 this.channelNumber = jsonObject.getInt(JSON_KEY_CHANNEL_NUMBER);
                 break;
+            case TYPE_SEND_FILE:
+            case TYPE_ACCEPT_FILE:
+                this.fileName = jsonObject.getString(JSON_KEY_FILE_NAME);
+                this.fileType = jsonObject.getInt(JSON_KEY_FILE_TYPE);
+                this.fileUniqueId = jsonObject.getString(JSON_KEY_FILE_UNIQUE_ID);
+                this.channelNumber = jsonObject.getInt(JSON_KEY_CHANNEL_NUMBER);
+                break;
+
         }
 
     }
@@ -161,13 +180,36 @@ public class ChatMessage {
         this.channelNumber = channelNumber;
     }
 
-
     public List<HostInfo> getClientList() {
         return clientList;
     }
 
     public void setClientList(List<HostInfo> listClients) {
         this.clientList = listClients;
+    }
+
+    public String getFileUniqueId() {
+        return fileUniqueId;
+    }
+
+    public void setFileUniqueId(String fileUniqueId) {
+        this.fileUniqueId = fileUniqueId;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public int getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(int fileType) {
+        this.fileType = fileType;
     }
 
     public String getJsonString() throws JSONException{
@@ -217,6 +259,13 @@ public class ChatMessage {
             case TYPE_JOIN_CHANNEL:
             case TYPE_CHANNEL_DUPLICATE:
             case TYPE_LEFT_CHANNEL:
+                jsonObject.put(JSON_KEY_CHANNEL_NUMBER, this.channelNumber);
+                break;
+            case TYPE_SEND_FILE:
+            case TYPE_ACCEPT_FILE:
+                jsonObject.put(JSON_KEY_FILE_NAME, this.fileName);
+                jsonObject.put(JSON_KEY_FILE_TYPE, this.fileType);
+                jsonObject.put(JSON_KEY_FILE_UNIQUE_ID, this.fileUniqueId);
                 jsonObject.put(JSON_KEY_CHANNEL_NUMBER, this.channelNumber);
                 break;
         }
